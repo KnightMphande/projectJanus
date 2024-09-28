@@ -1,78 +1,90 @@
 import { NavLink } from "react-router-dom";
+import { TfiMenu } from "react-icons/tfi";
+import { FaMapMarkerAlt, FaSearch, FaUser } from "react-icons/fa";
+import styles from "./Header.module.scss";
 
 export default function Header() {
     return (
-        <header className="bg-white">
-            <nav className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                    <div className="md:flex md:items-center md:gap-12">
-                        <NavLink>
-                            <span>Car</span>
-                            <span>Rental</span>
+        <header className={styles.header}>
+            <nav className={styles.nav}>
+                <div className={styles.navSubContainer}>
+                    <div className={styles.logo}>
+                        <NavLink className={styles.logoLink}>
+                            JanusCars
                         </NavLink>
                     </div>
 
-                    <div className="hidden md:block">
-                        <nav aria-label="Global">
-                            <ul className="flex items-center gap-6 text-sm">
-                                <li>
-                                    <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> About </a>
-                                </li>
+                    <div className="hidden xl:block">
+                        <form className={styles.headerForm}>
 
-                                <li>
-                                    <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Careers </a>
-                                </li>
+                            <div className={styles.formInputContainer}>
 
-                                <li>
-                                    <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> History </a>
-                                </li>
+                                <div className="flex items-center">
+                                    {/* Pickup location */}
+                                    <div className={styles.pickupLocationBox}>
+                                        <FaMapMarkerAlt className="text-gray-500 mr-2" />
+                                        <input
+                                            type="text"
+                                            placeholder="Enter pickup location"
+                                            className={styles.input}
+                                        />
+                                    </div>
 
-                                <li>
-                                    <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Services </a>
-                                </li>
+                                    {/* Pickup date */}
+                                    <div className={styles.pickupDateBox}>
+                                        <input
+                                            type="date"
+                                            className={styles.input}
+                                        />
+                                    </div>
+                                </div>
 
-                                <li>
-                                    <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Projects </a>
-                                </li>
+                                <div className="flex items-center">
+                                    {/* Drop off location */}
+                                    <div className={styles.dropoffLocationBox}>
+                                        <FaMapMarkerAlt className="text-gray-500 mr-2" />
+                                        <input
+                                            type="text"
+                                            placeholder="Enter drop off location"
+                                            className={styles.input}
+                                        />
+                                    </div>
 
-                                <li>
-                                    <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Blog </a>
-                                </li>
-                            </ul>
-                        </nav>
+                                    {/* Drop off date */}
+                                    <div className={styles.dropoffDateBox}>
+                                        <input
+                                            type="date"
+                                            className={styles.input}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Search dropdown */}
+                            <div className="ml-2">
+                                <button type="submit" className={styles.headerSearchBtn}>
+                                    <FaSearch className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                        </form>
                     </div>
 
                     <div className="flex items-center gap-4">
                         <div className="sm:flex sm:gap-4">
-                            <a
-                                className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow"
-                                href="#"
-                            >
-                                Login
-                            </a>
+                            <NavLink
+                                className={styles.accountLink}
 
-                            <div className="hidden sm:flex">
-                                <a
-                                    className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600"
-                                    href="#"
-                                >
-                                    Register
-                                </a>
-                            </div>
+                            >
+                                <FaUser className="size-4 mr-2" />
+                                <span className="text-sm font-medium">MY ACCOUNT</span>
+                            </NavLink>
+
                         </div>
 
                         <div className="block md:hidden">
-                            <button className="rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="size-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
+                            <button className={styles.menuBtn}>
+                                <TfiMenu className="size-5" />
                             </button>
                         </div>
                     </div>

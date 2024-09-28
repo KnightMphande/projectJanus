@@ -1,0 +1,59 @@
+.header {
+    @apply bg-white shadow-lg;
+
+    .nav {
+        @apply mx-auto w-full px-4 sm:px-6 lg:px-8;
+
+        .navSubContainer {
+            @apply flex h-16 items-center justify-between;
+
+            .logo {
+                @apply md:flex md:items-center md:gap-12;
+                
+                .logoLink {
+                    @apply text-lg sm:text-2xl font-bold text-green-900 hover:text-blue-800;
+                }
+            }
+
+            .headerForm {
+                @apply flex items-center;
+
+                .formInputContainer {
+                    @apply flex items-center divide-x-2;
+
+                    .pickupLocationBox {
+                        @apply flex items-center bg-gray-100 border rounded-md p-2 mr-2;
+                    }
+
+                    .pickupDateBox {
+                        @apply flex items-center bg-gray-100 border rounded-md p-[7px] mr-2;
+                    }
+
+                    .dropoffLocationBox {
+                        @apply flex items-center bg-gray-100 border rounded-md p-2 mx-2;
+                    }
+
+                    .dropoffDateBox {
+                        @apply flex items-center bg-gray-100 border rounded-md p-[7px];
+                    }
+
+                    .input {
+                        @apply flex-1 outline-none bg-transparent;
+                    }
+                }
+
+                .headerSearchBtn {
+                    @apply bg-green-800 hover:bg-green-900 rounded p-[8px] transition text-white;
+                }
+            }
+
+            .accountLink {
+                @apply flex items-center bg-slate-200 rounded-md px-2.5 py-2.5 text-gray-800  hover:bg-slate-300 transition;
+            }
+
+            .menuBtn {
+                @apply rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700;
+            }
+        }
+    }
+}
