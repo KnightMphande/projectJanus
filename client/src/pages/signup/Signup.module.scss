@@ -25,7 +25,7 @@
       width: 100%;
       display: grid;
       grid-template-columns: repeat(1, minmax(0, 1fr));
-      gap: 2rem;
+      gap: 1rem;
 
       .input {
         --tw-bg-opacity: 1;
@@ -33,7 +33,7 @@
         width: 100%;
         --tw-text-opacity: 1;
         color: rgb(31 41 55 / var(--tw-text-opacity));
-        font-size: 0.875rem;
+        font-size: 0.983rem;
         line-height: 1.25rem;
         padding-left: 1rem;
         padding-right: 1rem;
