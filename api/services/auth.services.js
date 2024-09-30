@@ -73,8 +73,8 @@ export class AuthenticationService {
       // Return the new customer Id
       return result.rows[0].customer_id;
     } catch (error) {
-      console.error("Failed to register customer:", err);
-      throw err;
+      console.error("Failed to register customer:", error);
+      throw error;
     }
   }
 }
