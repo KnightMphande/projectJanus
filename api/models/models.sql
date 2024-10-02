@@ -19,10 +19,15 @@ CREATE TABLE IF NOT EXISTS staff (
     phone VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    must_change_password BOOLEAN DEFAULT TRUE,
     role VARCHAR DEFAULT 'admin' NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
+
+-- INSERT staff
+INSERT INTO staff (names, phone, email, password, role) VALUES
+    ('John Skales', '0724569867', 'admin@email.com', 'admin', 'admin');
 
 
 -- Vehicles table
