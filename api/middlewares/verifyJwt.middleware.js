@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 export const verifyJwt = async (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
 
-  //   Check if token start with "Bearer "
-  if (!authHeader?.startWith("Bearer ")) {
+  // Check if token starts with "Bearer "
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ success: false, error: "Unauthorized" });
   }
 
