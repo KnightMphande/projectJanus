@@ -6,7 +6,7 @@ export class vehicleService {
    * @param {object} vehicleDetails Contains vehicle information.
    * @returns {number} vehicle id.
    */
-  static addNewVehicleService = async (vehicleData) => {
+  static addNewVehicle = async (vehicleData) => {
     try {
       // Destructure vehicle data
       const { make, model, year, category, status } = vehicleData;

@@ -1,3 +1,4 @@
+import { query } from "express";
 import client from "../configs/db.configs.js";
 
 export class AuthenticationService {
@@ -20,15 +21,15 @@ export class AuthenticationService {
 
       return {
         exists: user ? true : false,
-        user
-      }
+        user,
+      };
     } catch (err) {
       console.error("Failed to get user by email:", err);
       throw err;
     }
   }
 
-    /**
+  /**
    * Register new customer.
    * @param {object} customerDetails Contains user information.
    * @returns {number} Customer id.
@@ -77,6 +78,36 @@ export class AuthenticationService {
       return result.rows[0].customer_id;
     } catch (error) {
       console.error("Failed to register customer:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user by id.
+   * @param {id} userId for user both customer and staff.
+   * @param {role} role for the user (customer and staff).
+   * @returns {object} user if found or null if not.
+   */
+  static async getUserById(id, role) {
+    // Validate role input
+    if (!["customer", "staff"].includes(role)) {
+      throw new Error(
+        `Invalid role provided: ${role}. Expected "customer" or "staff".`
+      );
+    }
+    
+    try {
+      const query =
+        role === "customer"
+          ? "SELECT * FROM customers WHERE customer_id = $1;"
+          : "SELECT * FROM staff WHERE staff_id = $1;";
+
+      // Execute the query
+      const result = await client.query(query, [id]);
+
+      return result.rows[0] || null;
+    } catch (error) {
+      console.log("Error fetching user by id: ", error);
       throw error;
     }
   }
