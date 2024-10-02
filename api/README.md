@@ -35,6 +35,7 @@ Create a `.env` file in the root of your project and configure the following env
 * POSTGRES_DATABASE
 * POSTGRES_PASS
 * PORT_DB
+* SECRET
 * NODEMAILER_USER
 * NODEMAILER_PASS
 
