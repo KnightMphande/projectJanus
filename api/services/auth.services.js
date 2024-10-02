@@ -4,7 +4,7 @@ export class AuthenticationService {
   /**
    * Checks if a user exists by their email.
    * @param {string} email The email of the user to check.
-   * @returns {boolean} true if use is found.
+   * @returns {object} exists and user if found.
    */
   static async checkEmailExists(email) {
     try {
@@ -18,7 +18,10 @@ export class AuthenticationService {
       );
       const user = resultCustomer.rows[0] || resultStaff.rows[0];
 
-      return user ? true : false;
+      return {
+        exists: user ? true : false,
+        user
+      }
     } catch (err) {
       console.error("Failed to get user by email:", err);
       throw err;

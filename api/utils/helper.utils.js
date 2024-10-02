@@ -7,6 +7,10 @@ export class HelperFunc {
     static hashFunc = (strValue) => {
       return bcryptjs.hashSync(strValue, 12);
     };
+
+    static isPasswordFound = (password, user) => {
+      return bcryptjs.compareSync(password, user?.password);
+    }
   
     static capitalizeVariable = (variable) => {
       if (typeof variable !== 'string' || variable.length === 0) {

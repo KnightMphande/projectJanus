@@ -2,6 +2,7 @@ import client from "../configs/db.configs.js";
 import { AuthenticationService } from "../services/auth.services.js";
 import { HelperFunc } from "../utils/helper.utils.js";
 import { DataValidation } from "../utils/validations.utils.js";
+import jwt from "jsonwebtoken";
 
 export const registerCustomerController = async (req, res) => {
   const customerDetails = req.body;
@@ -40,7 +41,7 @@ export const registerCustomerController = async (req, res) => {
       customerDetails?.email
     );
 
-    if (emailExists) {
+    if (emailExists?.exists) {
       return res
         .status(409)
         .json({ success: false, error: "User already exist, please login." });
@@ -69,5 +70,91 @@ export const registerCustomerController = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+export const loginController = async (req, res) => {
+  const userDetails = req.body;
+  const role = req.params.role;
+  try {
+    // Check missing information
+    const missingFieldsArr = DataValidation.checkMissingInfo(userDetails);
+
+    if (missingFieldsArr?.length > 0) {
+      return res
+        .status(400)
+        .json({ success: false, error: `${missingFieldsArr[0]} is missing` });
+    }
+
+    // Validate email
+    const isEmailValid = DataValidation.validateEmail(userDetails?.email);
+
+    if (!isEmailValid) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Email not valid." });
+    }
+
+    // Validate password
+    const isPasswordValid = DataValidation.validatePassword(
+      userDetails?.password
+    );
+
+    if (!isPasswordValid) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Password not valid." });
+    }
+
+    // check if email does exist
+    const emailExists = await AuthenticationService.checkEmailExists(
+      userDetails?.email
+    );
+
+    if (!emailExists?.exists) {
+      if (role === "staff") {
+        return res
+          .status(409)
+          .json({ success: false, error: "Staff not found." });
+      }
+      return res
+        .status(409)
+        .json({ success: false, error: "User not found, please register." });
+    }
+
+    const user = emailExists?.user;
+
+    const passwordMatch = await HelperFunc.isPasswordFound(
+      userDetails.password,
+      user
+    );
+
+    if (!passwordMatch) {
+      return res
+        .status(401)
+        .json({ success: false, error: "Invalid password" });
+    }
+
+    // Remove password
+    const { password: userPassword, ...rest } = user;
+
+    // Create a token for the user
+    const token = jwt.sign(
+      {
+        userId: role === "customer" ? user.customer_id : user.staff_id,
+        role,
+      },
+      process.env.SECRET,
+      {
+        expiresIn: "2h",
+      }
+    );
+
+    return res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .json({ success: true, message: "Login successful" });
+  } catch (error) {
+    console.log(error);
   }
 };
