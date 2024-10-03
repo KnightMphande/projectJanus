@@ -262,7 +262,7 @@ export const updateVehicleController = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Vehicle updated successfully.",
-        data: updatedVehicle,
+        vehicle: updatedVehicle,
       });
     } else {
       return res.status(404).json({
@@ -272,6 +272,55 @@ export const updateVehicleController = async (req, res) => {
     }
   } catch (error) {
     console.error("Failed to update vehicle: ", error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+// Update vehicle details
+export const updateVehicleDetailsController = async (req, res) => {
+  const vehicleId = parseInt(req.params.vehicleId);
+  const vehicleDetails = req.body;
+
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
+
+  try {
+    if (role === "customer") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Not allowed to delete vehicle" });
+    }
+
+    const vehicle = await vehicleService.getVehicleById(vehicleId);
+
+    if (!vehicle) {
+      return res
+      .status(400)
+      .json({ success: false, error: `Vehicle of id ${vehicleId} not found` });
+    }
+
+    const updatedVehicleDetails = await vehicleService.updateVehicleDetails(
+      vehicleId,
+      vehicleDetails
+    );
+
+    if (updatedVehicleDetails) {
+      return res.status(200).json({
+        success: true,
+        message: "Vehicle updated successfully.",
+        vehicleDetails: updatedVehicleDetails,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found.",
+      });
+    }
+  } catch (error) {
+    console.error("Failed to update vehicle details: ", error);
     return res
       .status(500)
       .json({ success: false, error: "Internal Server Error" });

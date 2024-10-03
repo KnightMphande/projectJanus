@@ -248,4 +248,45 @@ export class vehicleService {
       throw error;
     }
   }
+
+    /**
+   * update vehicle details.
+   * @param {id} vehicleId for for vehicle.
+   * @param {object} vehicleDetails Contains vehicle details information.
+   * @returns {object} updated vehicle details or null.
+   */
+  static async updateVehicleDetails(vehicleId, vehicleDetails) {
+    try {
+      // Destructure vehicle data
+      const { color, numberOfSeats, mileage } = vehicleDetails;
+
+      // Start a new transaction
+      await client.query("BEGIN");
+
+      const query = `
+        UPDATE vehicle_details
+        SET color = $2, number_seats = $3, mileage = $4
+        WHERE vehicle_id = $1
+        RETURNING *;
+      `;
+
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+
+      const result = await client.query(query, [
+        vehicleId,
+        color,
+        numberOfSeats,
+        mileage
+      ]);
+
+      return result.rows[0] || null;
+    } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
+      console.error("Error updating vehicle details:", error);
+      throw error;
+    }
+  }
 }
