@@ -19,15 +19,6 @@ export class HelperFunc {
       return variable.charAt(0).toUpperCase() + variable.slice(1);
     }
   
-    static removeProperties = (user, ...properties) => {
-      // Destructure the specified properties from the user object
-      const userWithoutProperties = { ...user };
-      properties.forEach(property => {
-        delete userWithoutProperties[property];
-      });
-      return userWithoutProperties;
-    }
-  
     static isObjEmpty = (obj) => {
       return Object.keys(obj).length === 0;
     }
