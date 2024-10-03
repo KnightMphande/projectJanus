@@ -54,13 +54,12 @@
  *         description: Internal Server Error
  */
 
-
-// ########################## Login ##########################
+/// ########################## Login ##########################
 /**
  * @swagger
  * /api/auth/login/{role}:
  *   post:
- *     summary: Login both customer and staff
+ *     summary: Login both customer and admin
  *     tags:
  *       - Auth
  *     parameters:
@@ -69,8 +68,8 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [customer, staff]
- *         description: Specify the role for login (customer or staff)
+ *           enum: [customer, admin]
+ *         description: Specify the role for login (customer or admin)
  *     requestBody:
  *       required: true
  *       content:
@@ -80,13 +79,18 @@
  *             properties:
  *               email:
  *                 type: string
- *                 example: "knight@gmail.com"
+ *                 example: "admin@email.com"
  *               password:
  *                 type: string
- *                 example: "Mypass@123!"
+ *                 example: "admin"
  *     responses:
  *       200:
  *         description: Login successfully
+ *         headers:
+ *           Set-Cookie:
+ *             description: JWT token for authentication
+ *             type: string
+ *             example: "access_token=Bearer your_jwt_token; HttpOnly; Secure"
  *       400:
  *         description: Missing required fields or invalid input
  *       404:
@@ -94,5 +98,4 @@
  *       500:
  *         description: Internal Server Error
  */
-
 export default {};

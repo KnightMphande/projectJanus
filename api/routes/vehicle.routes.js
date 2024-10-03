@@ -6,7 +6,7 @@ const vehicle_router = express.Router();
 
 vehicle_router.use(verifyJwt)
 
-vehicle_router.post('/add-vehicle', addNewVehicleController);
+vehicle_router.post('/', addNewVehicleController);
 vehicle_router.post('/details/:vehicleId', addVehicleDetailsController);
 vehicle_router.post('/features/:vehicleId', addVehicleFeaturesController);
 vehicle_router.delete('/:vehicleId', deleteVehicleController);

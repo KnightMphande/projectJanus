@@ -115,7 +115,7 @@ export const loginController = async (req, res) => {
     let isPasswordValid;
 
     if (user) {
-      if (user.role === "admin" && user.must_change_password === true) {
+      if (role === "admin" && user.must_change_password === true) {
         
         isPasswordValid = true;
 
@@ -135,15 +135,20 @@ export const loginController = async (req, res) => {
         );
 
         return res
+          .set('Authorization', `Bearer ${token}`)
           .cookie("access_token", token, { httpOnly: true })
           .status(200)
           .json({ success: true, message: "Login successfully", user: rest });
 
       } 
+
+      else if (role === "customer" && user.role === "admin") {
+        return res
+        .status(400)
+        .json({ success: false, error: "Invalid login credintials" });
+      }
       
-      else if (
-        user.role === "customer" ||
-        (user.role === "admin" && user.must_change_password === false)
+      else if (role === "customer" || (role === "admin" && user.must_change_password === false)
       ) {
         isPasswordValid = DataValidation.validatePassword(
           userDetails?.password
@@ -180,8 +185,9 @@ export const loginController = async (req, res) => {
             expiresIn: "2h",
           }
         );
-
+        
         return res
+          .set('Authorization', `Bearer ${token}`)
           .cookie("access_token", token, { httpOnly: true })
           .status(200)
           .json({ success: true, message: "Login successfully", user: rest });

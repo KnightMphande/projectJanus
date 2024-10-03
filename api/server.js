@@ -49,7 +49,7 @@ const options = {
       }
     ]
   },
-  apis: ['./routes*.js', './annotations/swaggerAuthAnnotations.js'], 
+  apis: ['./routes*.js', './annotations/swaggerAuthAnnotations.js', './annotations/vehicleAnnotations.js'], 
 };
 
 const spacs = swaggerJSDoc(options);
