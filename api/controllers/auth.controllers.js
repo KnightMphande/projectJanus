@@ -95,24 +95,13 @@ export const loginController = async (req, res) => {
         .json({ success: false, error: "Email not valid." });
     }
 
-    // Validate password
-    const isPasswordValid = DataValidation.validatePassword(
-      userDetails?.password
-    );
-
-    if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Password not valid." });
-    }
-
     // check if email does exist
     const emailExists = await AuthenticationService.checkEmailExists(
       userDetails?.email
     );
 
     if (!emailExists?.exists) {
-      if (role === "staff") {
+      if (role === "admin") {
         return res
           .status(409)
           .json({ success: false, error: "Staff not found." });
@@ -123,37 +112,81 @@ export const loginController = async (req, res) => {
     }
 
     const user = emailExists?.user;
+    let isPasswordValid;
 
-    const passwordMatch = await HelperFunc.isPasswordFound(
-      userDetails.password,
-      user
-    );
+    if (user) {
+      if (user.role === "admin" && user.must_change_password === true) {
+        
+        isPasswordValid = true;
 
-    if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ success: false, error: "Invalid password" });
-    }
+        // Remove password
+        const { password: userPassword, ...rest } = user;
 
-    // Remove password
-    const { password: userPassword, ...rest } = user;
+        // Create a token for the user
+        const token = jwt.sign(
+          {
+            userId: user.staff_id,
+            role: "admin",
+          },
+          process.env.SECRET,
+          {
+            expiresIn: "2h",
+          }
+        );
 
-    // Create a token for the user
-    const token = jwt.sign(
-      {
-        userId: role === "customer" ? user.customer_id : user.staff_id,
-        role,
-      },
-      process.env.SECRET,
-      {
-        expiresIn: "2h",
+        return res
+          .cookie("access_token", token, { httpOnly: true })
+          .status(200)
+          .json({ success: true, message: "Login successfully", user: rest });
+
+      } 
+      
+      else if (
+        user.role === "customer" ||
+        (user.role === "admin" && user.must_change_password === false)
+      ) {
+        isPasswordValid = DataValidation.validatePassword(
+          userDetails?.password
+        );
+
+        if (!isPasswordValid) {
+          return res
+            .status(400)
+            .json({ success: false, error: "Password not valid." });
+        }
+
+        const passwordMatch = await HelperFunc.isPasswordFound(
+          userDetails.password,
+          user
+        );
+
+        if (!passwordMatch) {
+          return res
+            .status(401)
+            .json({ success: false, error: "Invalid password" });
+        }
+
+        // Remove password
+        const { password: userPassword, ...rest } = user;
+
+        // Create a token for the user
+        const token = jwt.sign(
+          {
+            userId: user.role === "customer" ? user.customer_id : user.staff_id,
+            role: user.role,
+          },
+          process.env.SECRET,
+          {
+            expiresIn: "2h",
+          }
+        );
+
+        return res
+          .cookie("access_token", token, { httpOnly: true })
+          .status(200)
+          .json({ success: true, message: "Login successfully", user: rest });
       }
-    );
-
-    return res
-      .cookie("access_token", token, { httpOnly: true })
-      .status(200)
-      .json({ success: true, message: "Login successfully", user: rest });
+    }
   } catch (error) {
     console.log(error);
   }

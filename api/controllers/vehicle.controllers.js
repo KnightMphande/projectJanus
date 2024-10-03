@@ -47,120 +47,173 @@ export const addNewVehicleController = async (req, res) => {
 export const addVehicleDetailsController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
   const vehicleDetails = req.body;
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
 
   try {
+    if (role === "customer") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Not allowed to delete vehicle" });
+    }
     const vehicle = await vehicleService.getVehicleById(vehicleId);
 
-   if(vehicle) {
-    const vehicleDetailsFound = await vehicleService.getVehicleDetailsById(vehicleId);
+    if (vehicle) {
+      const vehicleDetailsFound = await vehicleService.getVehicleDetailsById(
+        vehicleId
+      );
 
-    if(vehicleDetailsFound) {
+      if (vehicleDetailsFound) {
+        return res
+          .status(409)
+          .json({
+            success: false,
+            error: "Cannot add different details for the same vehicle",
+          });
+      }
+      // Add vehicle to object
+      vehicleDetails.vehicleId = vehicleId;
+
+      // Check missing information
+      const missingFieldsArr = DataValidation.checkMissingInfo(vehicleDetails);
+
+      if (missingFieldsArr?.length > 0) {
+        return res
+          .status(400)
+          .json({ success: false, error: `${missingFieldsArr[0]} is missing` });
+      }
+
+      // Check if mileage is greater than 0
+      if (vehicleDetails?.mileage < 0) {
+        return res.status(400).json({
+          success: false,
+          error: "Mileage has to be greater or equal to 0",
+        });
+      }
+
+      // Add vehicle details
+      const savedVehicleDetails = await vehicleService.addVehicleDetails(
+        vehicleDetails
+      );
+
+      if (savedVehicleDetails) {
+        return res.status(400).json({
+          success: true,
+          message: "Vehicle details saved successfully",
+          details: savedVehicleDetails,
+        });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, error: "Something went wrong" });
+      }
+    } else {
       return res
-      .status(409)
-      .json({ success: false, error: "Cannot add different details for the same vehicle" });
+        .status(404)
+        .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
     }
-     // Add vehicle to object
-     vehicleDetails.vehicleId = vehicleId;
-    
-     // Check missing information
-     const missingFieldsArr = DataValidation.checkMissingInfo(vehicleDetails);
- 
-     if (missingFieldsArr?.length > 0) {
-       return res
-         .status(400)
-         .json({ success: false, error: `${missingFieldsArr[0]} is missing` });
-     }
- 
-     // Check if mileage is greater than 0
-     if (vehicleDetails?.mileage < 0) {
-       return res
-         .status(400)
-         .json({
-           success: false,
-           error: "Mileage has to be greater or equal to 0",
-         });
-     }
- 
-     // Add vehicle details
-     const savedVehicleDetails = await vehicleService.addVehicleDetails(
-       vehicleDetails
-     );
- 
-     if (savedVehicleDetails) {
-       return res
-         .status(400)
-         .json({
-           success: true,
-           message: "Vehicle details saved successfully",
-           details: savedVehicleDetails,
-         });
-     } else {
-       return res
-         .status(400)
-         .json({ success: false, error: "Something went wrong" });
-     }
-   } else {
-    return res
-    .status(404)
-    .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
-   }
   } catch (error) {
     console.log(error);
   }
 };
 
-
 export const addVehicleFeaturesController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
   const vehicleFeatures = req.body;
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
 
   try {
+    if (role === "customer") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Not allowed to delete vehicle" });
+    }
     const vehicle = await vehicleService.getVehicleById(vehicleId);
 
-   if(vehicle) {
-    const vehicleFeaturesFound = await vehicleService.getVehicleFeaturesById(vehicleId);
+    if (vehicle) {
+      const vehicleFeaturesFound = await vehicleService.getVehicleFeaturesById(
+        vehicleId
+      );
 
-    if(vehicleFeaturesFound) {
+      if (vehicleFeaturesFound) {
+        return res
+          .status(409)
+          .json({
+            success: false,
+            error: "Cannot add different features for the same vehicle",
+          });
+      }
+      // Add vehicle to object
+      vehicleFeatures.vehicleId = vehicleId;
+
+      // Check missing information
+      const missingFieldsArr = DataValidation.checkMissingInfo(vehicleFeatures);
+
+      if (missingFieldsArr?.length > 0) {
+        return res
+          .status(400)
+          .json({ success: false, error: `${missingFieldsArr[0]} is missing` });
+      }
+
+      // Add vehicle features
+      const savedVehicleFeatures = await vehicleService.addvehicleFeatures(
+        vehicleFeatures
+      );
+
+      if (savedVehicleFeatures) {
+        return res.status(400).json({
+          success: true,
+          message: "Vehicle features saved successfully",
+          details: savedVehicleFeatures,
+        });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, error: "Something went wrong" });
+      }
+    } else {
       return res
-      .status(409)
-      .json({ success: false, error: "Cannot add different features for the same vehicle" });
+        .status(404)
+        .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
     }
-     // Add vehicle to object
-     vehicleFeatures.vehicleId = vehicleId;
-    
-     // Check missing information
-     const missingFieldsArr = DataValidation.checkMissingInfo(vehicleFeatures);
- 
-     if (missingFieldsArr?.length > 0) {
-       return res
-         .status(400)
-         .json({ success: false, error: `${missingFieldsArr[0]} is missing` });
-     }
- 
-     // Add vehicle features
-     const savedVehicleFeatures = await vehicleService.addvehicleFeatures(
-       vehicleFeatures
-     );
- 
-     if (savedVehicleFeatures) {
-       return res
-         .status(400)
-         .json({
-           success: true,
-           message: "Vehicle features saved successfully",
-           details: savedVehicleFeatures,
-         });
-     } else {
-       return res
-         .status(400)
-         .json({ success: false, error: "Something went wrong" });
-     }
-   } else {
-    return res
-    .status(404)
-    .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
-   }
   } catch (error) {
     console.log(error);
+  }
+};
+
+// Delete a vehicle by ID
+export const deleteVehicleController = async (req, res) => {
+  const vehicleId = parseInt(req.params.vehicleId);
+
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
+  console.log(role);
+  
+
+  try {
+    if (role === "customer") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Not allowed to delete vehicle" });
+    }
+
+    const vehicleDeleted = await vehicleService.deleteVehicle(vehicleId);
+    if (!vehicleDeleted) {
+      return res
+        .status(404)
+        .json({
+          success: false,
+          error: `Vehicle with ID ${vehicleId} not found.`,
+        });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: `Vehicle with successfully deleted.` });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting vehicle", error });
   }
 };

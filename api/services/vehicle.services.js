@@ -151,4 +151,22 @@ export class vehicleService {
       throw error;
     }
   }
+
+  /**
+   * Get vehicle features by vehicle id.
+   * @param {id} vehicleId for for vehicle.
+   * @returns {object} vehicle features if found or null if not.
+   */
+static async deleteVehicle(vehicleId) {
+  try {
+    const query = `DELETE FROM vehicles WHERE vehicle_id = $1;
+`
+    const result = await client.query(query, [vehicleId]);
+
+     return result.rowCount > 0;
+  } catch (error) {
+    console.log("Error Error deleting vehicle: ", error);
+    throw error;
+  }
+};
 }
