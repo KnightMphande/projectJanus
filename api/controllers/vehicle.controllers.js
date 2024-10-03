@@ -2,6 +2,8 @@ import { AuthenticationService } from "../services/auth.services.js";
 import { vehicleService } from "../services/vehicle.services.js";
 import { DataValidation } from "../utils/validations.utils.js";
 
+
+// Add new vehicle to fleet
 export const addNewVehicleController = async (req, res) => {
   // Access the userId and role from the req object
   const userId = req.user;
@@ -40,10 +42,13 @@ export const addNewVehicleController = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    console.error("Failed to add vehicle to the fleet: ", error);
+
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
+// Add vehicle details
 export const addVehicleDetailsController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
   const vehicleDetails = req.body;
@@ -114,10 +119,12 @@ export const addVehicleDetailsController = async (req, res) => {
         .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
     }
   } catch (error) {
-    console.log(error);
+    console.error("Failed to add vehicle details: ", error);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
+// Add vehicle features
 export const addVehicleFeaturesController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
   const vehicleFeatures = req.body;
@@ -180,7 +187,8 @@ export const addVehicleFeaturesController = async (req, res) => {
         .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
     }
   } catch (error) {
-    console.log(error);
+    console.error("Failed to add vehicle features: ", error);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -214,6 +222,17 @@ export const deleteVehicleController = async (req, res) => {
       .status(200)
       .json({ success: true, message: `Vehicle with successfully deleted.` });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting vehicle", error });
+    console.error("Failed to delete vehicle: ", error);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
+
+// Update vehicle 
+export const updateVehicleController = async (req, res) => {
+  try {
+    
+  } catch (error) {
+    console.error("Failed to update vehicle: ", error);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+}

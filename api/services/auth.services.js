@@ -64,6 +64,9 @@ export class AuthenticationService {
       ) RETURNING customer_id;
     `;
 
+      // Start a new transaction
+      await client.query("BEGIN");
+
       // Run the query
       const result = await client.query(query, [
         names,
@@ -73,6 +76,9 @@ export class AuthenticationService {
         address,
         role,
       ]);
+
+      // Commit the transaction if successful
+      await client.query("COMMIT");
 
       // Return the new customer Id
       return result.rows[0].customer_id;
@@ -95,7 +101,7 @@ export class AuthenticationService {
         `Invalid role provided: ${role}. Expected "customer" or "staff".`
       );
     }
-    
+
     try {
       const query =
         role === "customer"

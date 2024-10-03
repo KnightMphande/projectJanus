@@ -14,6 +14,9 @@ export class vehicleService {
       const query = `INSERT INTO vehicles (make, model, year, category, status) VALUES 
         ($1, $2, $3, $4, $5) RETURNING vehicle_id`;
 
+      // Start a new transaction
+      await client.query("BEGIN");
+
       // Execute the query
       const result = await client.query(query, [
         make,
@@ -23,8 +26,14 @@ export class vehicleService {
         status.toLowerCase(),
       ]);
 
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+
       return result.rows[0].vehicle_id;
     } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
       console.error("Failed to add new vehicle:", error);
       throw error;
     }
@@ -43,6 +52,9 @@ export class vehicleService {
       const query = `INSERT INTO vehicle_details (vehicle_id, color, number_seats, mileage) VALUES 
           ($1, $2, $3, $4) RETURNING *`;
 
+      // Start a new transaction
+      await client.query("BEGIN");
+
       // Execute the query
       const result = await client.query(query, [
         vehicleId,
@@ -51,8 +63,14 @@ export class vehicleService {
         mileage,
       ]);
 
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+
       return result.rows[0];
     } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
       console.error("Failed to add vehicle details:", error);
       throw error;
     }
@@ -78,6 +96,9 @@ export class vehicleService {
       const query = `INSERT INTO vehicle_features (vehicle_id, has_gps, has_child_seats, has_parking_sensors, has_air_conditioning, has_bluetooth) VALUES 
             ($1, $2, $3, $4, $5, $6) RETURNING *`;
 
+      // Start a new transaction
+      await client.query("BEGIN");
+
       // Execute the query
       const result = await client.query(query, [
         vehicleId,
@@ -88,8 +109,14 @@ export class vehicleService {
         hasBlutooth,
       ]);
 
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+
       return result.rows[0];
     } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
       console.error("Failed to add vehicle features:", error);
       throw error;
     }
@@ -157,16 +184,25 @@ export class vehicleService {
    * @param {id} vehicleId for for vehicle.
    * @returns {object} vehicle features if found or null if not.
    */
-static async deleteVehicle(vehicleId) {
-  try {
-    const query = `DELETE FROM vehicles WHERE vehicle_id = $1;
-`
-    const result = await client.query(query, [vehicleId]);
+  static async deleteVehicle(vehicleId) {
+    try {
+      const query = `DELETE FROM vehicles WHERE vehicle_id = $1;
+`;
 
-     return result.rowCount > 0;
-  } catch (error) {
-    console.log("Error Error deleting vehicle: ", error);
-    throw error;
+      // Start a new transaction
+      await client.query("BEGIN");
+      const result = await client.query(query, [vehicleId]);
+
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+
+      return result.rowCount > 0;
+    } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
+      console.log("Error Error deleting vehicle: ", error);
+      throw error;
+    }
   }
-};
 }
