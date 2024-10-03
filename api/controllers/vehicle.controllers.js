@@ -2,7 +2,6 @@ import { AuthenticationService } from "../services/auth.services.js";
 import { vehicleService } from "../services/vehicle.services.js";
 import { DataValidation } from "../utils/validations.utils.js";
 
-
 // Add new vehicle to fleet
 export const addNewVehicleController = async (req, res) => {
   // Access the userId and role from the req object
@@ -31,20 +30,22 @@ export const addNewVehicleController = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: true, error: "User not found" });
     } else {
-      const vehicleId = await vehicleService.addNewVehicle(vehicleData);
+      const vehicle = await vehicleService.addNewVehicle(vehicleData);
 
-      if (vehicleId) {
+      if (vehicle) {
         return res.status(201).json({
           success: true,
           message: "Vehicle added successfully",
-          vehicleId,
+          vehicle,
         });
       }
     }
   } catch (error) {
     console.error("Failed to add vehicle to the fleet: ", error);
 
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -70,12 +71,10 @@ export const addVehicleDetailsController = async (req, res) => {
       );
 
       if (vehicleDetailsFound) {
-        return res
-          .status(409)
-          .json({
-            success: false,
-            error: "Cannot add different details for the same vehicle",
-          });
+        return res.status(409).json({
+          success: false,
+          error: "Cannot add different details for the same vehicle",
+        });
       }
       // Add vehicle to object
       vehicleDetails.vehicleId = vehicleId;
@@ -120,7 +119,9 @@ export const addVehicleDetailsController = async (req, res) => {
     }
   } catch (error) {
     console.error("Failed to add vehicle details: ", error);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -128,6 +129,7 @@ export const addVehicleDetailsController = async (req, res) => {
 export const addVehicleFeaturesController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
   const vehicleFeatures = req.body;
+
   // Access the userId and role from the req object
   const userId = req.user;
   const role = req.role;
@@ -138,6 +140,7 @@ export const addVehicleFeaturesController = async (req, res) => {
         .status(400)
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
+
     const vehicle = await vehicleService.getVehicleById(vehicleId);
 
     if (vehicle) {
@@ -146,12 +149,10 @@ export const addVehicleFeaturesController = async (req, res) => {
       );
 
       if (vehicleFeaturesFound) {
-        return res
-          .status(409)
-          .json({
-            success: false,
-            error: "Cannot add different features for the same vehicle",
-          });
+        return res.status(409).json({
+          success: false,
+          error: "Cannot add different features for the same vehicle",
+        });
       }
       // Add vehicle to object
       vehicleFeatures.vehicleId = vehicleId;
@@ -188,7 +189,9 @@ export const addVehicleFeaturesController = async (req, res) => {
     }
   } catch (error) {
     console.error("Failed to add vehicle features: ", error);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -200,7 +203,6 @@ export const deleteVehicleController = async (req, res) => {
   const userId = req.user;
   const role = req.role;
   console.log(role);
-  
 
   try {
     if (role === "customer") {
@@ -211,28 +213,67 @@ export const deleteVehicleController = async (req, res) => {
 
     const vehicleDeleted = await vehicleService.deleteVehicle(vehicleId);
     if (!vehicleDeleted) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          error: `Vehicle with ID ${vehicleId} not found.`,
-        });
+      return res.status(404).json({
+        success: false,
+        error: `Vehicle with ID ${vehicleId} not found.`,
+      });
     }
     return res
       .status(200)
       .json({ success: true, message: `Vehicle with successfully deleted.` });
   } catch (error) {
     console.error("Failed to delete vehicle: ", error);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
-// Update vehicle 
+// Update vehicle
 export const updateVehicleController = async (req, res) => {
+  const vehicleId = parseInt(req.params.vehicleId);
+  const vehicleData = req.body;
+
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
+
   try {
-    
+    if (role === "customer") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Not allowed to delete vehicle" });
+    }
+
+    const vehicle = await vehicleService.getVehicleById(vehicleId);
+
+    if (!vehicle) {
+      return res
+      .status(400)
+      .json({ success: false, error: `Vehicle of id ${vehicleId} not found` });
+    }
+
+    const updatedVehicle = await vehicleService.updateVehicle(
+      vehicleId,
+      vehicleData
+    );
+
+    if (updatedVehicle) {
+      return res.status(200).json({
+        success: true,
+        message: "Vehicle updated successfully.",
+        data: updatedVehicle,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found.",
+      });
+    }
   } catch (error) {
     console.error("Failed to update vehicle: ", error);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
-}
+};

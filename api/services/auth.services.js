@@ -96,7 +96,7 @@ export class AuthenticationService {
    */
   static async getUserById(id, role) {
     // Validate role input
-    if (!["customer", "staff"].includes(role)) {
+    if (!["customer", "admin"].includes(role)) {
       throw new Error(
         `Invalid role provided: ${role}. Expected "customer" or "staff".`
       );

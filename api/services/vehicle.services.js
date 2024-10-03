@@ -4,7 +4,7 @@ export class vehicleService {
   /**
    * add new vehicle.
    * @param {object} vehicleData Contains vehicle information.
-   * @returns {number} vehicle id.
+   * @returns {object} vehicle.
    */
   static addNewVehicle = async (vehicleData) => {
     try {
@@ -12,7 +12,7 @@ export class vehicleService {
       const { make, model, year, category, status } = vehicleData;
 
       const query = `INSERT INTO vehicles (make, model, year, category, status) VALUES 
-        ($1, $2, $3, $4, $5) RETURNING vehicle_id`;
+        ($1, $2, $3, $4, $5) RETURNING *`;
 
       // Start a new transaction
       await client.query("BEGIN");
@@ -29,7 +29,7 @@ export class vehicleService {
       // Commit the transaction if successful
       await client.query("COMMIT");
 
-      return result.rows[0].vehicle_id;
+      return result.rows[0] || null;
     } catch (error) {
       // Rollback the transaction in case of an error
       await client.query("ROLLBACK");
@@ -202,6 +202,49 @@ export class vehicleService {
       await client.query("ROLLBACK");
 
       console.log("Error Error deleting vehicle: ", error);
+      throw error;
+    }
+  }
+
+  /**
+   * update vehicle.
+   * @param {id} vehicleId for for vehicle.
+   * @param {object} vehicleData Contains vehicle information.
+   * @returns {object} updated vehicle or null.
+   */
+  static async updateVehicle(vehicleId, vehicleData) {
+    try {
+      // Destructure vehicle data
+      const { make, model, year, category, status } = vehicleData;
+
+      // Start a new transaction
+      await client.query("BEGIN");
+
+      const query = `
+        UPDATE vehicles
+        SET make = $2, model = $3, year = $4, category = $5, status = $6
+        WHERE vehicle_id = $1
+        RETURNING *;
+      `;
+
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+
+      const result = await client.query(query, [
+        vehicleId,
+        make,
+        model,
+        year,
+        category,
+        status,
+      ]);
+
+      return result.rows[0] || null;
+    } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
+      console.error("Error updating vehicle:", error);
       throw error;
     }
   }
