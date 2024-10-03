@@ -91,8 +91,64 @@ export const addVehicleDetailsController = async (req, res) => {
          .status(400)
          .json({
            success: true,
-           message: "Vehicle saved successfully",
+           message: "Vehicle details saved successfully",
            details: savedVehicleDetails,
+         });
+     } else {
+       return res
+         .status(400)
+         .json({ success: false, error: "Something went wrong" });
+     }
+   } else {
+    return res
+    .status(404)
+    .json({ success: false, error: `No vehicle of id ${vehicleId} found` });
+   }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const addVehicleFeaturesController = async (req, res) => {
+  const vehicleId = parseInt(req.params.vehicleId);
+  const vehicleFeatures = req.body;
+
+  try {
+    const vehicle = await vehicleService.getVehicleById(vehicleId);
+
+   if(vehicle) {
+    const vehicleFeaturesFound = await vehicleService.getVehicleFeaturesById(vehicleId);
+
+    if(vehicleFeaturesFound) {
+      return res
+      .status(409)
+      .json({ success: false, error: "Cannot add different features for the same vehicle" });
+    }
+     // Add vehicle to object
+     vehicleFeatures.vehicleId = vehicleId;
+    
+     // Check missing information
+     const missingFieldsArr = DataValidation.checkMissingInfo(vehicleFeatures);
+ 
+     if (missingFieldsArr?.length > 0) {
+       return res
+         .status(400)
+         .json({ success: false, error: `${missingFieldsArr[0]} is missing` });
+     }
+ 
+     // Add vehicle features
+     const savedVehicleFeatures = await vehicleService.addvehicleFeatures(
+       vehicleFeatures
+     );
+ 
+     if (savedVehicleFeatures) {
+       return res
+         .status(400)
+         .json({
+           success: true,
+           message: "Vehicle features saved successfully",
+           details: savedVehicleFeatures,
          });
      } else {
        return res
