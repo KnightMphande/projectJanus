@@ -148,6 +148,12 @@ export const loginController = async (req, res) => {
         .json({ success: false, error: "Invalid login credintials" });
       }
       
+      else if (role === "admin" && user.role === "customer") {
+        return res
+        .status(400)
+        .json({ success: false, error: "Invalid login credintials" });
+      }
+
       else if (role === "customer" || (role === "admin" && user.must_change_password === false)
       ) {
         isPasswordValid = DataValidation.validatePassword(
