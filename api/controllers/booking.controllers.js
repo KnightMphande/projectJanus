@@ -99,12 +99,88 @@ export const deleteBookingController = async (req, res) => {
         .status(404)
         .json({ success: false, error: "Booking not found" });
 
-    return res.status(200).json({
-      success: true,
-      message: "Booking deleted successfully",
-    });
+    else if (deletedBooking) {
+        deletedBooking.status = "cancelled";
+
+        const movedToHistoryBooking = await BookingService.moveBookingToHistory(bookingId, deletedBooking)
+
+        if (movedToHistoryBooking) {
+          return res.status(200).json({
+            success: true,
+            message: "Booking deleted successfully",
+          });
+        }
+      
+    }
+
   } catch (error) {
     console.error("Failed to delete booking: ", error);
+
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+export const updateBookingController = async (req, res) => {
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
+
+  const bookingId = parseInt(req.params.bookingId);
+  const status = req.query.status;
+  const bookingData = req.body;  
+
+  try {
+    if(role === "customer") {
+        bookingData.status = "in-progress";
+
+        const updatedBooking = await BookingService.updateBooking(
+            bookingId,
+            bookingData
+          );
+      
+          if (!updatedBooking)
+            return res
+              .status(404)
+              .json({ success: false, error: "Booking not found" });
+      
+          return res.status(200).json({ success: true, message: "Booking updated successfully", updatedBooking });
+    } 
+
+    else if (role === "admin") {
+        
+        bookingData.status = status;
+
+        const updatedBooking = await BookingService.updateBooking(
+            bookingId,
+            bookingData
+          );
+      
+          if (!updatedBooking)
+            return res
+              .status(404)
+              .json({ success: false, error: "Booking not found" });
+          
+          if (updatedBooking.status === "completed") {
+            const deletedBooking = await BookingService.deleteBooking(updatedBooking.booking_id);
+
+            if (deletedBooking) {
+              
+              const movedToHistoryBooking = await BookingService.moveBookingToHistory(bookingId, deletedBooking)
+
+              if (movedToHistoryBooking) {
+                return res.status(200).json({ success: true, message: "Booking updated successfully", updatedBooking });
+              }
+              
+            }
+          }
+      
+          return res.status(200).json({ success: true, message: "Booking updated successfully", updatedBooking });
+    }
+
+  } catch (error) {
+    console.error("Failed to updated booking: ", error);
 
     return res
       .status(500)

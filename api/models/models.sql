@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 -- Booking history
 CREATE TABLE IF NOT EXISTS booking_history (
     history_id SERIAL PRIMARY KEY,
-    booking_id INT UNIQUE NOT NULL REFERENCES bookings(booking_id) ON DELETE CASCADE, 
+    booking_id INT UNIQUE NOT NULL, 
     customer_id INT REFERENCES customers(customer_id) ON DELETE CASCADE, 
     vehicle_id INT REFERENCES vehicles(vehicle_id) ON DELETE CASCADE, 
     check_out DATE NOT NULL,
@@ -168,27 +168,3 @@ BEFORE UPDATE ON vehicle_features
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
-
--- Trigger to move completed bookings
-CREATE OR REPLACE FUNCTION move_completed_booking()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Insert the completed booking into the booking_history table
-    INSERT INTO booking_history (booking_id, customer_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, status, created_at, completed_at)
-    VALUES (NEW.booking_id, NEW.customer_id, NEW.vehicle_id, NEW.check_out, NEW.check_in, NEW.pick_up_location, NEW.drop_off_location, NEW.status, NEW.created_at, CURRENT_TIMESTAMP);
-    
-    -- Delete the completed booking from bookings
-    DELETE FROM bookings WHERE booking_id = NEW.booking_id;
-    
-    RETURN NULL; -- return NULL (delete from bookings)
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_move_completed_booking
-AFTER UPDATE OF status ON bookings
-FOR EACH ROW
-WHEN (NEW.status = 'completed') -- Only trigger on completed bookings
-EXECUTE FUNCTION move_completed_booking();
-
-
--- Need trigger to update car availability upon return

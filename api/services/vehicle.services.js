@@ -251,7 +251,7 @@ export class vehicleService {
 
   /**
    * update vehicle details.
-   * @param {id} vehicleId for for vehicle.
+   * @param {id} vehicleId for vehicle.
    * @param {object} vehicleDetails Contains vehicle details information.
    * @returns {object} updated vehicle details or null.
    */
