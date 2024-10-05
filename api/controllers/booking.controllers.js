@@ -37,12 +37,9 @@ export const getAllBookingsController = async (req, res) => {
   const role = req.role;
   try {
     if (role === "customer") {
-
       // Fetch bookings related to the customer
-      return res.status(400).json({
-        success: false,
-        error: "Only admins can get list of bookings",
-      });
+      const bookings = await BookingService.getAllBookings();
+      return res.status(200).json({ success: true, bookings });
     }
 
     const bookings = await BookingService.getAllBookings();
@@ -61,7 +58,7 @@ export const getBookingByIdController = async (req, res) => {
   const userId = req.user;
   const role = req.role;
 
-  const bookingId = parseInt(req.params.bookingId)
+  const bookingId = parseInt(req.params.bookingId);
 
   try {
     const booking = await BookingService.getBookingById(bookingId);
@@ -74,6 +71,40 @@ export const getBookingByIdController = async (req, res) => {
     return res.status(200).json({ success: true, booking });
   } catch (error) {
     console.error("Failed to fetch a single booking: ", error);
+
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+export const deleteBookingController = async (req, res) => {
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
+
+  const bookingId = parseInt(req.params.bookingId);
+
+  try {
+    if (role === "admin") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Cannot delete customer booking" });
+    }
+
+    const deletedBooking = await BookingService.deleteBooking(bookingId);
+
+    if (!deletedBooking)
+      return res
+        .status(404)
+        .json({ success: false, error: "Booking not found" });
+
+    return res.status(200).json({
+      success: true,
+      message: "Booking deleted successfully",
+    });
+  } catch (error) {
+    console.error("Failed to delete booking: ", error);
 
     return res
       .status(500)

@@ -65,13 +65,25 @@ export class BookingService {
   }
 
   static async getBookingById(id) {
-   try {
-    const query = `SELECT * FROM bookings WHERE booking_id = $1;`;
-    const result = await client.query(query, [id]);
-    return result.rows[0];
-   } catch (error) {
-    console.error("Error fetching a single booking:", error);
-    throw error;
-   }
-  };
+    try {
+      const query = `SELECT * FROM bookings WHERE booking_id = $1;`;
+      const result = await client.query(query, [id]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error fetching a single booking:", error);
+      throw error;
+    }
+  }
+
+  static async deleteBooking(id) {
+    try {
+      const query = `DELETE FROM bookings WHERE booking_id = $1 RETURNING *;`;
+      const result = await client.query(query, [id]);
+
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      throw error;
+    }
+  }
 }
