@@ -51,4 +51,15 @@ export class BookingService {
       throw error;
     }
   }
+
+  static async getAllBookings() {
+    try {
+      const query = `SELECT * FROM bookings;`;
+      const { rows } = await client.query(query);
+      return rows;
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      throw error;
+    }
+  }
 }
