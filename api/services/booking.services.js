@@ -55,11 +55,23 @@ export class BookingService {
   static async getAllBookings() {
     try {
       const query = `SELECT * FROM bookings;`;
-      const { rows } = await client.query(query);
-      return rows;
+      const result = await client.query(query);
+
+      return result.rows;
     } catch (error) {
       console.error("Error fetching bookings:", error);
       throw error;
     }
   }
+
+  static async getBookingById(id) {
+   try {
+    const query = `SELECT * FROM bookings WHERE booking_id = $1;`;
+    const result = await client.query(query, [id]);
+    return result.rows[0];
+   } catch (error) {
+    console.error("Error fetching a single booking:", error);
+    throw error;
+   }
+  };
 }
