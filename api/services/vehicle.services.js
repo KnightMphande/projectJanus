@@ -249,7 +249,7 @@ export class vehicleService {
     }
   }
 
-    /**
+  /**
    * update vehicle details.
    * @param {id} vehicleId for for vehicle.
    * @param {object} vehicleDetails Contains vehicle details information.
@@ -270,15 +270,15 @@ export class vehicleService {
         RETURNING *;
       `;
 
-      // Commit the transaction if successful
-      await client.query("COMMIT");
-
       const result = await client.query(query, [
         vehicleId,
         color,
         numberOfSeats,
-        mileage
+        mileage,
       ]);
+
+      // Commit the transaction if successful
+      await client.query("COMMIT");
 
       return result.rows[0] || null;
     } catch (error) {

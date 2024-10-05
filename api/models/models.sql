@@ -78,10 +78,12 @@ CREATE TABLE IF NOT EXISTS bookings (
     check_in DATE NOT NULL CHECK (check_in > check_out), 
     pick_up_location VARCHAR(100) NOT NULL,
     drop_off_location VARCHAR(100) NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('confirmed', 'completed', 'canceled', 'in-progress')), 
+    status VARCHAR(20) NOT NULL DEFAULT 'in-progress' CHECK (status IN ('confirmed', 'completed', 'canceled', 'in-progress')), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ALTER TABLE bookings 
+-- ALTER COLUMN status SET DEFAULT 'in-progress';
 
 -- Maintenance
 CREATE TABLE IF NOT EXISTS maintenance (

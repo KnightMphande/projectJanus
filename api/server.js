@@ -7,6 +7,7 @@ import auth_router from "./routes/auth.routes.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerui from "swagger-ui-express";
 import vehicle_router from "./routes/vehicle.routes.js";
+import booking_router from "./routes/booking.routes.js";
 
 //Create app
 const app = express();
@@ -88,3 +89,4 @@ app.get('/api/test', (req, res) => {
 // Router level middlewares
 app.use('/api/auth', auth_router);
 app.use('/api/vehicle', vehicle_router);
+app.use('/api/booking', booking_router);
