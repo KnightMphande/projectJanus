@@ -11,7 +11,7 @@ export default function ContentHeader({ title, handleMenuClick }) {
                 <h2 className={styles.title}>{title}</h2>
             </div>
             <div className={styles.profile}>
-            <img class='w-12 h-12 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
+            <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
             </div>
         </div>
     );
