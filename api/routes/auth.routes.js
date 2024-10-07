@@ -3,7 +3,7 @@ import { loginController, registerCustomerController } from "../controllers/auth
 
 const auth_router = express.Router();
 
-auth_router.post('/register', registerCustomerController);
-auth_router.post('/login/:role', loginController);
+auth_router.post('/signup', registerCustomerController);
+auth_router.post('/signin/:role', loginController);
 
 export default auth_router;

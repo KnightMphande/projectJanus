@@ -29,6 +29,33 @@ export class AuthenticationService {
     }
   }
 
+    /**
+   * Checks if phone number exists.
+   * @param {string} phone The phone of the user to check.
+   * @returns {object} exists or user if found.
+   */
+    static async checkPhoneExists(phone) {
+      try {
+        const resultCustomer = await client.query(
+          `SELECT * FROM customers WHERE phone = $1`,
+          [phone]
+        );
+        const resultStaff = await client.query(
+          `SELECT * FROM staff WHERE phone = $1`,
+          [phone]
+        );
+        const user = resultCustomer.rows[0] || resultStaff.rows[0];
+  
+        return {
+          exists: user ? true : false,
+          user,
+        };
+      } catch (err) {
+        console.error("Failed to get user by phone:", err);
+        throw err;
+      }
+    }
+
   /**
    * Register new customer.
    * @param {object} customerDetails Contains user information.

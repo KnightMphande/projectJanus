@@ -1,87 +1,67 @@
 import { NavLink } from "react-router-dom";
 import { TfiMenu } from "react-icons/tfi";
-import { FaMapMarkerAlt, FaSearch, FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import styles from "./Header.module.scss";
+import { useState } from "react";
+import SigninModal from "../modals/SigninModal";
+import SignupModal from "../modals/SignupModal";
 
 export default function Header() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalType, setModalType] = useState("");
+
+    const handleModalOpen = (type) => {
+        if (type === "signin") {
+            setIsModalOpen(true);
+            setModalType(type);
+        }
+        else if (type === "signup") {
+            setIsModalOpen(true);
+            setModalType(type);
+        };
+    }
+
+    const handleModalClose = (type) => {
+        if (type === "signin") {
+            setIsModalOpen(false);
+            setModalType("");
+        }
+        else if (type === "signup") {
+            setIsModalOpen(false);
+            setModalType("");
+        }
+    }
+
     return (
         <header className={styles.header}>
             <nav className={styles.nav}>
                 <div className={styles.navSubContainer}>
                     <div className={styles.logo}>
-                        <NavLink className={styles.logoLink}>
+                        <NavLink to="/" className={styles.logoLink}>
                             JanusCars
                         </NavLink>
                     </div>
 
-                    <div className="hidden xl:block">
-                        <form className={styles.headerForm}>
-
-                            <div className={styles.formInputContainer}>
-
-                                <div className="flex items-center">
-                                    {/* Pickup location */}
-                                    <div className={styles.pickupLocationBox}>
-                                        <FaMapMarkerAlt className="text-gray-500 mr-2" />
-                                        <input
-                                            type="text"
-                                            placeholder="Enter pickup location"
-                                            className={styles.input}
-                                        />
-                                    </div>
-
-                                    {/* Pickup date */}
-                                    <div className={styles.pickupDateBox}>
-                                        <input
-                                            type="date"
-                                            className={styles.input}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center">
-                                    {/* Drop off location */}
-                                    <div className={styles.dropoffLocationBox}>
-                                        <FaMapMarkerAlt className="text-gray-500 mr-2" />
-                                        <input
-                                            type="text"
-                                            placeholder="Enter drop off location"
-                                            className={styles.input}
-                                        />
-                                    </div>
-
-                                    {/* Drop off date */}
-                                    <div className={styles.dropoffDateBox}>
-                                        <input
-                                            type="date"
-                                            className={styles.input}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Search dropdown */}
-                            <div className="ml-2">
-                                <button type="submit" className={styles.headerSearchBtn}>
-                                    <FaSearch className="w-6 h-6" />
-                                </button>
-                            </div>
-
-                        </form>
-                    </div>
-
                     <div className="flex items-center gap-4">
-                        <div className="sm:flex sm:gap-4">
+                        <div className="hidden sm:flex sm:gap-4">
                             <NavLink
                                 className={styles.accountLink}
-
+                                onClick={() => handleModalOpen("signup")}
                             >
                                 <FaUser className="size-4 mr-2" />
-                                <span className="text-sm font-medium">MY ACCOUNT</span>
+                                <span className="text-sm font-medium">Signup</span>
                             </NavLink>
 
+                            <NavLink
+                                className={styles.accountLink}
+                                onClick={() => handleModalOpen("signin")}
+                            >
+                                <FaUser className="size-4 mr-2" />
+                                <span className="text-sm font-medium">Signin</span>
+                            </NavLink>
                         </div>
 
+                        {/* Mobile Menu Button */}
                         <div className="block md:hidden">
                             <button className={styles.menuBtn}>
                                 <TfiMenu className="size-5" />
@@ -90,6 +70,15 @@ export default function Header() {
                     </div>
                 </div>
             </nav>
+
+            {
+                (isModalOpen && modalType === "signin") && (<SigninModal open={isModalOpen} close={handleModalClose} switchToSignup={() => handleModalOpen("signup")} />)
+            }
+
+            {
+                (isModalOpen && modalType === "signup") && (<SignupModal open={isModalOpen} close={handleModalClose} switchToSignin={() => handleModalOpen("signin")} />)
+            }
+
         </header>
     );
 }

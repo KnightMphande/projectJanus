@@ -1,17 +1,24 @@
 .header {
-    @apply bg-white shadow-lg;
+    background-color: #fefefe; 
+    --tw-text-opacity: 0.9;
+    color: rgb(0 120 10 / var(--tw-text-opacity));
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 4px 4px 0 rgba(0, 0, 0, 0.05);
 
     .nav {
-        @apply mx-auto w-full px-4 sm:px-6 lg:px-8;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        padding: 0 1rem;
+        max-width: 1600px;
 
         .navSubContainer {
             @apply flex h-16 items-center justify-between;
 
             .logo {
                 @apply md:flex md:items-center md:gap-12;
-                
+
                 .logoLink {
-                    @apply text-lg sm:text-2xl font-bold text-green-900 hover:text-blue-800;
+                    @apply text-lg sm:text-2xl font-bold hover:text-green-800 transition;
                 }
             }
 
@@ -21,20 +28,11 @@
                 .formInputContainer {
                     @apply flex items-center divide-x-2;
 
-                    .pickupLocationBox {
-                        @apply flex items-center bg-gray-100 border rounded-md p-2 mr-2;
-                    }
-
-                    .pickupDateBox {
-                        @apply flex items-center bg-gray-100 border rounded-md p-[7px] mr-2;
-                    }
-
-                    .dropoffLocationBox {
-                        @apply flex items-center bg-gray-100 border rounded-md p-2 mx-2;
-                    }
-
+                    .pickupLocationBox,
+                    .pickupDateBox,
+                    .dropoffLocationBox,
                     .dropoffDateBox {
-                        @apply flex items-center bg-gray-100 border rounded-md p-[7px];
+                        @apply flex items-center bg-gray-100 border rounded-md p-2 mr-2;
                     }
 
                     .input {
@@ -43,17 +41,29 @@
                 }
 
                 .headerSearchBtn {
-                    @apply bg-green-800 hover:bg-green-900 rounded p-[8px] transition text-white;
+                    @apply bg-blue-600 hover:bg-blue-700 rounded p-[8px] transition;
                 }
             }
 
             .accountLink {
-                @apply flex items-center bg-slate-200 rounded-md px-2.5 py-2.5 text-gray-800  hover:bg-slate-300 transition;
+                @apply flex items-center bg-slate-200 rounded-md px-3 py-2 hover:bg-slate-300 hover:text-gray-900 transition;
             }
 
             .menuBtn {
-                @apply rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700;
+                @apply rounded bg-gray-100 p-2 text-gray-600 hover:text-gray-700 hover:bg-gray-200 transition;
             }
+        }
+    }
+
+    @media (min-width: 640px) {
+        .nav {
+            padding: 0 1.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .nav {
+            padding: 0 2rem;
         }
     }
 }

@@ -178,4 +178,20 @@ export class BookingService {
       throw error;
     }
   }
+
+  static async getLocations() {
+    try {
+      const query = `SELECT location_id, location, address FROM locations;`
+
+      const result = await client.query(query);
+
+      return result.rows
+
+    } catch (error) {
+      console.log("Error fetching locations: ", error);
+
+      throw error;
+      
+    }
+  }
 }

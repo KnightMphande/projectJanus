@@ -1,8 +1,10 @@
 import express from "express";
 import { verifyJwt } from "../middlewares/verifyJwt.middleware.js";
-import { createBookingController, deleteBookingController, getAllBookingsController, getBookingByIdController, updateBookingController } from "../controllers/booking.controllers.js";
+import { createBookingController, deleteBookingController, getAllBookingsController, getBookingByIdController, getLocationsController, updateBookingController } from "../controllers/booking.controllers.js";
 
 const booking_router = express.Router();
+
+booking_router.get('/locations', getLocationsController);
 
 booking_router.use(verifyJwt);
 

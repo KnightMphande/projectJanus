@@ -187,3 +187,18 @@ export const updateBookingController = async (req, res) => {
       .json({ success: false, error: "Internal Server Error" });
   }
 };
+
+export const getLocationsController = async (req, res) => {
+  try {
+
+    const locations = await BookingService.getLocations();
+
+    return res.status(200).json({ success: true, locations });
+    
+  } catch (error) {
+    console.log("Error fetching locations: ", error);
+
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    
+  }
+}

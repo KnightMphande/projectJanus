@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 
 export const registerCustomerController = async (req, res) => {
   const customerDetails = req.body;
+
   try {
     // Check missing information
     const missingFieldsArr = DataValidation.checkMissingInfo(customerDetails);
@@ -45,6 +46,17 @@ export const registerCustomerController = async (req, res) => {
       return res
         .status(409)
         .json({ success: false, error: "User already exist, please login." });
+    }
+
+    // check if phone does exist
+    const phoneExists = await AuthenticationService.checkPhoneExists(
+      customerDetails?.phone
+    );
+
+    if (phoneExists?.exists) {
+      return res
+        .status(409)
+        .json({ success: false, error: "Phone number already used" });
     }
 
     // Hash password
@@ -116,7 +128,6 @@ export const loginController = async (req, res) => {
 
     if (user) {
       if (role === "admin" && user.must_change_password === true) {
-        
         isPasswordValid = true;
 
         // Remove password
@@ -135,26 +146,21 @@ export const loginController = async (req, res) => {
         );
 
         return res
-          .set('Authorization', `Bearer ${token}`)
+          .set("Authorization", `Bearer ${token}`)
           .cookie("access_token", token, { httpOnly: true })
           .status(200)
           .json({ success: true, message: "Login successfully", user: rest });
-
-      } 
-
-      else if (role === "customer" && user.role === "admin") {
+      } else if (role === "customer" && user.role === "admin") {
         return res
-        .status(400)
-        .json({ success: false, error: "Invalid login credintials" });
-      }
-      
-      else if (role === "admin" && user.role === "customer") {
+          .status(400)
+          .json({ success: false, error: "Invalid login credintials" });
+      } else if (role === "admin" && user.role === "customer") {
         return res
-        .status(400)
-        .json({ success: false, error: "Invalid login credintials" });
-      }
-
-      else if (role === "customer" || (role === "admin" && user.must_change_password === false)
+          .status(400)
+          .json({ success: false, error: "Invalid login credintials" });
+      } else if (
+        role === "customer" ||
+        (role === "admin" && user.must_change_password === false)
       ) {
         isPasswordValid = DataValidation.validatePassword(
           userDetails?.password
@@ -191,9 +197,9 @@ export const loginController = async (req, res) => {
             expiresIn: "2h",
           }
         );
-        
+
         return res
-          .set('Authorization', `Bearer ${token}`)
+          .set("Authorization", `Bearer ${token}`)
           .cookie("access_token", token, { httpOnly: true })
           .status(200)
           .json({ success: true, message: "Login successfully", user: rest });

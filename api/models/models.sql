@@ -30,6 +30,70 @@ INSERT INTO staff (names, phone, email, password, role) VALUES
     ('John Skales', '0724569867', 'admin@email.com', 'admin', 'admin');
 
 
+-- Locations
+CREATE TABLE IF NOT EXISTS locations (
+    location_id SERIAL PRIMARY KEY,
+    location VARCHAR(250) UNIQUE NOT NULL, 
+    address VARCHAR(255) UNIQUE NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO locations (location, address)
+VALUES
+('Johannesburg, Gauteng', 'Sandton City Mall, 83 Rivonia Rd, Sandhurst, Sandton, Johannesburg'),
+('Pretoria, Gauteng', 'Union Buildings, Government Ave, Arcadia, Pretoria'),
+('Soweto, Gauteng', 'Vilakazi St, Orlando West, Soweto, Johannesburg'),
+('Sandton, Gauteng', 'Sandton Central, Sandton, Johannesburg'),
+('Midrand, Gauteng', 'Mall of Africa, Lone Creek Cres, Waterval City, Midrand'),
+('Randburg, Gauteng', 'Cresta Shopping Centre, Beyers Naude Dr, Cresta, Randburg'),
+('Centurion, Gauteng', 'Centurion Mall, Heuwel Ave, Centurion Central, Centurion'),
+('Roodepoort, Gauteng', 'Westgate Shopping Centre, Ontdekkers Rd, Horizon View, Roodepoort'),
+('Krugersdorp, Gauteng', 'Key West Shopping Centre, Paardekraal Dr, Krugersdorp'),
+('Benoni, Gauteng', 'Lakeside Mall, Tom Jones St, Benoni CBD, Benoni'),
+('Boksburg, Gauteng', 'East Rand Mall, Bentel Ave, Jansen Park, Boksburg'),
+('Germiston, Gauteng', 'Golden Walk Shopping Centre, Victoria St, Germiston'),
+('Alberton, Gauteng', 'Alberton City Shopping Centre, Voortrekker Rd, New Redruth, Alberton'),
+('Kempton Park, Gauteng', 'Festival Mall, Cnr CR Swart Dr & Kelvin St, Kempton Park'),
+('Vereeniging, Gauteng', 'River Square Shopping Centre, Nile Dr, Three Rivers, Vereeniging'),
+('Springs, Gauteng', 'Springs Mall, Jan Smuts Rd & Wit Rd, Springs New'),
+('Durban, KwaZulu-Natal', 'Gateway Theatre of Shopping, 1 Palm Blvd, Umhlanga Ridge, Durban'),
+('Pietermaritzburg, KwaZulu-Natal', 'Liberty Midlands Mall, Sanctuary Rd, Pietermaritzburg'),
+('Umhlanga, KwaZulu-Natal', 'Gateway Blvd, Umhlanga, Durban'),
+('Newcastle, KwaZulu-Natal', 'Amajuba Mall, Newcastle Central, Newcastle'),
+('Richards Bay, KwaZulu-Natal', 'Boardwalk Inkwazi Shopping Centre, Mark Strasse, Richards Bay'),
+('Pinetown, KwaZulu-Natal', 'Pavillion Shopping Centre, 5 Jack Martens Dr, Westville, Pinetown'),
+('Cape Town, Western Cape', 'V&A Waterfront, Dock Rd, Cape Town'),
+('Stellenbosch, Western Cape', 'Eikestad Mall, Andringa St, Stellenbosch Central, Stellenbosch'),
+('Paarl, Western Cape', 'Paarl Mall, Cecelia St, Paarl'),
+('George, Western Cape', 'Garden Route Mall, Knysna Rd, George'),
+('Knysna, Western Cape', 'Knysna Mall, Waterfront Dr, Knysna Central, Knysna'),
+('Mossel Bay, Western Cape', 'Langeberg Mall, Louis Fourie Rd, Mossel Bay'),
+('Somerset West, Western Cape', 'Somerset Mall, Centenary Dr, Somerset West'),
+('Bellville, Western Cape', 'Tyger Valley Shopping Centre, Willie Van Schoor Dr, Bellville'),
+('East London, Eastern Cape', 'Hemingways Mall, Western Ave, East London'),
+('Port Elizabeth, Eastern Cape', 'Walmer Park Shopping Centre, Main Rd, Walmer, Port Elizabeth'),
+('Uitenhage, Eastern Cape', 'Penford Shopping Centre, Graaff Reinet Rd, Uitenhage'),
+('King William’s Town, Eastern Cape', 'Metlife Mall, Buffalo Rd, King William’s Town'),
+('Mthatha, Eastern Cape', 'BT Ngebs Mall, Errol Spring Ave, Mthatha'),
+('Bloemfontein, Free State', 'Mimosa Mall, Kellner St, Brandwag, Bloemfontein'),
+('Welkom, Free State', 'Goldfields Mall, Stateway & Buiten St, Welkom'),
+('Kroonstad, Free State', 'Crossing Shopping Centre, Kroonstad Central, Kroonstad'),
+('Sasolburg, Free State', 'Sasolburg Plaza, John Voster Rd, Sasolburg'),
+('Rustenburg, North West', 'Waterfall Mall, Augrabies Ave, Cashan, Rustenburg'),
+('Mahikeng, North West', 'The Crossing Mall, Sekame St, Mahikeng'),
+('Potchefstroom, North West', 'MooiRivier Mall, Govan Mbeki Dr, Potchefstroom'),
+('Klerksdorp, North West', 'City Mall Klerksdorp, Magaretha Prinsloo St, Klerksdorp'),
+('Nelspruit, Mpumalanga', 'Ilanga Mall, Bitterbessie St, West Acres, Nelspruit'),
+('Witbank, Mpumalanga', 'Highveld Mall, Mandela St, Die Heuwel, Witbank'),
+('Secunda, Mpumalanga', 'Secunda Mall, PDP Kruger St, Secunda'),
+('Polokwane, Limpopo', 'Mall of the North, R81, Bendor, Polokwane'),
+('Thohoyandou, Limpopo', 'Thavhani Mall, Mphephu St, Thohoyandou'),
+('Tzaneen, Limpopo', 'Tzaneen Lifestyle Centre, Danie Joubert St, Tzaneen'),
+('Kimberley, Northern Cape', 'Kimberley Mall, MacDougall St, Kimberley'),
+('Upington, Northern Cape', 'Kalahari Mall, Scott St, Upington');
+
+
 -- Vehicles table
 CREATE TABLE IF NOT EXISTS vehicles (
     vehicle_id SERIAL PRIMARY KEY,

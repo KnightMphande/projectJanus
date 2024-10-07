@@ -1,7 +1,7 @@
 // ########################## Register ##########################
 /**
  * @swagger
- * /api/auth/register:
+ * /api/auth/signup:
  *   post:
  *     summary: Register a new customer
  *     tags:
