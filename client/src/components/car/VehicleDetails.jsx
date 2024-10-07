@@ -11,6 +11,26 @@ export default function VehicleDetails() {
         file: null,
     });
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [carFeatures, setCarFeatures] = useState({
+        hasChildSeats: false,
+        hasParkingSensors: false,
+        hasAirConditioning: false,
+        hasBluetooth: false,
+    });
+
+    const features = [
+        { key: 'hasChildSeats', label: 'Child Seats' },
+        { key: 'hasParkingSensors', label: 'Parking Sensors' },
+        { key: 'hasAirConditioning', label: 'Air Conditioning' },
+        { key: 'hasBluetooth', label: 'Bluetooth' },
+    ];
+
+    const toggleFeature = (key) => {
+        setCarFeatures((prevFeatures) => ({
+            ...prevFeatures,
+            [key]: !prevFeatures[key],
+        }));
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,11 +70,13 @@ export default function VehicleDetails() {
 
         try {
             console.log(formData);
+            console.log(carFeatures);
             
-            
+
+
         } catch (error) {
             console.log(error);
-            
+
         }
     }
 
@@ -118,6 +140,20 @@ export default function VehicleDetails() {
                             value={formData.mileage}
                             onChange={handleChange}
                         />
+                    </div>
+
+                    <div className="mb-6 w-full lg:w-1/2">
+                        <p className="my-1 text-base">Select features</p>
+                        {features.map(({ key, label }) => (
+                            <div
+                                key={key}
+                                onClick={() => toggleFeature(key)}
+                                className={`my-1 p-2 border rounded cursor-pointer hover:bg-green-500 hover:text-white transition-all ${carFeatures[key] ? 'bg-green-500 text-white' : 'bg-gray-200'
+                                    }`}
+                            >
+                                {label}
+                            </div>
+                        ))}
                     </div>
 
                     {/* File Upload Section */}
