@@ -26,7 +26,7 @@ export default function Sidebar({ open }) {
                 </NavLink>
 
                 {/* Add a car */}
-                <NavLink className={styles.sidebarItem}>
+                <NavLink to="/new-vehicle" className={styles.sidebarItem}>
                     <MdAddBox className="w-5 h-5" />
                     Add Car
                 </NavLink>
