@@ -20,7 +20,7 @@ export default function Sidebar({ open }) {
 
             <div className={styles.sidebarList}>
                 {/* Dashboard */}
-                <NavLink className={styles.sidebarItem}>
+                <NavLink to="/dashboard" className={styles.sidebarItem}>
                     <MdDashboard className="w-5 h-5" />
                     Dashboard
                 </NavLink>
