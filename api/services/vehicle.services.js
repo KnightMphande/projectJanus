@@ -90,8 +90,8 @@ export class VehicleService {
         hasChildSeats,
         hasParkingSensors,
         hasAirConditioning,
-        hasBluetooth
-      } = vehicleFeatures;      
+        hasBluetooth,
+      } = vehicleFeatures;
 
       const query = `INSERT INTO vehicle_features (vehicle_id, has_gps, has_child_seats, has_parking_sensors, has_air_conditioning, has_bluetooth) VALUES 
             ($1, $2, $3, $4, $5, $6) RETURNING *`;
@@ -325,7 +325,48 @@ export class VehicleService {
 
   static async getAllVehicles() {
     try {
-      const query = `SELECT * FROM vehicles;`;
+      const query = `SELECT 
+      v.make, 
+      v.model, 
+      v.year, 
+      v.status, 
+      vi.filename, 
+      vi.path, 
+      vd.color, 
+      vd.number_seats, 
+      vd.mileage, 
+      CASE 
+          WHEN vf.has_gps THEN jsonb_build_object('GPS', true)
+          ELSE jsonb_build_object('GPS', false) 
+      END AS gps,
+      CASE 
+          WHEN vf.has_child_seats THEN jsonb_build_object('Child Seats', true)
+          ELSE jsonb_build_object('Child Seats', false)
+      END AS child_seats,
+      CASE 
+          WHEN vf.has_parking_sensors THEN jsonb_build_object('Parking Sensors', true)
+          ELSE jsonb_build_object('Parking Sensors', false)
+      END AS parking_sensors,
+      CASE 
+          WHEN vf.has_air_conditioning THEN jsonb_build_object('Air Conditioning', true)
+          ELSE jsonb_build_object('Air Conditioning', false)
+      END AS air_conditioning,
+      CASE 
+          WHEN vf.has_bluetooth THEN jsonb_build_object('Bluetooth', true)
+          ELSE jsonb_build_object('Bluetooth', false)
+      END AS bluetooth
+  FROM 
+      vehicles v
+  LEFT JOIN 
+      vehicle_images vi ON v.vehicle_id = vi.vehicle_id
+  LEFT JOIN 
+      vehicle_details vd ON v.vehicle_id = vd.vehicle_id
+  LEFT JOIN 
+      vehicle_features vf ON v.vehicle_id = vf.vehicle_id
+  ORDER BY 
+      v.vehicle_id;
+  `;
+  
 
       const result = await client.query(query);
 
