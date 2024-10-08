@@ -9,6 +9,7 @@ export const addNewVehicleController = async (req, res) => {
   const role = req.role;
 
   const vehicleData = req.body;
+  
   try {
     // Check missing information
     const missingFieldsArr = DataValidation.checkMissingInfo(vehicleData);
@@ -63,7 +64,7 @@ export const addVehicleDetailsController = async (req, res) => {
         .status(400)
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
-    const vehicle = await Ve.getVehicleById(vehicleId);
+    const vehicle = await VehicleService.getVehicleById(vehicleId);
 
     if (vehicle) {
       const vehicleDetailsFound = await VehicleService.getVehicleDetailsById(
@@ -94,7 +95,7 @@ export const addVehicleDetailsController = async (req, res) => {
           success: false,
           error: "Mileage has to be greater or equal to 0",
         });
-      }
+      }      
 
       // Check if the car has an image
       if (!req.file) {
@@ -118,7 +119,7 @@ export const addVehicleDetailsController = async (req, res) => {
 
       if (savedVehicleDetails) {
         // After car has be saved, then save the image metadata to database
-        const imageData = await VehicleService.addVehicleImage(fileDetails);
+        const imageData = await VehicleService.addVehicleImage(vehicleId ,fileDetails);
 
         const details = Object.assign({}, savedVehicleDetails, imageData);
 
@@ -222,7 +223,6 @@ export const deleteVehicleController = async (req, res) => {
   // Access the userId and role from the req object
   const userId = req.user;
   const role = req.role;
-  console.log(role);
 
   try {
     if (role === "customer") {
@@ -348,3 +348,18 @@ export const updateVehicleDetailsController = async (req, res) => {
       .json({ success: false, error: "Internal Server Error" });
   }
 };
+
+// Get all vehicles controller 
+export const getAllVehiclesController = async (req, res) => {
+  try {
+    const vehicles = await VehicleService.getAllVehicles();
+
+    return res.status(200).json({ success: true, vehicles })
+  } catch (error) {
+    console.error("Failed to all vehicles: ", error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
+  
+  }
+}

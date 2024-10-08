@@ -3,7 +3,7 @@ import Home from "./pages/home/Home";
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from "./pages/dashboard/Dashboard";
-import AddCar from "./pages/add-car/AddCar";
+import Fleet from "./pages/fleet/Fleet";
 
 export default function App() {
   return (
@@ -11,7 +11,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/new-vehicle" element={<AddCar />} />
+        <Route path="/fleet" element={<Fleet />} />
       </Routes>
 
       {/* Toast container */}

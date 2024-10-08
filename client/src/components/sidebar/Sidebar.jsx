@@ -25,14 +25,8 @@ export default function Sidebar({ open }) {
                     Dashboard
                 </NavLink>
 
-                {/* Add a car */}
-                <NavLink to="/new-vehicle" className={styles.sidebarItem}>
-                    <MdAddBox className="w-5 h-5" />
-                    Add Car
-                </NavLink>
-
                 {/* Fleet */}
-                <NavLink className={styles.sidebarItem}>
+                <NavLink to="/fleet" className={styles.sidebarItem}>
                     <PiCarSimpleFill className="w-5 h-5" />
                     Fleet
                 </NavLink>

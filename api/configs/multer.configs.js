@@ -4,13 +4,13 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const carId = req.params.carId; 
+    const vehicleId = req.params.vehicleId; 
 
-    if(!carId) {
+    if(!vehicleId) {
         return cb(new Error("Cannot create storage for car without id"));
     }
 
-    const uploadDir = path.join("uploads/vehicles", `car-${carId}`);
+    const uploadDir = path.join("uploads/vehicles", `car-${vehicleId}`);
 
     // Check if the directory exists, if not, create it
     if (!fs.existsSync(uploadDir)) {

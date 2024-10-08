@@ -15,7 +15,7 @@ export class VehicleService {
         ($1, $2, $3, $4, $5) RETURNING *`;
 
       // Start a new transaction
-      await client.query("BEGIN");      
+      await client.query("BEGIN");
 
       // Execute the query
       const result = await client.query(query, [
@@ -122,25 +122,30 @@ export class VehicleService {
     }
   }
 
-  static async addVehicleImage(fileData) {
+  static async addVehicleImage(id, fileData) {
     try {
       // Destructure file details
       const { filename, path, size, mimetype } = fileData;
 
-      const query = `INSERT INTO veihicle_images (filename, path, size, mimetype) 
-                    VALUES ($1, $2, $3, $4) RERTUNING * AS image_data`;
+      const query = `INSERT INTO vehicle_images (vehicle_id, filename, path, size, mimetype) 
+      VALUES ($1, $2, $3, $4, $5) 
+      RETURNING *`;
 
       // Start a new transaction
       await client.query("BEGIN");
 
-      const result = await client.query(query, [filename, path, size, mimetype]);
+      const result = await client.query(query, [
+        id,
+        filename,
+        path,
+        size,
+        mimetype,
+      ]);
 
       // Commit the transaction if successful
       await client.query("COMMIT");
-      console.log("Image Data: ", result.rows.image_data);
-      
 
-      return result.rows.image_data;
+      return result.rows[0];
     } catch (error) {
       // Rollback the transaction in case of an error
       await client.query("ROLLBACK");
@@ -314,6 +319,19 @@ export class VehicleService {
       await client.query("ROLLBACK");
 
       console.error("Error updating vehicle details:", error);
+      throw error;
+    }
+  }
+
+  static async getAllVehicles() {
+    try {
+      const query = `SELECT * FROM vehicles;`;
+
+      const result = await client.query(query);
+
+      return result.rows;
+    } catch (error) {
+      console.error("Error get vehicles:", error);
       throw error;
     }
   }

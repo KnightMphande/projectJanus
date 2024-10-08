@@ -71,9 +71,21 @@ export default function Header() {
                         }
 
                         {
-                            currentUser && <div className="">
-                                <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
-                            </div>
+                            (currentUser && currentUser.role === "admin") && <NavLink
+                                to="/dashboard"
+                                className={styles.accountLink}>
+                                <span className="text-sm font-medium">Admin</span>
+                            </NavLink>
+                        }
+
+                        {
+                            currentUser && (<>
+                                <div className="">
+                                    <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
+                                </div>
+
+                            </>)
+
                         }
 
                         {/* Mobile Menu Button */}

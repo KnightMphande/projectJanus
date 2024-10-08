@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS vehicle_images (
     filename VARCHAR(255) NOT NULL, 
     path VARCHAR(255) NOT NULL,
     size INT NOT NULL,
-    mime_type VARCHAR(50) NOT NULL
+    mimetype VARCHAR(50) NOT NULL
 );
 
 

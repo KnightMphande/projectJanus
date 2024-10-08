@@ -29,7 +29,7 @@
             font-size: 1.1rem;
             text-decoration: none;
             font-weight: 600;
-            padding: 8px 20px;
+            padding: 8px 40px;
             border-radius: 10px;
             transition: 0.3s ease-in-out;
             color: #27374d;
@@ -38,6 +38,24 @@
         .sidebarItem:hover {
            background-color: #27374d;
            color: #dde6ed; 
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        padding-left: 10px;
+        padding-right: 10px;
+        gap: 1.5rem;
+
+        .logo {
+            font-size: 1rem;
+        }
+
+        .sidebarList {
+            .sidebarItem {
+                padding: 8px 10px;
+            }
         }
     }
 }
