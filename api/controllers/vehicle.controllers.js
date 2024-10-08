@@ -1,6 +1,8 @@
 import { AuthenticationService } from "../services/auth.services.js";
 import { VehicleService } from "../services/vehicle.services.js";
 import { DataValidation } from "../utils/validations.utils.js";
+import path from "path";
+import fs from "fs";
 
 // Add new vehicle to fleet
 export const addNewVehicleController = async (req, res) => {
@@ -9,7 +11,7 @@ export const addNewVehicleController = async (req, res) => {
   const role = req.role;
 
   const vehicleData = req.body;
-  
+
   try {
     // Check missing information
     const missingFieldsArr = DataValidation.checkMissingInfo(vehicleData);
@@ -95,7 +97,7 @@ export const addVehicleDetailsController = async (req, res) => {
           success: false,
           error: "Mileage has to be greater or equal to 0",
         });
-      }      
+      }
 
       // Check if the car has an image
       if (!req.file) {
@@ -119,7 +121,10 @@ export const addVehicleDetailsController = async (req, res) => {
 
       if (savedVehicleDetails) {
         // After car has be saved, then save the image metadata to database
-        const imageData = await VehicleService.addVehicleImage(vehicleId ,fileDetails);
+        const imageData = await VehicleService.addVehicleImage(
+          vehicleId,
+          fileDetails
+        );
 
         const details = Object.assign({}, savedVehicleDetails, imageData);
 
@@ -149,7 +154,7 @@ export const addVehicleDetailsController = async (req, res) => {
 // Add vehicle features
 export const addVehicleFeaturesController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
-  const vehicleFeatures = req.body;
+  const vehicleFeatures = req.body;  
 
   // Access the userId and role from the req object
   const userId = req.user;
@@ -229,6 +234,23 @@ export const deleteVehicleController = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, error: "Not allowed to delete vehicle" });
+    }
+
+    // Get the directory path for the vehicle images
+    const uploadDir = path.join("uploads/vehicles", `car-${vehicleId}`);
+
+    // Check if the directory exists
+    if (fs.existsSync(uploadDir)) {
+      // Remove the entire directory and its contents
+      fs.rm(uploadDir, { recursive: true, force: true }, (err) => {
+        if (err) {
+          console.error(`Failed to delete directory ${uploadDir}: `, err);
+          return res
+            .status(500)
+            .json({ success: false, error: "Failed to delete vehicle files" });
+        }
+       
+      });
     }
 
     const vehicleDeleted = await VehicleService.deleteVehicle(vehicleId);
@@ -349,17 +371,16 @@ export const updateVehicleDetailsController = async (req, res) => {
   }
 };
 
-// Get all vehicles controller 
+// Get all vehicles controller
 export const getAllVehiclesController = async (req, res) => {
   try {
     const vehicles = await VehicleService.getAllVehicles();
 
-    return res.status(200).json({ success: true, vehicles })
+    return res.status(200).json({ success: true, vehicles });
   } catch (error) {
     console.error("Failed to all vehicles: ", error);
     return res
       .status(500)
       .json({ success: false, error: "Internal Server Error" });
-  
   }
-}
+};

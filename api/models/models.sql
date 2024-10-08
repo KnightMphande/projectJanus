@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS vehicle_details (
 -- Vehicle fetaures
 CREATE TABLE IF NOT EXISTS vehicle_features (
     feature_id SERIAL PRIMARY KEY,
-    vehicle_id INT NOT NULL REFERENCES vehicles(vehicle_id) ON DELETE CASCADE, -- Each vehicle has a set of features
+    vehicle_id INT NOT NULL REFERENCES vehicles(vehicle_id) ON DELETE CASCADE,
     has_gps BOOLEAN DEFAULT FALSE, 
     has_child_seats BOOLEAN DEFAULT FALSE, 
     has_parking_sensors BOOLEAN DEFAULT FALSE, 

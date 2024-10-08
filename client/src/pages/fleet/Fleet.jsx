@@ -126,44 +126,64 @@ export default function Fleet() {
     };
 
     // Handle submit for vehicle details
-    const handleVehicleDetailsSubmit = async (formData) => {
-        console.log("Logged Again: ", formData);
-        
+    const handleVehicleDetailsSubmit = async (formData, carFeatures) => {
+
         try {
-            // Create a new FormData object to append all form fields and file(s)
+            // Create a new FormData object 
             const form = new FormData();
-    
+
             // Append form fields to the FormData object
             form.append("color", formData.color);
             form.append("numberOfSeats", formData.numberOfSeats);
             form.append("mileage", formData.mileage);
-            
-            // Append the file to the FormData if it exists
+
+            // Append the file to the FormData
             if (formData.file) {
-                form.append("file", formData.file); // Use the name "file" that corresponds to your multer configuration
+                form.append("file", formData.file);
             }
-    
-            // Send the request using fetch
-            const response = await fetch(`/api/vehicle/details/${currentVehicle.vehicle_id}`, {
+
+            // Send the request using fetch for vehicle details
+            const responseDetails = await fetch(`/api/vehicle/details/${currentVehicle.vehicle_id}`, {
                 method: "POST",
                 body: form,
             });
-    
-            const result = await response.json();
-    
-            if (!result.success) {
-                toast.error(result.error);
+
+            const resultDetails = await responseDetails.json();
+
+            // If the details update was not successful
+            if (!resultDetails.success) {
+                toast.error(resultDetails.error || "Failed to update vehicle details");
                 return;
             }
-    
-            toast.success(result.message);
-    
-            fetchVehicles(); // Assuming this function updates the vehicle list after successful submission
+
+            // Send the request using fetch for vehicle features
+            const responseFeatures = await fetch(`/api/vehicle/features/${currentVehicle.vehicle_id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(carFeatures),
+            });
+
+            const resultFeatures = await responseFeatures.json();
+
+            // If the features update was not successful
+            if (!resultFeatures.success) {
+                toast.error(resultFeatures.error || "Failed to update vehicle features");
+                return;
+            }
+
+            // Notify the user of success
+            toast.success(resultDetails.message);
+            handleCloseModal("vehicle-details");
+            fetchVehicles();
         } catch (error) {
-            console.log(error);
+            console.error("Error during vehicle details submission:", error);
+            toast.error("An unexpected error occurred. Please try again.");
         }
     };
-    
+
+
 
     return (
         <div className={styles.dashboard}>

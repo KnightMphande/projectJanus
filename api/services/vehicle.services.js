@@ -90,8 +90,8 @@ export class VehicleService {
         hasChildSeats,
         hasParkingSensors,
         hasAirConditioning,
-        hasBlutooth,
-      } = vehicleFeatures;
+        hasBluetooth
+      } = vehicleFeatures;      
 
       const query = `INSERT INTO vehicle_features (vehicle_id, has_gps, has_child_seats, has_parking_sensors, has_air_conditioning, has_bluetooth) VALUES 
             ($1, $2, $3, $4, $5, $6) RETURNING *`;
@@ -106,7 +106,7 @@ export class VehicleService {
         hasChildSeats,
         hasParkingSensors,
         hasAirConditioning,
-        hasBlutooth,
+        hasBluetooth,
       ]);
 
       // Commit the transaction if successful

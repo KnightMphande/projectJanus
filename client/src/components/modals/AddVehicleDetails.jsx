@@ -11,6 +11,7 @@ export default function AddVehicleDetails({ handleCloseModal, handleVehicleDetai
     });
     const [previewUrl, setPreviewUrl] = useState(null);
     const [carFeatures, setCarFeatures] = useState({
+        hasGPS: false,
         hasChildSeats: false,
         hasParkingSensors: false,
         hasAirConditioning: false,
@@ -18,6 +19,7 @@ export default function AddVehicleDetails({ handleCloseModal, handleVehicleDetai
     });
 
     const features = [
+        { key: 'hasGPS', label: 'Has GPS' },
         { key: 'hasChildSeats', label: 'Child Seats' },
         { key: 'hasParkingSensors', label: 'Parking Sensors' },
         { key: 'hasAirConditioning', label: 'Air Conditioning' },
@@ -68,7 +70,7 @@ export default function AddVehicleDetails({ handleCloseModal, handleVehicleDetai
         e.preventDefault();
         console.log(formData);
         
-        handleVehicleDetailsSubmit(formData)
+        handleVehicleDetailsSubmit(formData, carFeatures)
     }
 
     return (
