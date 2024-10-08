@@ -261,7 +261,7 @@ export default function Fleet() {
                                                             <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                                                                 <div className="inline-flex items-center gap-x-3">
                                                                     <div className="flex items-center gap-x-2">
-                                                                        <img className="object-cover w-10 h-10 rounded-md" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" alt="" />
+                                                                        <img className="object-cover w-10 h-10 rounded-md" src={`http://localhost:5000/image/${vehicle.vehicle_id}/${vehicle.filename}`} alt="" />
                                                                         <div>
                                                                             <h2 className="font-medium text-gray-800">{vehicle.make}</h2>
                                                                             <p className="text-sm font-normal text-gray-600">{vehicle.model}</p>

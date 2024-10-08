@@ -326,6 +326,7 @@ export class VehicleService {
   static async getAllVehicles() {
     try {
       const query = `SELECT 
+      v.vehicle_id,
       v.make, 
       v.model, 
       v.year, 

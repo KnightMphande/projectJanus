@@ -9,6 +9,13 @@ import swaggerui from "swagger-ui-express";
 import vehicle_router from "./routes/vehicle.routes.js";
 import booking_router from "./routes/booking.routes.js";
 import cookieParser from "cookie-parser";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Define __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import fs from "fs";
 
 //Create app
 const app = express();
@@ -86,6 +93,32 @@ connect();
 // Test api route
 app.get('/api/test', (req, res) => {
     return res.status(200).json({ success: true, message: "Hello Knight, started Node.js Development" })
+});
+
+
+// Middleware to serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Route to serve a specific image
+app.get('/image/:vehicleId/:filename', (req, res) => {
+  const { vehicleId, filename } = req.params;
+  const filePath = path.join(__dirname, 'uploads', 'vehicles', `car-${vehicleId}`, filename);
+
+  // Check if the file exists
+  fs.stat(filePath, (err) => {
+      if (err) {
+          return res.status(404).json({ success: false, error: "File not found" });
+      }
+
+      // Send the file to the client
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              res.status(err.status).end();
+          } else {
+              console.log('Sent:', filename);
+          }
+      });
+  });
 });
 
 // Router level middlewares
