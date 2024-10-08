@@ -1,6 +1,6 @@
 import client from "../configs/db.configs.js";
 
-export class vehicleService {
+export class VehicleService {
   /**
    * add new vehicle.
    * @param {object} vehicleData Contains vehicle information.
@@ -81,7 +81,7 @@ export class vehicleService {
    * @param {object} vehicleFeatures Contains vehicle information.
    * @returns {object} vehicle features.
    */
-  static addvehicleFeatures = async (vehicleFeatures) => {
+  static async addvehicleFeatures(vehicleFeatures) {
     try {
       // Destructure vehicle data
       const {
@@ -120,7 +120,35 @@ export class vehicleService {
       console.error("Failed to add vehicle features:", error);
       throw error;
     }
-  };
+  }
+
+  static async addVehicleImage(fileData) {
+    try {
+      // Destructure file details
+      const { filename, path, size, mimetype } = fileData;
+
+      const query = `INSERT INTO veihicle_images (filename, path, size, mimetype) 
+                    VALUES ($1, $2, $3, $4) RERTUNING * AS image_data`;
+
+      // Start a new transaction
+      await client.query("BEGIN");
+
+      const result = await client.query(query, [filename, path, size, mimetype]);
+
+      // Commit the transaction if successful
+      await client.query("COMMIT");
+      console.log("Image Data: ", result.rows.image_data);
+      
+
+      return result.rows.image_data;
+    } catch (error) {
+      // Rollback the transaction in case of an error
+      await client.query("ROLLBACK");
+
+      console.error("Failed to add vehicle image:", error);
+      throw error;
+    }
+  }
 
   /**
    * Get vehicle by id.

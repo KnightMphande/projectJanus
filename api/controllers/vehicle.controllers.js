@@ -1,5 +1,5 @@
 import { AuthenticationService } from "../services/auth.services.js";
-import { vehicleService } from "../services/vehicle.services.js";
+import { VehicleService } from "../services/vehicle.services.js";
 import { DataValidation } from "../utils/validations.utils.js";
 
 // Add new vehicle to fleet
@@ -30,7 +30,7 @@ export const addNewVehicleController = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: true, error: "User not found" });
     } else {
-      const vehicle = await vehicleService.addNewVehicle(vehicleData);
+      const vehicle = await VehicleService.addNewVehicle(vehicleData);
 
       if (vehicle) {
         return res.status(201).json({
@@ -63,10 +63,10 @@ export const addVehicleDetailsController = async (req, res) => {
         .status(400)
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
-    const vehicle = await vehicleService.getVehicleById(vehicleId);
+    const vehicle = await Ve.getVehicleById(vehicleId);
 
     if (vehicle) {
-      const vehicleDetailsFound = await vehicleService.getVehicleDetailsById(
+      const vehicleDetailsFound = await VehicleService.getVehicleDetailsById(
         vehicleId
       );
 
@@ -96,16 +96,36 @@ export const addVehicleDetailsController = async (req, res) => {
         });
       }
 
+      // Check if the car has an image
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ success: false, error: "No file uploaded." });
+      }
+
+      // Image of the car: metadata
+      const fileDetails = {
+        filename: req.file.filename,
+        path: req.file.path,
+        size: req.file.size,
+        mimetype: req.file.mimetype,
+      };
+
       // Add vehicle details
-      const savedVehicleDetails = await vehicleService.addVehicleDetails(
+      const savedVehicleDetails = await VehicleService.addVehicleDetails(
         vehicleDetails
       );
 
       if (savedVehicleDetails) {
+        // After car has be saved, then save the image metadata to database
+        const imageData = await VehicleService.addVehicleImage(fileDetails);
+
+        const details = Object.assign({}, savedVehicleDetails, imageData);
+
         return res.status(200).json({
           success: true,
           message: "Vehicle details saved successfully",
-          details: savedVehicleDetails,
+          details,
         });
       } else {
         return res
@@ -141,10 +161,10 @@ export const addVehicleFeaturesController = async (req, res) => {
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
 
-    const vehicle = await vehicleService.getVehicleById(vehicleId);
+    const vehicle = await VehicleService.getVehicleById(vehicleId);
 
     if (vehicle) {
-      const vehicleFeaturesFound = await vehicleService.getVehicleFeaturesById(
+      const vehicleFeaturesFound = await VehicleService.getVehicleFeaturesById(
         vehicleId
       );
 
@@ -167,7 +187,7 @@ export const addVehicleFeaturesController = async (req, res) => {
       }
 
       // Add vehicle features
-      const savedVehicleFeatures = await vehicleService.addvehicleFeatures(
+      const savedVehicleFeatures = await VehicleService.addvehicleFeatures(
         vehicleFeatures
       );
 
@@ -211,7 +231,7 @@ export const deleteVehicleController = async (req, res) => {
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
 
-    const vehicleDeleted = await vehicleService.deleteVehicle(vehicleId);
+    const vehicleDeleted = await VehicleService.deleteVehicle(vehicleId);
     if (!vehicleDeleted) {
       return res.status(404).json({
         success: false,
@@ -245,15 +265,16 @@ export const updateVehicleController = async (req, res) => {
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
 
-    const vehicle = await vehicleService.getVehicleById(vehicleId);
+    const vehicle = await VehicleService.getVehicleById(vehicleId);
 
     if (!vehicle) {
-      return res
-      .status(400)
-      .json({ success: false, error: `Vehicle of id ${vehicleId} not found` });
+      return res.status(400).json({
+        success: false,
+        error: `Vehicle of id ${vehicleId} not found`,
+      });
     }
 
-    const updatedVehicle = await vehicleService.updateVehicle(
+    const updatedVehicle = await VehicleService.updateVehicle(
       vehicleId,
       vehicleData
     );
@@ -294,15 +315,16 @@ export const updateVehicleDetailsController = async (req, res) => {
         .json({ success: false, error: "Not allowed to delete vehicle" });
     }
 
-    const vehicle = await vehicleService.getVehicleById(vehicleId);
+    const vehicle = await VehicleService.getVehicleById(vehicleId);
 
     if (!vehicle) {
-      return res
-      .status(400)
-      .json({ success: false, error: `Vehicle of id ${vehicleId} not found` });
+      return res.status(400).json({
+        success: false,
+        error: `Vehicle of id ${vehicleId} not found`,
+      });
     }
 
-    const updatedVehicleDetails = await vehicleService.updateVehicleDetails(
+    const updatedVehicleDetails = await VehicleService.updateVehicleDetails(
       vehicleId,
       vehicleDetails
     );

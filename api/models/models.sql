@@ -106,6 +106,16 @@ CREATE TABLE IF NOT EXISTS vehicles (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Vehicle images
+CREATE TABLE IF NOT EXISTS vehicle_images (
+    image_id SERIAL PRIMARY KEY, 
+    vehicle_id INT NOT NULL UNIQUE REFERENCES vehicles(vehicle_id) ON DELETE CASCADE, 
+    filename VARCHAR(255) NOT NULL, 
+    path VARCHAR(255) NOT NULL,
+    size INT NOT NULL,
+    mime_type VARCHAR(50) NOT NULL
+);
+
 
 -- Vehicle details
 CREATE TABLE IF NOT EXISTS vehicle_details (
