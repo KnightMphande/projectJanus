@@ -1,7 +1,9 @@
 import styles from "./AuthModal.module.scss"
 import { useState } from "react";
 import { MdClose } from "react-icons/md";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { signinFailure, signinStart, signinSuccess } from "../../redux/user/userSlice";
 
 export default function SigninModal({ open, close, switchToSignup }) {
     const [formData, setFormData] = useState({
@@ -9,6 +11,8 @@ export default function SigninModal({ open, close, switchToSignup }) {
         password: ""
     });
     const [role, setRole] = useState("");
+
+    const dispatch = useDispatch();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,6 +39,9 @@ export default function SigninModal({ open, close, switchToSignup }) {
             // Convert email to lowercase
             formData.email.toLocaleLowerCase();
 
+            // Start signin transaction
+            dispatch(signinStart());
+
             const response = await fetch(`/api/auth/signin/${role}`, {
                 method: "POST",
                 headers: {
@@ -48,6 +55,7 @@ export default function SigninModal({ open, close, switchToSignup }) {
 
             if (!data.success) {
                 toast.error(data.error);
+                dispatch(signinFailure(data.error));
                 return;
             }
 
@@ -57,6 +65,7 @@ export default function SigninModal({ open, close, switchToSignup }) {
             })
 
             toast.success(data.message);
+            dispatch(signinSuccess(data.user));
             close("signin");
 
         } catch (error) {
