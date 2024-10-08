@@ -15,7 +15,7 @@ export class VehicleService {
         ($1, $2, $3, $4, $5) RETURNING *`;
 
       // Start a new transaction
-      await client.query("BEGIN");
+      await client.query("BEGIN");      
 
       // Execute the query
       const result = await client.query(query, [

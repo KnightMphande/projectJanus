@@ -1,15 +1,9 @@
 import jwt from "jsonwebtoken";
 
 export const verifyJwt = async (req, res, next) => {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
+  const token = req.cookies.access_token;
 
-  // Check if token starts with "Bearer "
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ success: false, error: "Unauthorized" });
-  }
-
-  //   Get the token
-  const token = authHeader.split(" ")[1];
+  if(!token) return res.status(401).json({ success: false, error: "Unauthorized" })
 
   jwt.verify(
     token,

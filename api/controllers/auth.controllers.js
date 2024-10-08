@@ -146,8 +146,7 @@ export const loginController = async (req, res) => {
         );
 
         return res
-          .set("Authorization", `Bearer ${token}`)
-          .cookie("access_token", token, { httpOnly: true })
+          .cookie('access_token', token, { httpOnly: true })
           .status(200)
           .json({ success: true, message: "Login successfully", user: rest });
       } else if (role === "customer" && user.role === "admin") {

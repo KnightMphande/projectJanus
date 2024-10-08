@@ -11,7 +11,8 @@ export default function AddCar() {
         make: "",
         model: "",
         year: "",
-        category: ""
+        category: "",
+        status: ""
     });
     const [vehicleId, setVehicleId] = useState(null);
 
@@ -72,7 +73,8 @@ export default function AddCar() {
                 make: "",
                 model: "",
                 year: "",
-                category: ""
+                category: "",
+                status: ""
             });
 
 
@@ -81,7 +83,7 @@ export default function AddCar() {
         }
     }
 
-    const show = false;
+    const show = true;
 
     return (
         <div className={styles.dashboard}>
@@ -139,6 +141,22 @@ export default function AddCar() {
                     <option value="sedan">Sedan</option>
                 </select>
 
+                <select
+                    name="status"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+                    value={formData.status}
+                    onChange={handleChange}
+                >
+                    <option value="default">
+                        Select status
+                    </option>
+                    <option value="available">Available</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="booked">Booked</option>
+                </select>
+
+                <div className=""></div>
+
                 <button type="submit"
                     className="rounded border border-green-600 bg-green-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500"
 
@@ -152,7 +170,9 @@ export default function AddCar() {
 }
 
                     {/* Add vehicle details */}
-                    <VehicleDetails />
+                    {
+                        show === false && <VehicleDetails />
+                    }
                 </div>
             </div>
         </div>)

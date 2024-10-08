@@ -8,6 +8,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerui from "swagger-ui-express";
 import vehicle_router from "./routes/vehicle.routes.js";
 import booking_router from "./routes/booking.routes.js";
+import cookieParser from "cookie-parser";
 
 //Create app
 const app = express();
@@ -30,6 +31,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Swagger
