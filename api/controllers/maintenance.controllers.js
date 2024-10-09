@@ -36,3 +36,13 @@ export const createMaintenanceController = async (req, res) => {
       .json({ success: false, error: "Failed to create maintenance record." });
   }
 };
+
+export const getAllMaintenanceController = async (req, res) => {
+    try {
+      const maintenanceRecords = await MaintenanceService.getAllMaintenance();
+      return res.status(200).json({  success: true, maintenanceRecords });
+    } catch (error) {
+      console.error('Error fetching maintenance records:', error);
+      return res.status(500).json({ success: false, error: 'Failed to fetch maintenance records.' });
+    }
+  };
