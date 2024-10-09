@@ -1,3 +1,5 @@
+import client from "../configs/db.configs.js";
+
 export class MaintenanceService {
     static async createMaintenance(data) {
         try {
@@ -79,6 +81,19 @@ export class MaintenanceService {
     
             const result = await client.query(query, [id]);
             return result.rows[0]; 
+        } catch (error) {
+            console.error('Error retrieving maintenance record:', error);
+            throw error;
+        }
+    }
+
+    static async getMaintenanceByVehicleId(id){
+        try {
+            const query = `SELECT * FROM maintenance WHERE vehicle_id = $1;`
+
+            const result = await client.query(query, [id]);
+
+            return result.rows[0];
         } catch (error) {
             console.error('Error retrieving maintenance record:', error);
             throw error;
