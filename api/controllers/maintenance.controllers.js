@@ -46,3 +46,17 @@ export const getAllMaintenanceController = async (req, res) => {
       return res.status(500).json({ success: false, error: 'Failed to fetch maintenance records.' });
     }
   };
+
+  export const getMaintenanceByIdController = async (req, res) => {
+    const id= parseInt(req.params.id);
+    try {
+      const maintenanceRecord = await MaintenanceService.getMaintenanceById(id);
+      if (!maintenanceRecord) {
+        return res.status(404).json({ success: false, error: 'Maintenance record not found.' });
+      }
+      return res.status(200).json({ success: true, maintenanceRecord });
+    } catch (error) {
+      console.error('Error fetching maintenance record:', error);
+      return res.status(500).json({ success: false, error: 'Failed to fetch maintenance record.' });
+    }
+  };
