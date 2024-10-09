@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
     const [locations, setLocations] = useState([]);
+    const [vehicles, setVehicles] = useState([]);
+    const [allModels, setModels] = useState();
 
     useEffect(() => {
         async function fetchLocations() {
@@ -29,7 +31,29 @@ export default function Home() {
             }
         } 
 
+        async function fetchVehicles() {
+            try {
+                const response = await fetch('/api/vehicle', {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const result = await response.json();
+
+                const data = result.vehicles;
+
+                setVehicles(data);
+                
+            } catch (error) {
+                console.log(error);
+                
+            }
+        }
+
         fetchLocations();
+        fetchVehicles();
     }, []);
 
     
@@ -192,11 +216,17 @@ export default function Home() {
                             <div className="col-span-12 md:col-span-9">
                                 {/* Image Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <CarCard url="https://cdn.pixabay.com/photo/2017/11/12/09/58/renault-2942017_960_720.jpg" />    
+                                    {/* <CarCard url="https://cdn.pixabay.com/photo/2017/11/12/09/58/renault-2942017_960_720.jpg" />    
                                     <CarCard url="https://cdn.pixabay.com/photo/2016/11/18/15/11/car-1835246_1280.jpg" />  
                                     <CarCard url="https://cdn.pixabay.com/photo/2023/03/05/06/55/car-7830737_640.jpg" />  
                                     <CarCard url="https://cdn.pixabay.com/photo/2016/11/23/17/24/woman-1853936_960_720.jpg" />  
-                                    <CarCard url="https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg" />                                  
+                                    <CarCard url="https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg" />                                   */}
+
+                                    {
+                                        vehicles?.map((vehicle) => (
+                                            <CarCard vehicle={vehicle} />
+                                        ))
+                                    }
                                 </div>
                             </div>
                         </div>
