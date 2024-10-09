@@ -60,3 +60,19 @@ export const getAllMaintenanceController = async (req, res) => {
       return res.status(500).json({ success: false, error: 'Failed to fetch maintenance record.' });
     }
   };
+
+  export const deleteMaintenanceController = async (req, res) => {
+    const id = parseInt(req.params.id);
+    try {
+      const deleted = await MaintenanceService.deleteMaintenance(id);
+      
+      if(deleted) {
+        return res.status(200).json({ success: true, message: "Successfully deleted" })
+      } else {
+        return res.status(200).json({ success: false, error: "Deltion failed" })
+      }
+    } catch (error) {
+      console.error('Error deleting maintenance record:', error);
+      return res.status(500).json({ success: false, error: 'Failed to delete maintenance record.' });
+    }
+  };
