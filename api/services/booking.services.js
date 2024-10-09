@@ -54,7 +54,26 @@ export class BookingService {
 
   static async getAllBookings() {
     try {
-      const query = `SELECT * FROM bookings;`;
+      const query = `
+        SELECT 
+            b.booking_id,
+            b.customer_id,
+            b.vehicle_id,
+            b.check_out,
+            b.check_in,
+            b.pick_up_location,
+            b.drop_off_location,
+            b.status,
+            b.created_at,
+            v.make,
+            v.model,
+            v.year,
+            v.category,
+            vi.filename AS filename
+        FROM bookings b
+        JOIN vehicles v ON b.vehicle_id = v.vehicle_id
+        LEFT JOIN vehicle_images vi ON v.vehicle_id = vi.vehicle_id;
+      `;
       const result = await client.query(query);
 
       return result.rows;
@@ -96,7 +115,7 @@ export class BookingService {
   static async updateBooking(id, updatedBooking) {
     // Validate status input
     if (
-      !["confirmed", "completed", "in-progress"].includes(updatedBooking.status)
+      !["confirmed", "completed", "in-progress", "canceled"].includes(updatedBooking.status)
     ) {
       throw new Error(
         `Invalid status provided: ${updatedBooking.status}. Expected "confirmed" or "completed" or "in-progress".`
@@ -169,7 +188,7 @@ export class BookingService {
         drop_off_location,
         status,
       ];
-      
+
       const result = await client.query(query, values);
 
       return result.rows[0] || null;
@@ -181,17 +200,15 @@ export class BookingService {
 
   static async getLocations() {
     try {
-      const query = `SELECT location_id, location, address FROM locations;`
+      const query = `SELECT location_id, location, address FROM locations;`;
 
       const result = await client.query(query);
 
-      return result.rows
-
+      return result.rows;
     } catch (error) {
       console.log("Error fetching locations: ", error);
 
       throw error;
-      
     }
   }
 }

@@ -330,6 +330,7 @@ export class VehicleService {
       v.make, 
       v.model, 
       v.year, 
+      v.category,
       v.status, 
       vi.filename, 
       vi.path, 

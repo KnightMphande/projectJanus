@@ -162,7 +162,7 @@ export const updateBookingController = async (req, res) => {
               .status(404)
               .json({ success: false, error: "Booking not found" });
           
-          if (updatedBooking.status === "completed") {
+          if (updatedBooking.status === "completed" || updatedBooking.status === "canceled") {
             const deletedBooking = await BookingService.deleteBooking(updatedBooking.booking_id);
 
             if (deletedBooking) {

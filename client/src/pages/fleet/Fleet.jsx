@@ -68,7 +68,7 @@ export default function Fleet() {
     };
 
     // Handle close modal
-    const handleCloseModal = (type) => {
+    const handleCloseModal = () => {
         setIsOpen(false);
         setModalType("");
     };
@@ -233,7 +233,7 @@ export default function Fleet() {
 
                                                     <th scope="col" className="px-4 py-3.5 text-sm font-medium text-left text-gray-500">
 
-                                                        <span>Type</span>
+                                                        <span>Category</span>
 
                                                     </th>
 
@@ -288,6 +288,9 @@ export default function Fleet() {
                                                                         className="px-3 py-1 text-sm rounded-full bg-green-500 hover:bg-green-600 text-white">Add details</button>
                                                                 </div>
                                                             </td>
+
+                                                            {/* Add details data */}
+                                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{vehicle.category}</td>
                                                             {/* Actions data */}
                                                             <td className="px-4 py-4 text-sm whitespace-nowrap">
                                                                 <div className="flex items-center gap-x-6">

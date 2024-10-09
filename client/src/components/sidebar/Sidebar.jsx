@@ -32,7 +32,7 @@ export default function Sidebar({ open }) {
                 </NavLink>
 
                 {/* Booking */}
-                <NavLink className={styles.sidebarItem}>
+                <NavLink to="/admin-bookings" className={styles.sidebarItem}>
                     <BsCartPlusFill className="w-5 h-5" />
                     Booking
                 </NavLink>
