@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import fs from "fs";
+import maintenance_router from "./routes/maintenance.routes.js";
 
 //Create app
 const app = express();
@@ -125,3 +126,4 @@ app.get('/image/:vehicleId/:filename', (req, res) => {
 app.use('/api/auth', auth_router);
 app.use('/api/vehicle', vehicle_router);
 app.use('/api/booking', booking_router);
+app.use('/api/maintenance', maintenance_router);
