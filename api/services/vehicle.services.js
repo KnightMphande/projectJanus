@@ -332,6 +332,7 @@ export class VehicleService {
       v.year, 
       v.category,
       v.status, 
+      v.price,
       vi.filename, 
       vi.path, 
       vd.color, 

@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS vehicles (
     model VARCHAR(100) NOT NULL,
     year INT NOT NULL CHECK (year >= 1886 AND year <= EXTRACT(YEAR FROM CURRENT_DATE)), 
     category VARCHAR(50) NOT NULL CHECK (LOWER(category) IN ('economy', 'luxury', 'suv', 'sedan')), 
+    price DOUBLE PRECISION NOT NULL DEFAULT 450.00,
     status VARCHAR(50) NOT NULL CHECK (LOWER(status) IN ('available', 'booked', 'maintenance', 'out of service')), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
