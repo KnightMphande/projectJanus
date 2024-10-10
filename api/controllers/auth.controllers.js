@@ -75,8 +75,6 @@ export const registerCustomerController = async (req, res) => {
       }
     }
   } catch (error) {
-    await client.query("ROLLBACK");
-    // Rollback transaction in case of error
     console.error("Failed to register user: ", error);
 
     return res
@@ -206,5 +204,18 @@ export const loginController = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const logoutController = async (req, res) => {
+  try {
+    return res.clearCookie('access_token').status(200).json('Successsfully logged out');
+  } catch (error) {
+    console.error("Failed to signout user: ", error);
+
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
+  
   }
 };

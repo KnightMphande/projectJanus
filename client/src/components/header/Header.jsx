@@ -5,14 +5,15 @@ import styles from "./Header.module.scss";
 import { useState } from "react";
 import SigninModal from "../modals/SigninModal";
 import SignupModal from "../modals/SignupModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { signinFailure, signinSuccess, signoutUserStart } from "../../redux/user/userSlice";
+import { toast } from "react-toastify";
 
 export default function Header() {
     // Retrieve the persisted user from local storage
-    const { currentUser, error, loading } = useSelector((state) => state.user);
+    const { currentUser, error, loading } = useSelector((state) => state.user);      
 
-    console.log("Persisted User: ", currentUser);
-
+    const dispatch = useDispatch();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState("");
@@ -39,6 +40,31 @@ export default function Header() {
         }
     }
 
+    const handleSignout = async () => {
+        try {
+          dispatch(signoutUserStart());
+
+          const response = await fetch('/api/auth/signout', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+          });
+
+          const data = await response.json();
+
+          if (data.success === false) {
+            toast.error(data.error || "Failed to signout");
+            return;
+          }
+
+          dispatch(signinSuccess());
+        } catch (error) {
+          console.log(error);
+          
+        }
+      };
+
     return (
         <header className={styles.header}>
             <nav className={styles.nav}>
@@ -51,7 +77,7 @@ export default function Header() {
 
                     <div className="flex items-center gap-4">
                         {
-                            currentUser === null && <div className="hidden sm:flex sm:gap-4">
+                            currentUser === null || currentUser === undefined && <div className="hidden sm:flex sm:gap-4">
                                 <NavLink
                                     className={styles.accountLink}
                                     onClick={() => handleModalOpen("signup")}
@@ -68,6 +94,16 @@ export default function Header() {
                                     <span className="text-sm font-medium">Signin</span>
                                 </NavLink>
                             </div>
+                        }
+
+                        {
+                            currentUser  && (
+                                <NavLink
+                                onClick={() => handleSignout()}
+                                className="flex items-center rounded-md px-3 py-2 bg-red-500 hover:bg-red-600 text-white transition">
+                                <span className="text-sm font-medium">Signout</span>
+                            </NavLink>
+                            )
                         }
 
                         {
