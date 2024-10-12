@@ -209,7 +209,7 @@ export const loginController = async (req, res) => {
 
 export const logoutController = async (req, res) => {
   try {
-    return res.clearCookie('access_token').status(200).json('Successsfully logged out');
+    return res.clearCookie('access_token').status(200).json({ success: true, message: "Successsfully logged out" });
   } catch (error) {
     console.error("Failed to signout user: ", error);
 

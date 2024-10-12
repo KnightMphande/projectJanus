@@ -15,6 +15,8 @@ export class BookingService {
         checkIn,
         pickUpLocation,
         dropOffLocation,
+        amount,
+        totalDays,
         status,
       } = bookingData;
 
@@ -23,8 +25,8 @@ export class BookingService {
 
       const query = `
         INSERT INTO bookings 
-        (customer_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, status) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        (customer_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, amount, total_days, status) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
         RETURNING *;
       `;
       const values = [
@@ -34,6 +36,8 @@ export class BookingService {
         checkIn,
         pickUpLocation,
         dropOffLocation,
+        amount,
+        totalDays,
         status,
       ];
 

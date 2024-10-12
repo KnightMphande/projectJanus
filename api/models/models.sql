@@ -147,15 +147,18 @@ CREATE TABLE IF NOT EXISTS vehicle_features (
 -- Bookings
 CREATE TABLE IF NOT EXISTS bookings (
     booking_id SERIAL PRIMARY KEY,
-    customer_id INT UNIQUE NOT NULL REFERENCES customers(customer_id) ON DELETE CASCADE, 
-    vehicle_id INT UNIQUE NOT NULL REFERENCES vehicles(vehicle_id) ON DELETE CASCADE, 
+    customer_id INT NOT NULL REFERENCES customers(customer_id) ON DELETE CASCADE, 
+    vehicle_id INT NOT NULL REFERENCES vehicles(vehicle_id) ON DELETE CASCADE, 
     check_out DATE NOT NULL CHECK (check_out >= CURRENT_DATE), 
     check_in DATE NOT NULL CHECK (check_in > check_out), 
     pick_up_location VARCHAR(100) NOT NULL,
     drop_off_location VARCHAR(100) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL, 
+    total_days INT NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'in-progress' CHECK (status IN ('confirmed', 'completed', 'canceled', 'in-progress')), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- ALTER TABLE bookings 
 -- ALTER COLUMN status SET DEFAULT 'in-progress';

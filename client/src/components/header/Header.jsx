@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { TfiMenu } from "react-icons/tfi";
 import { FaUser } from "react-icons/fa";
 import styles from "./Header.module.scss";
@@ -14,6 +14,7 @@ export default function Header() {
     const { currentUser, error, loading } = useSelector((state) => state.user);      
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState("");
@@ -57,6 +58,9 @@ export default function Header() {
             toast.error(data.error || "Failed to signout");
             return;
           }
+
+          toast.success(data.message);
+          navigate('/')
 
           dispatch(signinSuccess());
         } catch (error) {
