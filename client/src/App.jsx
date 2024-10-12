@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from "./pages/dashboard/Dashboard";
 import Fleet from "./pages/fleet/Fleet";
 import AdminBookings from "./pages/admin-bookings/AdminBookings";
+import CarBooking from "./pages/car-booking/CarBooking";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/fleet" element={<Fleet />} />
         <Route path="/admin-bookings" element={<AdminBookings />} />
+        <Route path="/car-booking/:vehicleId" element={<CarBooking />} />
       </Routes>
 
       {/* Toast container */}

@@ -1,11 +1,12 @@
 import express from "express";
 import { verifyJwt } from "../middlewares/verifyJwt.middleware.js";
-import { addNewVehicleController, addVehicleDetailsController, addVehicleFeaturesController, deleteVehicleController, getAllVehiclesController, updateVehicleController, updateVehicleDetailsController } from "../controllers/vehicle.controllers.js";
+import { addNewVehicleController, addVehicleDetailsController, addVehicleFeaturesController, deleteVehicleController, getAllVehiclesController, getVehicleByIdController, updateVehicleController, updateVehicleDetailsController } from "../controllers/vehicle.controllers.js";
 import { upload } from "../configs/multer.configs.js";
 
 const vehicle_router = express.Router();
 
 vehicle_router.get('/', getAllVehiclesController);
+vehicle_router.get('/:vehicleId', getVehicleByIdController);
 
 vehicle_router.use(verifyJwt)
 

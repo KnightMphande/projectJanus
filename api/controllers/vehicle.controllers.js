@@ -378,9 +378,23 @@ export const getAllVehiclesController = async (req, res) => {
 
     return res.status(200).json({ success: true, vehicles });
   } catch (error) {
-    console.error("Failed to all vehicles: ", error);
+    console.error("Failed to fetch all vehicles: ", error);
     return res
       .status(500)
       .json({ success: false, error: "Internal Server Error" });
   }
 };
+
+export const getVehicleByIdController = async (req, res) => {
+  const vehicleId = parseInt(req.params.vehicleId);
+  try {
+    const vehicles = await VehicleService.getAllVehicleInfoById(vehicleId);
+
+    return res.status(200).json({ success: true, vehicles });
+  } catch (error) {
+    console.error("Failed to fetch vehicle: ", error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
+  }
+}

@@ -379,4 +379,63 @@ export class VehicleService {
       throw error;
     }
   }
+
+  static async getAllVehicleInfoById(id) {
+    try {
+      const query = `
+      SELECT 
+          v.vehicle_id,
+          v.make, 
+          v.model, 
+          v.year, 
+          v.category,
+          v.status, 
+          v.price,
+          vi.filename, 
+          vi.path, 
+          vd.color, 
+          vd.number_seats, 
+          vd.mileage, 
+          CASE 
+              WHEN vf.has_gps THEN jsonb_build_object('GPS', true)
+              ELSE jsonb_build_object('GPS', false) 
+          END AS gps,
+          CASE 
+              WHEN vf.has_child_seats THEN jsonb_build_object('Child Seats', true)
+              ELSE jsonb_build_object('Child Seats', false)
+          END AS child_seats,
+          CASE 
+              WHEN vf.has_parking_sensors THEN jsonb_build_object('Parking Sensors', true)
+              ELSE jsonb_build_object('Parking Sensors', false)
+          END AS parking_sensors,
+          CASE 
+              WHEN vf.has_air_conditioning THEN jsonb_build_object('Air Conditioning', true)
+              ELSE jsonb_build_object('Air Conditioning', false)
+          END AS air_conditioning,
+          CASE 
+              WHEN vf.has_bluetooth THEN jsonb_build_object('Bluetooth', true)
+              ELSE jsonb_build_object('Bluetooth', false)
+          END AS bluetooth
+      FROM 
+          vehicles v
+      LEFT JOIN 
+          vehicle_images vi ON v.vehicle_id = vi.vehicle_id
+      LEFT JOIN 
+          vehicle_details vd ON v.vehicle_id = vd.vehicle_id
+      LEFT JOIN 
+          vehicle_features vf ON v.vehicle_id = vf.vehicle_id
+      WHERE 
+          v.vehicle_id = $1
+      ORDER BY 
+          v.vehicle_id;
+    `;  
+
+      const result = await client.query(query, [id]);
+
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error get vehicles:", error);
+      throw error;
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import { MdAdd } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 export default function CarCard({ vehicle }) {
     return (
@@ -10,10 +11,10 @@ export default function CarCard({ vehicle }) {
                 <p className="mt-2 text-gray-600 font-medium">{vehicle.category}</p>
                 <div className="flex justify-between items-center mt-2">
                     <h4 className="text-lg font-semibold text-gray-800">R{vehicle.price}/day</h4>
-                    <button className="flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-400 focus:ring-opacity-80">
+                    <Link to={`/car-booking/${vehicle.vehicle_id}`} className="flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-400 focus:ring-opacity-80">
                         <MdAdd className="w-5 h-5 mx-1" />
                         <span className="mx-1">Book</span>
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>
