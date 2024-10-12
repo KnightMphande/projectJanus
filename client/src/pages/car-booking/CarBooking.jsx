@@ -19,7 +19,7 @@ export default function CarBooking() {
           setVehicle(data.vehicles);
           setLoading(false);
         } else {
-          setError(data.message || 'Error fetching vehicle data');
+          setError(data.error || 'Error fetching vehicle data');
           setLoading(false);
         }
       } catch (error) {
