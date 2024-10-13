@@ -6,6 +6,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Fleet from "./pages/fleet/Fleet";
 import AdminBookings from "./pages/admin-bookings/AdminBookings";
 import CarBooking from "./pages/car-booking/CarBooking";
+import Profile from "./pages/profile/Profile";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/fleet" element={<Fleet />} />
         <Route path="/admin-bookings" element={<AdminBookings />} />
         <Route path="/car-booking/:vehicleId" element={<CarBooking />} />
+        <Route path="/profile/:customerId" element={<Profile />} />
       </Routes>
 
       {/* Toast container */}

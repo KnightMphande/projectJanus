@@ -8,10 +8,14 @@ import SignupModal from "../modals/SignupModal";
 import { useDispatch, useSelector } from "react-redux";
 import { signinFailure, signinSuccess, signoutUserStart } from "../../redux/user/userSlice";
 import { toast } from "react-toastify";
+import { ro } from "date-fns/locale";
 
 export default function Header() {
     // Retrieve the persisted user from local storage
-    const { currentUser, error, loading } = useSelector((state) => state.user);      
+    const { currentUser, error, loading } = useSelector((state) => state.user);
+
+    const role = currentUser?.role;
+    const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;   
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -43,31 +47,31 @@ export default function Header() {
 
     const handleSignout = async () => {
         try {
-          dispatch(signoutUserStart());
+            dispatch(signoutUserStart());
 
-          const response = await fetch('/api/auth/signout', {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
+            const response = await fetch('/api/auth/signout', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success === false) {
+                toast.error(data.error || "Failed to signout");
+                return;
             }
-          });
 
-          const data = await response.json();
+            toast.success(data.message);
+            navigate('/')
 
-          if (data.success === false) {
-            toast.error(data.error || "Failed to signout");
-            return;
-          }
-
-          toast.success(data.message);
-          navigate('/')
-
-          dispatch(signinSuccess());
+            dispatch(signinSuccess());
         } catch (error) {
-          console.log(error);
-          
+            console.log(error);
+
         }
-      };
+    };
 
     return (
         <header className={styles.header}>
@@ -101,12 +105,12 @@ export default function Header() {
                         }
 
                         {
-                            currentUser  && (
+                            currentUser && (
                                 <NavLink
-                                onClick={() => handleSignout()}
-                                className="flex items-center rounded-md px-3 py-2 bg-red-500 hover:bg-red-600 text-white transition">
-                                <span className="text-sm font-medium">Signout</span>
-                            </NavLink>
+                                    onClick={() => handleSignout()}
+                                    className="flex items-center rounded-md px-3 py-2 bg-red-500 hover:bg-red-600 text-white transition">
+                                    <span className="text-sm font-medium">Signout</span>
+                                </NavLink>
                             )
                         }
 
@@ -120,7 +124,7 @@ export default function Header() {
 
                         {
                             currentUser && (<>
-                                <div className="">
+                                <div onClick={() => navigate(`/profile/${userId}`)} className="cursor-pointer">
                                     <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
                                 </div>
 

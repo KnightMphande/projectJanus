@@ -1,0 +1,59 @@
+.card {
+    background-color: #fff;
+    color: #000;
+    position: relative;
+    width: 100%;
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg-color);
+    box-shadow: 
+    0px 5px 10px rgba(0, 0, 0, 0.1),  /* Bottom shadow */
+    0px -5px 10px rgba(0, 0, 0, 0.1), /* Top shadow */
+    -5px 0px 10px rgba(0, 0, 0, 0.1),  /* Left shadow */
+    5px 0px 10px rgba(0, 0, 0, 0.1);   /* Right shadow */
+  }
+  
+  .cardHeader {
+    height: 140px;
+    width: 100%;
+  }
+  
+  .cardAvatar {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: calc(50% - 110px);
+  }
+  
+  
+  .cardTitle {
+    margin-top: 66px;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--main-color);
+  }
+  
+  .cardSubtitle {
+    margin-top: 10px;
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--submain-color);
+  }
+  
+  .cardBtn {
+    margin-top: 15px;
+    width: 76px;
+    height: 31px;
+    border: 2px solid var(--main-color);
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--main-color);
+    background: var(--bg-color);
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+

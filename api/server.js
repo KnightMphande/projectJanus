@@ -17,6 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import fs from "fs";
 import maintenance_router from "./routes/maintenance.routes.js";
+import profile_router from "./routes/profile.routes.js";
 
 //Create app
 const app = express();
@@ -122,8 +123,31 @@ app.get('/image/:vehicleId/:filename', (req, res) => {
   });
 });
 
+// Route to serve a specific image
+app.get('/profile/:userId/:filename', (req, res) => {
+  const { userId, filename } = req.params;
+  const filePath = path.join(__dirname, 'uploads', 'profiles', `user-${userId}`, filename);
+
+  // Check if the file exists
+  fs.stat(filePath, (err) => {
+      if (err) {
+          return res.status(404).json({ success: false, error: "File not found" });
+      }
+
+      // Send the file to the client
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              res.status(err.status).end();
+          } else {
+              console.log('Sent:', filename);
+          }
+      });
+  });
+});
+
 // Router level middlewares
 app.use('/api/auth', auth_router);
 app.use('/api/vehicle', vehicle_router);
 app.use('/api/booking', booking_router);
 app.use('/api/maintenance', maintenance_router);
+app.use('/api/profile', profile_router);

@@ -107,7 +107,7 @@ export const deleteBookingController = async (req, res) => {
         if (movedToHistoryBooking) {
           return res.status(200).json({
             success: true,
-            message: "Booking deleted successfully",
+            message: "Booking cancelled successfully",
           });
         }
       

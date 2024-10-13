@@ -29,32 +29,32 @@ export class AuthenticationService {
     }
   }
 
-    /**
+  /**
    * Checks if phone number exists.
    * @param {string} phone The phone of the user to check.
    * @returns {object} exists or user if found.
    */
-    static async checkPhoneExists(phone) {
-      try {
-        const resultCustomer = await client.query(
-          `SELECT * FROM customers WHERE phone = $1`,
-          [phone]
-        );
-        const resultStaff = await client.query(
-          `SELECT * FROM staff WHERE phone = $1`,
-          [phone]
-        );
-        const user = resultCustomer.rows[0] || resultStaff.rows[0];
-  
-        return {
-          exists: user ? true : false,
-          user,
-        };
-      } catch (err) {
-        console.error("Failed to get user by phone:", err);
-        throw err;
-      }
+  static async checkPhoneExists(phone) {
+    try {
+      const resultCustomer = await client.query(
+        `SELECT * FROM customers WHERE phone = $1`,
+        [phone]
+      );
+      const resultStaff = await client.query(
+        `SELECT * FROM staff WHERE phone = $1`,
+        [phone]
+      );
+      const user = resultCustomer.rows[0] || resultStaff.rows[0];
+
+      return {
+        exists: user ? true : false,
+        user,
+      };
+    } catch (err) {
+      console.error("Failed to get user by phone:", err);
+      throw err;
     }
+  }
 
   /**
    * Register new customer.
@@ -75,6 +75,9 @@ export class AuthenticationService {
         province,
         zipCode,
         country,
+        licenseNumber,
+        issueDate,
+        expiryDate,
       } = customerDetails;
 
       const names = firstName + " " + lastName;
@@ -103,6 +106,11 @@ export class AuthenticationService {
         address,
         role,
       ]);
+
+      await client.query(
+        `INSERT INTO drivers_license (customer_id, license_number, issue_date, expiry_date) VALUES ($1, $2, $3, $4)`,
+        [result.rows[0].customer_id, licenseNumber, issueDate, expiryDate]
+      );
 
       // Commit the transaction if successful
       await client.query("COMMIT");

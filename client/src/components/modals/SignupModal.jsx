@@ -14,7 +14,10 @@ export default function SignupModal({ open, close, switchToSignin }) {
         city: "",
         province: "",
         zipCode: "",
-        country: "South Africa"
+        country: "South Africa",
+        licenseNumber: "",
+        issueDate: "",
+        expiryDate: ""
     });
 
     // Handle change
@@ -60,7 +63,10 @@ export default function SignupModal({ open, close, switchToSignin }) {
                 city: "",
                 province: "",
                 zipCode: "",
-                country: "South Africa"
+                country: "South Africa",
+                licenseNumber: "",
+                issueDate: "",
+                expiryDate: ""
             })
 
             toast.success(data.message);
@@ -84,19 +90,21 @@ export default function SignupModal({ open, close, switchToSignin }) {
         "North West",
         "Western Cape"
     ];
-    
+
+    const today = new Date().toISOString().split("T")[0]; 
+
 
     return (
-        <div className={styles.modalContainer}>
-            <div className={styles.modal}>
-                <div className={styles.modalHeader}>
-                    <h4 className={styles.modalHeading}>Signup</h4>
-                    <button className={styles.closeBtn} onClick={() => close("signup")}>
-                        <MdClose size={24} className={styles.icon} />
+        <div className="modalContainer">
+            <div className="modal">
+                <div className="modalHeader">
+                    <h4 className="modalHeading">Signup</h4>
+                    <button className="closeBtn" onClick={() => close("signup")}>
+                        <MdClose size={24} className="icon" />
                     </button>
                 </div>
 
-                <div className={styles.modalBody}>
+                <div className={`${styles.modalBody} p-4 overflow-y-auto custom-scrollbar max-h-[65vh]`}>
                     <form className={styles.form} onSubmit={handleSubmit}>
                         <div className={styles.grid}>
                             <input
@@ -149,6 +157,7 @@ export default function SignupModal({ open, close, switchToSignin }) {
                                 value={formData.street}
                                 className={styles.formInput}
                             />
+
                             <input
                                 type="text"
                                 name="city"
@@ -189,6 +198,44 @@ export default function SignupModal({ open, close, switchToSignin }) {
                                 value={formData.country}
                                 className={`${styles.formInput} disabled cursor-not-allowed`}
                             />
+
+                            <label htmlFor="licenseNumber">
+                                License Number
+                                <input
+                                    type="text"
+                                    name="licenseNumber"
+                                    placeholder="License Number"
+                                    onChange={handleChange}
+                                    value={formData.licenseNumber}
+                                    className={styles.formInput}
+                                />
+                            </label>
+
+                            <label htmlFor="issueDate">
+                                Issue Date
+                                <input
+                                    type="date"
+                                    name="issueDate"
+                                    placeholder="Issue Date"
+                                    onChange={handleChange}
+                                    value={formData.issueDate}
+                                    className={styles.formInput}
+                                    max={today} // Prevent selecting past dates
+                                />
+                            </label>
+
+                            <label htmlFor="expiryDate">
+                                Expiry Date
+                                <input
+                                    type="date"
+                                    name="expiryDate"
+                                    placeholder="Expiry Date"
+                                    onChange={handleChange}
+                                    value={formData.expiryDate}
+                                    className={styles.formInput}
+                                    min={formData.issueDate || today} // Prevent selecting a date before the issue date
+                                />
+                            </label>
                         </div>
 
                         <button

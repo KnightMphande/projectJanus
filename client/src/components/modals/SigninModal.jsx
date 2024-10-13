@@ -75,18 +75,18 @@ export default function SigninModal({ open, close, switchToSignup }) {
 
     return (
         <div className="w-full relative">
-            <div className={styles.modalContainer}>
+            <div className="modalContainer">
                 {/* Modal Content */}
-                <div className={styles.modal}>
+                <div className="modal">
                     {/* Modal Header */}
-                    <div className={styles.modalHeader}>
-                        <h4 className={styles.modalHeading}>Sign In</h4>
+                    <div className="modalHeader">
+                        <h4 className="modalHeading">Sign In</h4>
                         {/* Close Button */}
                         <button
-                            className={styles.closeBtn}
+                            className="closeBtn"
                             onClick={() => close("signin")}
                         >
-                            <MdClose size={24} className={styles.icon}/>
+                            <MdClose size={24} className="icon" />
                         </button>
                     </div>
 

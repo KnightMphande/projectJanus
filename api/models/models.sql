@@ -7,6 +7,19 @@ CREATE TABLE IF NOT EXISTS customers (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role VARCHAR DEFAULT 'customer' NOT NULL,
+    logo_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Drivers license table
+CREATE TABLE drivers_license (
+    id SERIAL PRIMARY KEY,              
+    customer_id INT NOT NULL REFERENCES customers(customer_id) ON DELETE CASCADE,            
+    license_number VARCHAR(50) UNIQUE NOT NULL, 
+    issue_date DATE NOT NULL,            
+    expiry_date DATE NOT NULL,                
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -21,6 +34,7 @@ CREATE TABLE IF NOT EXISTS staff (
     password VARCHAR(255) NOT NULL,
     must_change_password BOOLEAN DEFAULT TRUE,
     role VARCHAR DEFAULT 'admin' NOT NULL,
+    logo_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
