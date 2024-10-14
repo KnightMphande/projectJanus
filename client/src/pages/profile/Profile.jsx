@@ -45,8 +45,6 @@ export default function Profile() {
 
     // Fetch profile data
     useEffect(() => {
-
-
         fetchProfile();
     }, [customerId]);
 
@@ -134,6 +132,37 @@ export default function Profile() {
         }
     };
 
+    // Handle drivers license update submit
+    const handleDriversLicenseSubmit = async (formData) => {
+        console.log("Data to be sent: ", formData)
+        try {
+            const response = await fetch(`/api/profile/license/${formData.customerId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    licenseNumber: formData.licenseNumber,
+                    issueDate: formData.issueDate,
+                    expiryDate: formData.expiryDate
+                })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                toast.error(result.error);
+                return;
+            }
+
+            toast.success(result.message);
+            fetchProfile();
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const urlLogo = userData?.logo_url === null ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdIVSqaMsmZyDbr9mDPk06Nss404fosHjLg&s" : `http://localhost:5000/profile/${userData?.customer_id}/${userData?.logo_url}`;
 
     return (
@@ -214,7 +243,7 @@ export default function Profile() {
                         {/* Render Booking History or other tabs based on activeTab */}
                         {activeTab === "booking-history" && <BookingHistory bookingHistory={bookingHistory} />}
                         {activeTab === "current-bookings" && <CurrentBookings currentBookings={currentBookings} cancelBooking={cancelBooking} />}
-                        {activeTab === "drivers-license" && <DriversLicense driversLicense={driversLicense} />}
+                        {activeTab === "drivers-license" && <DriversLicense driversLicense={driversLicense} handleDriversLicenseSubmit={handleDriversLicenseSubmit} customerId={userData.customer_id} />}
                     </div>
                 </div>
 
@@ -310,7 +339,7 @@ const CurrentBookings = ({ currentBookings, cancelBooking }) => {
 };
 
 // Component for Driver's License
-const DriversLicense = ({ driversLicense, customerId }) => {
+const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         licenseNumber: driversLicense?.license_number || '',
@@ -335,31 +364,10 @@ const DriversLicense = ({ driversLicense, customerId }) => {
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch(`/api/drivers-license/${customerId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    licenseNumber: formData.licenseNumber,
-                    issueDate: formData.issueDate,
-                    expiryDate: formData.expiryDate
-                })
-            });
+        formData.customerId = customerId;
 
-            const result = await response.json();
-
-            if (!result.success) {
-                toast.error(result.error);
-                return;
-            }
-
-            toast.success(result.message)
-            setIsEditing(false);
-        } catch (error) {
-            console.error(error);
-        }
+        handleDriversLicenseSubmit(formData);
+        setIsEditing(false);
     };
 
     return (

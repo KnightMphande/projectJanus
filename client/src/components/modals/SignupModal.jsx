@@ -242,7 +242,7 @@ export default function SignupModal({ open, close, switchToSignin }) {
                             type="submit"
                             className="w-full py-2 bg-green-600 text-white rounded-lg shadow transition-all duration-500 hover:bg-green-700"
                         >
-                            Sign In
+                            Signup
                         </button>
 
                     </form>

@@ -25,9 +25,7 @@ export const getCustomerProfileController = async (req, res) => {
   }
 };
 
-// Controller for updating profile
 export const updateProfileController = async (req, res) => {
-  // Access the userId and role from the req object
   const userId = req.user;
   const role = req.role;
 
@@ -37,7 +35,7 @@ export const updateProfileController = async (req, res) => {
   let profilePic = req.file ? req.file.filename : null;
 
   try {
-    // If profilePic is null, check if an existing profile picture exists for the user
+
     if (!profilePic) {
       const userProfileDir = path.join("uploads/profiles", `user-${userId}`);
 
@@ -54,8 +52,6 @@ export const updateProfileController = async (req, res) => {
       }
     }
 
-    // console.log("Filename: ", profilePic);
-    
     const updatedProfile = await ProfileService.updateProfileService(userId, { names, address, phone, profilePic });
 
     if (updatedProfile) {
@@ -68,4 +64,25 @@ export const updateProfileController = async (req, res) => {
     return res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
+
+export const updateDriversLicenseController = async (req, res) => {
+  // Access the userId and role from the req object
+  const userId = req.user;
+  const role = req.role;
+
+  const driversLicenseData = req.body;
+
+  try {
+    const updatedDriversLicense = await ProfileService.updateDriversLicense(userId, driversLicenseData);
+
+    if (updatedDriversLicense) {
+      return res.status(200).json({ success: true, message: 'Profile updated successfully', driversLicense: updatedDriversLicense });
+    } else {
+      return res.status(404).json({ success: false, error: 'Profile not found' });
+    }
+  } catch (error) {
+    console.error("Error updating drivers license:", error);
+    return res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+}
 

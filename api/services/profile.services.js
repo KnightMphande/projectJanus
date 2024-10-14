@@ -156,4 +156,27 @@ export class ProfileService {
       throw error;
     }
   }
+
+  // Update profile service
+  static async updateDriversLicense(id, data) {
+    const { licenseNumber, issueDate, expiryDate} = data;
+
+    try {
+      const query = `
+        UPDATE drivers_license
+        SET license_number = $1, issue_date = $2, expiry_date = $3
+        WHERE customer_id = $4
+        RETURNING *;
+      `;
+      const values = [licenseNumber, issueDate, expiryDate, id];
+
+      const result = await client.query(query, values);
+
+      // Return the updated drivers license 
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error updating drivers license:", error);
+      throw error;
+    }
+  }
 }
