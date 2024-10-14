@@ -249,29 +249,22 @@ export class VehicleService {
   static async updateVehicle(vehicleId, vehicleData) {
     try {
       // Destructure vehicle data
-      const { make, model, year, category, status } = vehicleData;
+      const { price } = vehicleData;
 
       // Start a new transaction
       await client.query("BEGIN");
 
       const query = `
         UPDATE vehicles
-        SET make = $2, model = $3, year = $4, category = $5, status = $6
-        WHERE vehicle_id = $1
+        SET price = $1
+        WHERE vehicle_id = $2
         RETURNING *;
       `;
 
       // Commit the transaction if successful
       await client.query("COMMIT");
 
-      const result = await client.query(query, [
-        vehicleId,
-        make,
-        model,
-        year,
-        category,
-        status,
-      ]);
+      const result = await client.query(query, [ price, vehicleId ]);
 
       return result.rows[0] || null;
     } catch (error) {
