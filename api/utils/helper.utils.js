@@ -68,5 +68,11 @@ export class HelperFunc {
   
     return newBookings;
   }
+
+  static async setToMidnightUTC(date) {
+    const newDate = new Date(date);
+    newDate.setUTCHours(0, 0, 0, 0); 
+    return newDate;
+  };
   
 }

@@ -39,10 +39,14 @@ export const getAllBookingsController = async (req, res) => {
     if (role === "customer") {
       // Fetch bookings related to the customer
       const bookings = await BookingService.getAllBookings();
+      
       return res.status(200).json({ success: true, bookings });
     }
 
     const bookings = await BookingService.getAllBookings();
+
+    console.log("Bookings: ", bookings);
+    
     return res.status(200).json({ success: true, bookings });
   } catch (error) {
     console.error("Failed to fetch bookings: ", error);
@@ -130,6 +134,9 @@ export const updateBookingController = async (req, res) => {
   const bookingId = parseInt(req.params.bookingId);
   const status = req.query.status;
   const bookingData = req.body;  
+
+  console.log("Booking Data on the Controller: ", bookingData);
+  
 
   try {
     if(role === "customer") {

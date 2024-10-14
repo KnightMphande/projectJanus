@@ -95,8 +95,8 @@ export default function CarBooking() {
         }
     }, [startDate, endDate, vehicle.price]);
 
-    console.log(locations);
-    
+    // console.log(locations);
+
 
     const handlePickupChange = (e) => {
         const value = e.target.value;
@@ -124,25 +124,46 @@ export default function CarBooking() {
         setFilteredDropoffLocations([]);
     };
 
+    const setToMidnightUTC = (date) => {
+        const newDate = new Date(date);
+        newDate.setUTCHours(0, 0, 0, 0); // Set to midnight UTC
+        return newDate;
+    };   
+
     // Handle Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if(currentUser === null || currentUser === undefined) {
-            toast.error("Please signin before booking");
-            return
-        }
     
-        // Prepare the data to be sent
+        if (!currentUser) {
+            toast.error("Please sign in before booking");
+            return;
+        }
+
+    
+        // Convert start and end dates to UTC midnight
         const bookingData = {
             vehicleId: vehicleId,
-            checkIn:  endDate ? format(endDate, 'yyyy-MM-dd') : '',
-            checkOut: startDate ? format(startDate, 'yyyy-MM-dd') : '',
+            checkIn: endDate ? format(setToMidnightUTC(endDate), 'yyyy-MM-dd') : '',
+            checkOut: startDate ? format(setToMidnightUTC(startDate), 'yyyy-MM-dd') : '',
             pickUpLocation: pickup,
             dropOffLocation: dropoff,
             amount: amount,
             totalDays: totalDays,
         };
+
+        console.log("Data to send to backend: ", bookingData);
+
+                // Check if pickup and droff are not empty
+                if(pickup === "") {
+                    toast.error("Please select pickup location");
+                    return
+                }
+        
+                if(dropoff === "") {
+                    toast.error("Please select dropoff location");
+                    return
+                }
+        
     
         try {
             const response = await fetch('/api/booking', {
@@ -156,18 +177,14 @@ export default function CarBooking() {
             const result = await response.json();
     
             if (!result.success) {
-               toast.error(result.error);
-               return 
-            } 
-
-            // const newBooking = result.newBooking;
-
+                toast.error(result.error);
+                return;
+            }
+    
             navigate(`/profile/${currentUser?.customer_id}`);
-
             toast.success(result.message);
         } catch (error) {
             console.log(error);
-            
         }
     };
     
@@ -180,24 +197,34 @@ export default function CarBooking() {
         return <div>Error: {error}</div>;
     }
 
+
     const handleDateSelection = (date) => {
         if (selectingStart) {
-            setStartDate(date);
-
+            // Add 1 day to the selected start date
+            const adjustedStartDate = new Date(date);
+            adjustedStartDate.setDate(adjustedStartDate.getDate() + 1);
+            
+            setStartDate(setToMidnightUTC(adjustedStartDate));
+    
             // Reset end date when selecting a new start date
             setEndDate(null);
-
+    
             // Switch to selecting end date
             setSelectingStart(false);
         } else {
             if (date >= startDate) {
-                setEndDate(date);
+                // Add 1 day to the selected end date
+                const adjustedEndDate = new Date(date);
+                adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+                
+                setEndDate(setToMidnightUTC(adjustedEndDate));
             }
-
+    
             // Switch back to selecting start date
             setSelectingStart(true);
         }
     };
+    
 
     return (
         <>
@@ -263,7 +290,7 @@ export default function CarBooking() {
                                                         onClick={() => handlePickupSelect(location)}
                                                         className="p-2 cursor-pointer hover:bg-gray-200"
                                                     >
-                                                        {location.location} 
+                                                        {location.location}
                                                     </p>
                                                 ))}
                                             </div>
@@ -288,7 +315,7 @@ export default function CarBooking() {
                                                         onClick={() => handleDropoffSelect(location)}
                                                         className="p-2 cursor-pointer hover:bg-gray-200"
                                                     >
-                                                        {location.location} 
+                                                        {location.location}
                                                     </p>
                                                 ))}
                                             </div>
@@ -299,11 +326,11 @@ export default function CarBooking() {
 
                             <div className="mt-4 rounded-lg bg-slate-300 max-h-44 p-4 font-medium space-y-1 text-gray-800">
                                 <div className="flex flex-col justify-center items-start">
-                                    <p>Check-in Date: {startDate ? format(startDate, 'dd/MM/yyyy') : 'Not selected'}</p>
-                                    <p>Checkout Date: {endDate ? format(endDate, 'dd/MM/yyyy') : 'Not selected'}</p>
+                                <p>Check-out Date: {startDate && isValid(startDate) ? format(startDate, 'dd/MM/yyyy') : 'Not selected'} </p>
+                                <p>Check-in Date: {endDate && isValid(endDate) ? format(endDate, 'dd/MM/yyyy') : 'Not selected'} </p>
                                     <p>Number of Days: {totalDays}</p>
                                     <p>Amount: R{amount}</p>
-                                    <button type="submit" onClick={handleSubmit}  className="mt-2 flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-400 focus:ring-opacity-80">
+                                    <button type="submit" onClick={handleSubmit} className="mt-2 flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-400 focus:ring-opacity-80">
                                         <MdAdd className="w-5 h-5 mx-1" />
                                         <span className="mx-1">Book</span>
                                     </button>

@@ -1,4 +1,5 @@
 import client from "../configs/db.configs.js";
+import { HelperFunc } from "../utils/helper.utils.js";
 
 export class BookingService {
   /**
@@ -23,17 +24,29 @@ export class BookingService {
       // Start a new transaction
       await client.query("BEGIN");
 
+      console.log("Data from Controller Customer Booking: ", bookingData);
+      
+
       const query = `
         INSERT INTO bookings 
         (customer_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, amount, total_days, status) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
         RETURNING *;
       `;
+
+          // Explicitly set to midnight UTC before saving check_out and check_in to the database
+    const resettedCheckout = await HelperFunc.setToMidnightUTC(checkOut);
+    const resettedCheckin = await HelperFunc.setToMidnightUTC(checkIn);
+
+    // Add 1 day to both check-in and check-out
+resettedCheckout.setDate(resettedCheckout.getDate() + 1);
+resettedCheckin.setDate(resettedCheckin.getDate() + 1);
+
       const values = [
         customerId,
         vehicleId,
-        checkOut,
-        checkIn,
+        resettedCheckout,
+        resettedCheckin,
         pickUpLocation,
         dropOffLocation,
         amount,
@@ -119,7 +132,7 @@ export class BookingService {
   static async updateBooking(id, updatedBooking) {
     // Validate status input
     if (
-      !["confirmed", "completed", "in-progress", "canceled"].includes(updatedBooking.status)
+      !["confirmed", "completed", "in-progress", "canceled", "rented"].includes(updatedBooking.status)
     ) {
       throw new Error(
         `Invalid status provided: ${updatedBooking.status}. Expected "confirmed" or "completed" or "in-progress".`
@@ -129,6 +142,8 @@ export class BookingService {
     try {
       const { checkOut, checkIn, pickUpLocation, dropOffLocation, status } =
         updatedBooking;
+
+        console.log(updatedBooking)
       const query = `
           UPDATE bookings 
           SET check_out = COALESCE($1, check_out),
@@ -151,8 +166,8 @@ export class BookingService {
 
       return result.rows[0] || null;
     } catch (error) {
-      console.error("Error updating booking:", error);
-      throw error;
+      console.error("Error updating booking:", error.message);
+      throw error.message;
     }
   }
 
@@ -182,12 +197,16 @@ export class BookingService {
       RETURNING *;
     `;
 
+    // Explicitly set to midnight UTC before saving check_out and check_in to the database
+    const resettedCheckout = await HelperFunc.setToMidnightUTC(check_out);
+    const resettedCheckin = await HelperFunc.setToMidnightUTC(check_in);
+
       const values = [
         customer_id,
         bookingId,
         vehicle_id,
-        check_out,
-        check_in,
+        resettedCheckout,
+        resettedCheckin,
         pick_up_location,
         drop_off_location,
         status,

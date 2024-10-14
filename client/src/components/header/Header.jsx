@@ -13,7 +13,7 @@ import { ro } from "date-fns/locale";
 export default function Header() {
     // Retrieve the persisted user from local storage
     const { currentUser, error, loading } = useSelector((state) => state.user);
-    console.log(currentUser);
+    // console.log(currentUser);
 
     const role = currentUser?.role;
     const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;   

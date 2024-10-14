@@ -94,8 +94,6 @@ export default function AddNewVehicleModal({ handleCloseModal, handleAddNewVehic
                         >
                             <option value="default">Select status</option>
                             <option value="available">Available</option>
-                            <option value="maintenance">Maintenance</option>
-                            <option value="booked">Booked</option>
                         </select>
 
                         <button

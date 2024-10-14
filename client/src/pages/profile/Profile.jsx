@@ -6,6 +6,7 @@ import Header from "../../components/header/Header";
 import { MdPreview } from "react-icons/md";
 import { toast } from "react-toastify";
 import UpdateProfileModal from "../../components/modals/updateProfile";
+import { removeTimeFromTimestamp } from "../../utils/Helper";
 
 export default function Profile() {
     const { customerId } = useParams();
@@ -157,7 +158,7 @@ export default function Profile() {
 
             toast.success(result.message);
             fetchProfile();
-            
+
         } catch (error) {
             console.error(error);
         }
@@ -178,7 +179,7 @@ export default function Profile() {
                             <div className={styles.cardAvatar}>
                                 <img
                                     className="w-28 h-28 rounded-full shadow-lg"
-                                    src={urlLogo} 
+                                    src={urlLogo}
                                     alt="Profile avatar"
                                 />
                             </div>
@@ -313,22 +314,27 @@ const CurrentBookings = ({ currentBookings, cancelBooking }) => {
                                         {booking?.vehicleDetails?.make} {booking?.vehicleDetails?.model}
                                     </div>
                                     <div className="w-full text-gray-500">Year: {booking?.vehicleDetails?.year}</div>
+                                    <div className="w-full text-gray-500"> Check Out: {removeTimeFromTimestamp(booking?.check_out)}</div>
+                                    <div className="w-full text-gray-500"> Check In: {removeTimeFromTimestamp(booking?.check_in)}</div>
                                     <div className="w-full text-gray-500">Invoice: {booking?.invoice}</div>
+
                                     <div className="mt-2 flex">
-                                        <button className="mr-2 flex gap-1 items-center rounded border border-green-600 bg-green-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500">
-                                            <MdPreview className="h-5 w-5" />
+                                        <button className="mr-2 flex items-center rounded-full border border-green-600 bg-green-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500">
                                             Invoice
                                         </button>
-                                        <button onClick={() => cancelBooking(booking?.booking_id)} className="rounded border border-red-600 bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-transparent hover:text-red-600 focus:outline-none focus:ring active:text-red-500">
+                                        <button onClick={() => cancelBooking(booking?.booking_id)} className="rounded-full border border-red-600 bg-red-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-red-600 focus:outline-none focus:ring active:text-red-500">
                                             Cancel Booking
                                         </button>
                                     </div>
                                 </div>
-                                <img
-                                    className="w-28 h-20 rounded ml-4"
-                                    src={`http://localhost:5000/image/${booking?.vehicle_id}/${booking?.vehicleDetails?.filename}`}
-                                    alt={`${booking?.vehicleDetails?.make} ${booking?.vehicleDetails?.model}`}
-                                />
+                                <div className="flex justify-start items-center flex-col ml-4">
+                                    <img
+                                        className="w-28 h-20 rounded"
+                                        src={`http://localhost:5000/image/${booking?.vehicle_id}/${booking?.vehicleDetails?.filename}`}
+                                        alt={`${booking?.vehicleDetails?.make} ${booking?.vehicleDetails?.model}`}
+                                    />
+                                    <div className="mt-2 w-full text-gray-500 font-medium text-sm">booking {booking?.status}</div>
+                                </div>
                             </div>
                         </li>
                     ))}
@@ -347,7 +353,7 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
         expiryDate: driversLicense?.expiry_date?.split("T")[0] || ''
     });
 
-    const today = new Date().toISOString().split("T")[0]; 
+    const today = new Date().toISOString().split("T")[0];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -358,7 +364,7 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
     };
 
     const handleEditClick = () => {
-        setIsEditing(!isEditing); 
+        setIsEditing(!isEditing);
     };
 
     const handleUpdateSubmit = async (e) => {
@@ -378,8 +384,8 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
                 <p><strong>Issue Date:</strong> {new Date(driversLicense?.issue_date).toLocaleDateString()}</p>
                 <p><strong>Expiry Date:</strong> {new Date(driversLicense?.expiry_date).toLocaleDateString()}</p>
             </div>
-            
-            <button 
+
+            <button
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 onClick={handleEditClick}
             >
@@ -390,7 +396,7 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
                 <form className="mt-4" onSubmit={handleUpdateSubmit}>
                     <label className="block mb-2">
                         License Number
-                        <input 
+                        <input
                             type="text"
                             name="licenseNumber"
                             value={formData.licenseNumber}
@@ -402,7 +408,7 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
 
                     <label className="block mb-2">
                         Issue Date
-                        <input 
+                        <input
                             type="date"
                             name="issueDate"
                             value={formData.issueDate}
@@ -414,7 +420,7 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
 
                     <label className="block mb-2">
                         Expiry Date
-                        <input 
+                        <input
                             type="date"
                             name="expiryDate"
                             value={formData.expiryDate}
@@ -424,7 +430,7 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
                         />
                     </label>
 
-                    <button 
+                    <button
                         type="submit"
                         className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                     >
