@@ -1,3 +1,5 @@
+import { removeTimeFromTimestamp } from "../../utils/Helper";
+
 export default function MaintenainceCard({ vehicle }) {
     return (
         <div className="relative flex flex-col items-center border border-solid border-gray-200 rounded-2xl transition-all duration-500 md:flex-row md:max-w-lg">
@@ -12,8 +14,12 @@ export default function MaintenainceCard({ vehicle }) {
                 <h4 className="text-base font-semibold text-gray-900 mb-2 capitalize transition-all duration-500">
                     {vehicle.make} {vehicle.model} ({vehicle.year})
                 </h4>
-                <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 mb-5">
+                <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 mb-1">
                     {vehicle.description}
+                </p>
+
+                <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 mb-2">
+                    Scheduled Date: {removeTimeFromTimestamp(vehicle.scheduled_date)}
                 </p>
 
                 <div className="flex justify-between items-center">
