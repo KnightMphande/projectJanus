@@ -18,6 +18,7 @@ const __dirname = path.dirname(__filename);
 import fs from "fs";
 import maintenance_router from "./routes/maintenance.routes.js";
 import profile_router from "./routes/profile.routes.js";
+import reports_router from "./routes/reports.routes.js";
 
 //Create app
 const app = express();
@@ -151,3 +152,4 @@ app.use('/api/vehicle', vehicle_router);
 app.use('/api/booking', booking_router);
 app.use('/api/maintenance', maintenance_router);
 app.use('/api/profile', profile_router);
+app.use('/api/reports', reports_router);
