@@ -44,7 +44,7 @@ export default function Sidebar({ open }) {
                 </NavLink>
 
                 {/* Analytics */}
-                <NavLink className={styles.sidebarItem}>
+                <NavLink to="/reports" className={styles.sidebarItem}>
                     <SiGoogleanalytics className="w-5 h-5" />
                     Reports
                 </NavLink>
