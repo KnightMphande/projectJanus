@@ -370,6 +370,11 @@ const DriversLicense = ({ driversLicense, customerId, handleDriversLicenseSubmit
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
 
+        if(formData.expiryDate === "" || formData.issueDate === "" || formData.licenseNumber === "") {
+            toast.error("Please fill in required information");
+            return
+        }
+
         formData.customerId = customerId;
 
         handleDriversLicenseSubmit(formData);
