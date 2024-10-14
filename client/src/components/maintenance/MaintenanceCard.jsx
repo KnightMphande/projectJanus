@@ -1,9 +1,17 @@
 import { removeTimeFromTimestamp } from "../../utils/Helper";
 
-export default function MaintenainceCard({ vehicle }) {
+export default function MaintenainceCard({ vehicle, handleManitenanceUpdate }) {
+
+    // Handle update
+    const handleUpdate = () => {
+        vehicle.completed = true;
+
+        handleManitenanceUpdate(vehicle);
+    }
+
     return (
         <div className="relative flex flex-col items-center border border-solid border-gray-200 rounded-2xl transition-all duration-500 md:flex-row md:max-w-lg">
-            <div className="block overflow-hidden h-28 pl-4">
+            <div className="block overflow-hidden w-40 h-28 pl-4">
                 <img
                     src={`http://localhost:5000/image/${vehicle.vehicle_id}/${vehicle.filename}`}
                     alt="Card image"
@@ -29,9 +37,13 @@ export default function MaintenainceCard({ vehicle }) {
                         }
                     </button>
 
-                    <button className="bg-green-600 hover:bg-green-700 shadow-sm rounded-full py-2 px-5 text-xs text-white font-semibold">
-                        Done maintaining
-                    </button>
+                    {
+                        vehicle.completed === false && <button
+                         onClick={() => handleUpdate()}
+                         className="bg-green-600 hover:bg-green-700 shadow-sm rounded-full py-2 px-5 text-xs text-white font-semibold">
+                            Done
+                        </button>
+                    }
                 </div>
             </div>
         </div>

@@ -102,7 +102,7 @@ export class MaintenanceService {
       
       static async updateMaintenance(id, data) {
         try {
-            const { vehicleId, description, scheduledDate, completed } = data;
+            const { vehicle_id, description, scheduled_date, completed } = data;
           await client.query('BEGIN'); 
       
           const query = `
@@ -111,7 +111,7 @@ export class MaintenanceService {
             WHERE maintenance_id = $5
             RETURNING *;
           `;
-          const values = [vehicleId, description, scheduledDate, completed, id];
+          const values = [vehicle_id, description, scheduled_date, completed, id];
       
           const result = await client.query(query, values);
           await client.query('COMMIT'); 

@@ -122,6 +122,36 @@ export default function Maintenance() {
         }
     }
 
+    // Handle update maintenance
+    const handleManitenanceUpdate = async (formData) => {
+        try {
+            const response = await fetch(`/api/maintenance/${formData.maintenance_id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if(!result.success) {
+                toast.error(result.error);
+                return
+            }
+
+            toast.success(result.message);
+
+            // Fetch all maintenance vehicles
+            fetchMaintenanceVehicles();
+
+            handleModalClose();
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
     return (
         <div className={styles.dashboard}>
             <Sidebar open={openSidebar} />
@@ -145,11 +175,11 @@ export default function Maintenance() {
 
                         <div>
                             <h2 className="text-lg font-semibold mb-4">Vehicles under maintenance</h2>
-                            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                                 {
                                     maintenanceVehicles?.map((vehicle) => (
                                         <div key={vehicle.maintenance_id} className="rounded-lg">
-                                    <MaintenainceCard vehicle={vehicle} />
+                                    <MaintenainceCard vehicle={vehicle} handleManitenanceUpdate={handleManitenanceUpdate} />
                                 </div>
                                     ))
                                 }
