@@ -68,6 +68,11 @@ export default function Reports() {
             display: true,
             text: 'Status',
           },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
         },
       };
 

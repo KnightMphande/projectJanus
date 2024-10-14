@@ -107,11 +107,11 @@ export class MaintenanceService {
       
           const query = `
             UPDATE maintenance
-            SET vehicle_id = $1, description = $2, scheduled_date = $3, completed = $4
-            WHERE maintenance_id = $5
+            SET vehicle_id = $1, completed = $2
+            WHERE maintenance_id = $3
             RETURNING *;
           `;
-          const values = [vehicle_id, description, scheduled_date, completed, id];
+          const values = [vehicle_id, completed, id];
       
           const result = await client.query(query, values);
           await client.query('COMMIT'); 
