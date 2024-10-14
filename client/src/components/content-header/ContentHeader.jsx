@@ -10,9 +10,7 @@ export default function ContentHeader({ title, handleMenuClick }) {
                 className="w-7 h-7 cursor-pointer hover:text-slate-600" />
                 <h2 className={styles.title}>{title}</h2>
             </div>
-            <div className={styles.profile}>
-            <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
-            </div>
+
         </div>
     );
 }

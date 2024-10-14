@@ -1,4 +1,5 @@
 import { MaintenanceService } from "../services/maintenance.services.js";
+import { VehicleService } from "../services/vehicle.services.js";
 
 export const createMaintenanceController = async (req, res) => {
   const userId = req.user;
@@ -16,17 +17,31 @@ export const createMaintenanceController = async (req, res) => {
       await MaintenanceService.getMaintenanceByVehicleId(
         maintenanceData.vehicleId
       );
-    
 
     if (maintenanceRecord) {
-      return res.status(409).json({
-        success: false,
-        error: "Cannot same same vehicle more then once",
-      });
+      if (maintenanceRecord.completed === false) {
+        return res.status(409).json({
+          success: false,
+          error:
+            "Cannot add same vehicle to maintance while it's still pending..",
+        });
+      }
     }
     const newMaintenance = await MaintenanceService.createMaintenance(
       maintenanceData
     );
+
+    if(newMaintenance) {
+      const vehicleId = newMaintenance.vehicle_id;
+
+      const vehicle = await VehicleService.getVehicleById(vehicleId);
+
+      vehicle.status = "maintenance";
+      
+      await VehicleService.updateVehicle(vehicleId, vehicle);
+            
+    }
+
     return res
       .status(201)
       .json({ success: true, message: "Successfully added", newMaintenance });
@@ -103,13 +118,24 @@ export const updateMaintenanceController = async (req, res) => {
       id,
       updateData
     );
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Successfully updated",
-        updatedMaintenance,
-      });
+
+    if(updatedMaintenance) {
+      const vehicleId = updatedMaintenance.vehicle_id;
+
+      const vehicle = await VehicleService.getVehicleById(vehicleId);
+
+      vehicle.status = "available";
+      
+      await VehicleService.updateVehicle(vehicleId, vehicle);
+            
+    }
+
+
+    return res.status(200).json({
+      success: true,
+      message: "Successfully updated",
+      updatedMaintenance,
+    });
   } catch (error) {
     console.error("Error updating maintenance record:", error);
     return res

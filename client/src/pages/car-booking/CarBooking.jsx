@@ -127,6 +127,11 @@ export default function CarBooking() {
     // Handle Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if(currentUser === null || currentUser === undefined) {
+            toast.error("Please signin before booking");
+            return
+        }
     
         // Prepare the data to be sent
         const bookingData = {

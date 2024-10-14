@@ -124,7 +124,7 @@ export default function Header() {
                         }
 
                         {
-                            currentUser && (<>
+                            (currentUser && currentUser.role !== "admin") && (<>
                                 <div onClick={() => navigate(`/profile/${userId}`)} className="cursor-pointer">
                                     <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
                                 </div>
