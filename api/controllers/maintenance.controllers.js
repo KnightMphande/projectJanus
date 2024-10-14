@@ -16,6 +16,7 @@ export const createMaintenanceController = async (req, res) => {
       await MaintenanceService.getMaintenanceByVehicleId(
         maintenanceData.vehicleId
       );
+    
 
     if (maintenanceRecord) {
       return res.status(409).json({

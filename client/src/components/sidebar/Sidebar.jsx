@@ -38,7 +38,7 @@ export default function Sidebar({ open }) {
                 </NavLink>
 
                 {/* Maintenance */}
-                <NavLink className={styles.sidebarItem}>
+                <NavLink to="/maintenance" className={styles.sidebarItem}>
                     <IoSettings className="w-5 h-5" />
                     Maintenance
                 </NavLink>

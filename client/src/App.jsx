@@ -7,6 +7,7 @@ import Fleet from "./pages/fleet/Fleet";
 import AdminBookings from "./pages/admin-bookings/AdminBookings";
 import CarBooking from "./pages/car-booking/CarBooking";
 import Profile from "./pages/profile/Profile";
+import Maintenance from "./pages/maintenance/Maintenance";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/admin-bookings" element={<AdminBookings />} />
         <Route path="/car-booking/:vehicleId" element={<CarBooking />} />
         <Route path="/profile/:customerId" element={<Profile />} />
+        <Route path="/maintenance" element={<Maintenance />} />
       </Routes>
 
       {/* Toast container */}

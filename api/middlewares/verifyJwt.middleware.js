@@ -10,7 +10,7 @@ export const verifyJwt = async (req, res, next) => {
     process.env.SECRET,
     (err, decoded) => {
         if(err) {
-            return res.status(403).json({ success: false, error: "Forbidden" })
+            return res.status(403).json({ success: false, error: "Forbidden" });
         }
 
         req.user = decoded.userId,
