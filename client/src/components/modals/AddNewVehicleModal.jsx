@@ -7,7 +7,8 @@ export default function AddNewVehicleModal({ handleCloseModal, handleAddNewVehic
         model: '',
         year: '',
         category: 'default',
-        status: 'default',
+        price: "",
+        status: 'default'
     });
 
     // Handle change
@@ -21,10 +22,10 @@ export default function AddNewVehicleModal({ handleCloseModal, handleAddNewVehic
 
     // Handle submit
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault(); 
         await handleAddNewVehicleSubmit(formData); 
-        handleCloseModal("new-vehicle"); // Optionally close the modal after submission
-    };
+        handleCloseModal("new-vehicle"); 
+    }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -75,6 +76,15 @@ export default function AddNewVehicleModal({ handleCloseModal, handleAddNewVehic
                             <option value="suv">SUV</option>
                             <option value="sedan">Sedan</option>
                         </select>
+
+                        <input
+                            type="text"
+                            name="price"
+                            placeholder="Price"
+                            onChange={handleChange}
+                            value={formData.price}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+                        />
 
                         <select
                             name="status"

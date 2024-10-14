@@ -9,10 +9,10 @@ export class VehicleService {
   static addNewVehicle = async (vehicleData) => {
     try {
       // Destructure vehicle data
-      const { make, model, year, category, status } = vehicleData;
+      const { make, model, year, category, price, status } = vehicleData;
 
-      const query = `INSERT INTO vehicles (make, model, year, category, status) VALUES 
-        ($1, $2, $3, $4, $5) RETURNING *`;
+      const query = `INSERT INTO vehicles (make, model, year, category, price, status) VALUES 
+        ($1, $2, $3, $4, $5, $6) RETURNING *`;
 
       // Start a new transaction
       await client.query("BEGIN");
@@ -23,6 +23,7 @@ export class VehicleService {
         model,
         year,
         category.toLowerCase(),
+        price,
         status.toLowerCase(),
       ]);
 

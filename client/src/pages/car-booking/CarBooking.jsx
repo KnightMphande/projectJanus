@@ -1,13 +1,17 @@
 import Header from '../../components/header/Header';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar } from '@rewind-ui/core';
 import { MdAdd } from 'react-icons/md';
 import { format, differenceInDays, isValid, eachDayOfInterval } from 'date-fns';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 export default function CarBooking() {
+    // Retrieve user from local storage
+    const { currentUser } = useSelector((state) => state.user);
+
     const { vehicleId } = useParams();
     const [vehicle, setVehicle] = useState({});
     const [loading, setLoading] = useState(true);
@@ -23,6 +27,8 @@ export default function CarBooking() {
     const [dropoff, setDropoffLocation] = useState('');
     const [filteredPickupLocations, setFilteredPickupLocations] = useState([]);
     const [filteredDropoffLocations, setFilteredDropoffLocations] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchLocations() {
@@ -149,9 +155,9 @@ export default function CarBooking() {
                return 
             } 
 
-            // Navigate to profile, I will implement  it soon
-
             // const newBooking = result.newBooking;
+
+            navigate(`/profile/${currentUser?.customer_id}`);
 
             toast.success(result.message);
         } catch (error) {
