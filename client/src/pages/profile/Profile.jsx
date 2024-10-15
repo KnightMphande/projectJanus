@@ -18,6 +18,7 @@ export default function Profile() {
   const [bookingHistory, setBookingHistory] = useState([]);
   const [vehicleDetails, setVehicleDetails] = useState({});
   const [driversLicense, setDriversLicense] = useState({});
+  const [invoicePath, setInvoicePath] = useState('');
 
   async function fetchProfile() {
     try {
@@ -224,33 +225,30 @@ export default function Profile() {
                   <Link
                     to="#"
                     onClick={() => handleTabChange("drivers-license")}
-                    className={`shrink-0 border border-transparent p-3 text-sm font-medium ${
-                      activeTab === "drivers-license"
-                        ? "text-sky-600 border-b-white"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
+                    className={`shrink-0 border border-transparent p-3 text-sm font-medium ${activeTab === "drivers-license"
+                      ? "text-sky-600 border-b-white"
+                      : "text-gray-500 hover:text-gray-700"
+                      }`}
                   >
                     Driver's License
                   </Link>
                   <Link
                     to="#"
                     onClick={() => handleTabChange("current-bookings")}
-                    className={`shrink-0 border border-transparent p-3 text-sm font-medium ${
-                      activeTab === "current-bookings"
-                        ? "text-sky-600 border-b-white"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
+                    className={`shrink-0 border border-transparent p-3 text-sm font-medium ${activeTab === "current-bookings"
+                      ? "text-sky-600 border-b-white"
+                      : "text-gray-500 hover:text-gray-700"
+                      }`}
                   >
                     Current Bookings
                   </Link>
                   <Link
                     to="#"
                     onClick={() => handleTabChange("booking-history")}
-                    className={`shrink-0 border border-transparent p-3 text-sm font-medium ${
-                      activeTab === "booking-history"
-                        ? "text-sky-600 border-b-white"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
+                    className={`shrink-0 border border-transparent p-3 text-sm font-medium ${activeTab === "booking-history"
+                      ? "text-sky-600 border-b-white"
+                      : "text-gray-500 hover:text-gray-700"
+                      }`}
                   >
                     Booking History
                   </Link>
@@ -317,19 +315,19 @@ const BookingHistory = ({ bookingHistory }) => {
                   {/* Cancelled */}
                   {
                     booking?.status === "cancelled" && <div className="flex my-2 bg-red-500 p-[2px] rounded-lg text-white w-32">
-                    {booking?.status === "cancelled" && (
-                      <p className="mx-auto">{booking?.status}</p>
-                    )}
-                  </div>
+                      {booking?.status === "cancelled" && (
+                        <p className="mx-auto">{booking?.status}</p>
+                      )}
+                    </div>
                   }
 
                   {/* Completed */}
                   {
-                    booking?.status === "completed" &&  <div className="flex my-2 bg-green-500 p-[2px] rounded-lg text-white w-32">
-                    {booking?.status === "completed" && (
-                      <p className="mx-auto">{booking?.status}</p>
-                    )}
-                  </div>
+                    booking?.status === "completed" && <div className="flex my-2 bg-green-500 p-[2px] rounded-lg text-white w-32">
+                      {booking?.status === "completed" && (
+                        <p className="mx-auto">{booking?.status}</p>
+                      )}
+                    </div>
                   }
                 </div>
                 <img
@@ -348,6 +346,35 @@ const BookingHistory = ({ bookingHistory }) => {
 
 // Component for Current Bookings
 const CurrentBookings = ({ currentBookings, cancelBooking }) => {
+
+// Handle invoice generation
+const handleGenerateInvoice = async (bookingId) => {
+  try {
+    const response = await fetch(`/api/invoice/generate/${bookingId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    console.log(data);
+
+    if (data.success) {
+      // Construct the URL for the served invoice
+      const invoiceUrl = `${"http://localhost:5000"}/invoices/invoice_${bookingId}.pdf`;
+
+      // Open the URL in a new tab
+      window.open(invoiceUrl, "_blank");
+    }
+  } catch (error) {
+    console.error(error);
+    console.log("Failed to generate invoice");
+  }
+};
+
+
+
 
   return (
     <div className="my-8">
@@ -379,7 +406,7 @@ const CurrentBookings = ({ currentBookings, cancelBooking }) => {
                   </div>
 
                   <div className="mt-2 flex">
-                    <button className="mr-2 flex items-center rounded-full border border-green-600 bg-green-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500">
+                    <button onClick={() => handleGenerateInvoice(booking?.booking_id)} className="mr-2 flex items-center rounded-full border border-green-600 bg-green-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500">
                       Invoice
                     </button>
                     {(booking?.status === "confirmed" ||

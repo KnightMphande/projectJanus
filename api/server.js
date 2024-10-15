@@ -19,6 +19,7 @@ import fs from "fs";
 import maintenance_router from "./routes/maintenance.routes.js";
 import profile_router from "./routes/profile.routes.js";
 import reports_router from "./routes/reports.routes.js";
+import invoice_router from "./routes/invoice.routes.js";
 
 //Create app
 const app = express();
@@ -146,6 +147,16 @@ app.get('/profile/:userId/:filename', (req, res) => {
   });
 });
 
+// Route to serve invoice file for download
+app.get('/invoices/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'uploads', 'invoices', req.params.filename);
+  res.download(filePath, (err) => {
+    if (err) {
+      res.status(404).send("Invoice not found.");
+    }
+  });
+});
+
 // Router level middlewares
 app.use('/api/auth', auth_router);
 app.use('/api/vehicle', vehicle_router);
@@ -153,3 +164,4 @@ app.use('/api/booking', booking_router);
 app.use('/api/maintenance', maintenance_router);
 app.use('/api/profile', profile_router);
 app.use('/api/reports', reports_router);
+app.use('/api/invoice', invoice_router);
