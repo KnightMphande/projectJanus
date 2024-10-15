@@ -6,9 +6,9 @@ import { useState } from "react";
 import SigninModal from "../modals/SigninModal";
 import SignupModal from "../modals/SignupModal";
 import { useDispatch, useSelector } from "react-redux";
-import { signinFailure, signinSuccess, signoutUserStart } from "../../redux/user/userSlice";
+import { signinSuccess, signoutUserStart } from "../../redux/user/userSlice";
 import { toast } from "react-toastify";
-import { ro } from "date-fns/locale";
+import { MdNotifications } from "react-icons/md";
 
 export default function Header() {
     // Retrieve the persisted user from local storage
@@ -16,7 +16,7 @@ export default function Header() {
     // console.log(currentUser);
 
     const role = currentUser?.role;
-    const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;   
+    const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -113,6 +113,15 @@ export default function Header() {
                                     <span className="text-sm font-medium">Signout</span>
                                 </NavLink>
                             )
+                        }
+
+                        {
+                            currentUser && <div className="relative">
+                                <div className="flex justify-center items-center p-[6px] bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-full">
+                                    <MdNotifications className="h-7 w-7 text-gray-700" />
+                                </div>
+                                <span className="absolute -top-1 -right-[8px] bg-red-600 p-[3px] px-2 rounded-full text-xs text-white font-medium">2</span>
+                            </div>
                         }
 
                         {
