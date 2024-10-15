@@ -171,7 +171,7 @@ export default function Profile() {
     <>
       <Header />
 
-      <section className="mt-8 p-4 max-w-[1200px] mx-auto">
+      <section className="mt-20 p-4 max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
           {/* Profile */}
           <div className="rounded-lg max-h-[400px]">
