@@ -1,10 +1,10 @@
 import { MdAdd } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-export default function CarCard({ vehicle }) {
+export default function CarCard({ vehicle, id }) {
     return (
-        <div className="bg-white shadow-lg rounded-2xl overflow-hidden cursor-pointer">
-            <img src={`http://localhost:5000/image/${vehicle.vehicle_id}/${vehicle.filename}`} alt="Car Image" className="w-full h-56 object-cover" />
+        <div key={id} className="bg-white shadow-lg rounded-2xl cursor-pointer">
+            <img src={`http://localhost:5000/image/${vehicle.vehicle_id}/${vehicle.filename}`} alt="Car Image" className="w-full h-56 object-cover rounded-lg" />
             <div className="p-4">
                 <h3 className="text-xl font-bold text-gray-800">{vehicle.make}</h3>
                 <p className="mt-2 text-gray-600 font-medium">{vehicle.model} {vehicle.year}</p>

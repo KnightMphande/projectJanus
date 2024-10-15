@@ -1,54 +1,42 @@
-import { FaMapMarkerAlt, FaCalendarAlt, FaCar, FaSearch } from "react-icons/fa";
-import { MdAdd } from "react-icons/md";
+import { FaCalendarAlt, FaCar, FaSearch } from "react-icons/fa";
 import Header from "../../components/header/Header";
 import CarCard from "../../components/car/CarCard";
 import { useEffect, useState } from "react";
+import bgHomeImgUrl from "../../assets/bgimg.jpg";
 
 export default function Home() {
     const [locations, setLocations] = useState([]);
     const [vehicles, setVehicles] = useState([]);
-    const [allModels, setModels] = useState();
+    const [filteredVehicles, setFilteredVehicles] = useState([]);
+    const [vehicleType, setVehicleType] = useState("default");
+    const [priceRange, setPriceRange] = useState({ min: "", max: "" }); 
+    const [vehicleBrand, setVehicleBrand] = useState("All Brands");
+    const [seats, setSeats] = useState("Any");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchLocations() {
             try {
-                const response = await fetch('/api/booking/locations', {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-
+                const response = await fetch('/api/booking/locations');
                 const result = await response.json();
-
-                const data = result.locations;
-
-                setLocations(data);
-                
+                setLocations(result.locations);
             } catch (error) {
                 console.log(error);
-                
             }
-        } 
+        }
 
         async function fetchVehicles() {
+            setLoading(true);
             try {
-                const response = await fetch('/api/vehicle', {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-
+                const response = await fetch('/api/vehicle');
                 const result = await response.json();
-
-                const data = result.vehicles;
-
-                setVehicles(data);
-                
+                setVehicles(result.vehicles);
+                setFilteredVehicles(result.vehicles);
             } catch (error) {
                 console.log(error);
-                
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -56,178 +44,199 @@ export default function Home() {
         fetchVehicles();
     }, []);
 
-    
+    const handleSearch = () => {    
+
+        let filtered = vehicles;
+
+        // Filter by search query
+        if (searchQuery) {
+            filtered = filtered.filter(vehicle => {
+                return vehicle.make.toLowerCase().includes(searchQuery.toLowerCase())
+            }
+                
+            );
+        }
+
+        // Filter by vehicle type
+        if (vehicleType !== "default") {
+            filtered = filtered.filter(vehicle => vehicle.category === vehicleType);
+        }
+
+        // Filter by price range
+        if (priceRange.min && priceRange.max) {
+            filtered = filtered.filter(vehicle => vehicle.price >= priceRange.min && vehicle.price <= priceRange.max);
+        }
+
+        // Filter by vehicle brand
+        if (vehicleBrand !== "All Brands") {
+            filtered = filtered.filter(vehicle => vehicle.make === vehicleBrand);
+        }
+
+        // Filter by number of seats
+        if (seats !== "Any") {
+            filtered = filtered.filter(vehicle => vehicle.seats === Number(seats));
+        }
+
+        setFilteredVehicles(filtered);
+    };
+
+    const clearFilters = () => {
+        setSearchQuery("");
+        setVehicleType("default");
+        setPriceRange({ min: "", max: "" }); // Reset to empty strings
+        setVehicleBrand("All Brands");
+        setSeats("Any");
+        setFilteredVehicles(vehicles);
+    };
+
+    // Trigger search whenever relevant fields change
+    useEffect(() => {
+        handleSearch();
+    }, [vehicleType, priceRange, vehicleBrand, seats]);
+
     return (
         <>
             <Header />
+            <div className="mt-16 relative w-full h-80 bg-cover bg-center" style={{ backgroundImage: `url(${bgHomeImgUrl})` }}>
+                <div className="absolute inset-0 bg-black opacity-50"></div>
+                <div className="relative flex flex-col items-center justify-center h-full">
+                    <h1 className="text-white text-xl lg:text-4xl font-bold mb-4">Find Your Perfect Car Rental</h1>
+                    <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="w-full max-w-md">
+                        <div className="flex items-center px-4">
+                            <input
+                                type="text"
+                                placeholder="Search for a vehicle..."
+                                className="h-12 border border-gray-300 rounded-l-md text-gray-700 px-4 w-full"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            <button
+                                type="submit"
+                                className="h-12 bg-blue-600 text-white rounded-r-md px-4 flex items-center"
+                            >
+                                <FaSearch />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-            {/* Car Rental Search Section */}
             <section className="py-10">
                 <div className="w-full max-w-[1500px] mx-auto px-4 md:px-8">
-                    <div className="bg-white rounded-xl shadow-lg p-4 lg:p-6">
-                        {/* Search Form */}
-                        <form className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full">
-                            {/* Pickup Location */}
-                            <div className="flex items-center border border-gray-300 rounded-md p-2 w-full lg:max-w-xs">
-                                <FaMapMarkerAlt className="text-gray-500 mr-2" />
-                                <input
-                                    type="text"
-                                    placeholder="Pickup location"
-                                    className="border-none outline-none text-sm py-1 w-full"
-                                />
-                            </div>
+                    <div className="mt-6 md:mt-8 grid grid-cols-12 gap-4">
+                        <div className="col-span-12 md:col-span-3">
+                            <div className="bg-white rounded-xl border border-gray-300 shadow-md p-6 w-full">
+                                <h6 className="font-semibold text-base text-gray-800 mb-4">Filter Options</h6>
 
-                            {/* Pickup Date */}
-                            <div className="flex items-center border border-gray-300 rounded-md p-2 w-full lg:max-w-xs">
-                                <FaCalendarAlt className="text-gray-500 mr-2" />
-                                <input
-                                    type="date"
-                                    className="border-none outline-none text-sm py-1 w-full"
-                                    placeholder="Pickup date"
-                                />
-                            </div>
+                                {/* Price Range */}
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium text-gray-700">Price Range</label>
+                                    <div className="flex items-center mt-2">
+                                        <div className="relative w-full">
+                                            <select
+                                                className="h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1"
+                                                value={priceRange.min}
+                                                onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                                            >
+                                                <option value="">Min</option>
+                                                <option value={450}>450</option>
+                                                <option value={550}>550</option>
+                                                <option value={650}>650</option>
+                                                <option value={750}>750</option>
+                                                <option value={850}>850</option>
+                                                <option value={950}>950</option>
+                                            </select>
+                                        </div>
+                                        <span className="mx-2 text-sm font-medium text-gray-600">to</span>
+                                        <div className="relative w-full">
+                                            <select
+                                                className="h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1"
+                                                value={priceRange.max}
+                                                onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                                            >
+                                                <option value="">Max</option>
+                                                <option value={550}>550</option>
+                                                <option value={650}>650</option>
+                                                <option value={750}>750</option>
+                                                <option value={850}>850</option>
+                                                <option value={950}>950</option>
+                                                <option value={1050}>1050</option>
+                                                <option value={1100}>1100</option>
+                                                <option value={1150}>1150</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            {/* Drop off Location */}
-                            <div className="flex items-center border border-gray-300 rounded-md p-2 w-full lg:max-w-xs">
-                                <FaMapMarkerAlt className="text-gray-500 mr-2" />
-                                <input
-                                    type="text"
-                                    placeholder="Drop off location"
-                                    className="border-none outline-none text-sm py-1 w-full"
-                                />
-                            </div>
-
-                            {/* Drop off Date */}
-                            <div className="flex items-center border border-gray-300 rounded-md p-2 w-full lg:max-w-xs">
-                                <FaCalendarAlt className="text-gray-500 mr-2" />
-                                <input
-                                    type="date"
-                                    className="border-none outline-none text-sm py-1 w-full"
-                                    placeholder="Drop off date"
-                                />
-                            </div>
-
-                            {/* Vehicle Type */}
-                            <div className="relative w-full lg:max-w-xs">
-                                <div className="flex items-center border border-gray-300 rounded-md p-2">
-                                    <FaCar className="text-gray-500 " />
+                                {/* Vehicle Type */}
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium text-gray-700">Vehicle Type</label>
                                     <select
-                                        className="border-none outline-none text-sm py-1 w-full appearance-none bg-white px-4"
-                                        defaultValue="default"
+                                        className="mt-2 h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 bg-white"
+                                        value={vehicleType}
+                                        onChange={(e) => setVehicleType(e.target.value)}
                                     >
-                                        <option value="default" disabled>
-                                            Select vehicle type
-                                        </option>
+                                        <option value="default" disabled>Select vehicle type</option>
                                         <option value="economy">Economy</option>
                                         <option value="luxury">Luxury</option>
                                         <option value="suv">SUV</option>
                                         <option value="sedan">Sedan</option>
                                     </select>
                                 </div>
-                            </div>
 
-                            {/* Search Button */}
-                            <button
-                                type="submit"
-                                className="flex items-center justify-center px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition duration-300 ease-in-out"
-                            >
-                                <FaSearch className="w-6 h-6 mr-2" />
-                                Search
-                            </button>
-                        </form>
-                    </div>
+                                {/* Vehicle Brand */}
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium text-gray-700">Vehicle Brand</label>
+                                    <select
+                                        className="mt-2 h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 bg-white"
+                                        value={vehicleBrand}
+                                        onChange={(e) => setVehicleBrand(e.target.value)}
+                                    >
+                                        <option>All Brands</option>
+                                        <option value="BMW">BMW</option>
+                                        <option value="Honda">Honda</option>
+                                        <option value="Ford">Ford</option>
+                                    </select>
+                                </div>
 
-                    {/* Show features */}
-                    <div className="showFeatures block md:hidden">
-                        <button className="border-2 p-2 w-full bg-green-500 hover:bg-green-600 mt-4 rounded-lg text-white" type="button">Apply Features</button>
-                    </div>
+                                {/* Number of Seats */}
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium text-gray-700">Number of Seats</label>
+                                    <select
+                                        className="mt-2 h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 bg-white"
+                                        value={seats}
+                                        onChange={(e) => setSeats(e.target.value)}
+                                    >
+                                        <option value="Any">Any</option>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="7">7</option>
+                                    </select>
+                                </div>
 
-                    {/* Filters Section */}
-                    <div className="hidden md:block">
-                        <div className="mt-6 md:mt-8 grid grid-cols-12 gap-4">
-                            <div className="col-span-12 md:col-span-3">
-                                {/* Filters Card */}
-                                <div className="bg-white rounded-xl border border-gray-300 shadow-md p-6 w-full">
-                                    <h6 className="font-semibold text-base text-gray-800 mb-4">Filter Options</h6>
-                                    <div className="flex flex-col gap-4">
-                                        {/* Price Range */}
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700">Price Range</label>
-                                            <div className="flex items-center mt-2">
-                                                <div className="relative w-full">
-                                                    <select
-                                                        className="h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 appearance-none bg-white"
-                                                    >
-                                                        <option>Min</option>
-                                                        <option value="500">R500</option>
-                                                        <option value="800">R800</option>
-                                                        <option value="1000">R1000</option>
-                                                        <option value="1500">R1500</option>
-                                                        <option value="2000">R2000</option>
-                                                        <option value="3000">R3000</option>
-                                                    </select>
-                                                </div>
-                                                <span className="mx-2 text-sm font-medium text-gray-600">to</span>
-                                                <div className="relative w-full">
-                                                    <select
-                                                        className="h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 appearance-none bg-white"
-                                                    >
-                                                        <option>Max</option>
-                                                        <option value="1000">R1000</option>
-                                                        <option value="1500">R1500</option>
-                                                        <option value="2000">R2000</option>
-                                                        <option value="3000">R3000</option>
-                                                        <option value="5000">R5000</option>
-                                                        <option value="10000">R10000</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Vehicle Brand */}
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700">Vehicle Brand</label>
-                                            <select className="mt-2 h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 bg-white">
-                                                <option>All Brands</option>
-                                                <option value="toyota">Toyota</option>
-                                                <option value="bmw">BMW</option>
-                                                <option value="mercedes">Mercedes</option>
-                                                <option value="audi">Audi</option>
-                                                <option value="ford">Ford</option>
-                                            </select>
-                                        </div>
-
-                                        {/* Number of Seats */}
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700">Seats</label>
-                                            <select className="mt-2 h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 bg-white">
-                                                <option>Any</option>
-                                                <option value="2">2</option>
-                                                <option value="4">4</option>
-                                                <option value="6">6</option>
-                                                <option value="8">8</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                {/* Clear Filters Button */}
+                                <div className="flex justify-end mt-4">
+                                    <button
+                                        onClick={clearFilters}
+                                        className="text-xs text-gray-500 hover:text-blue-500"
+                                    >
+                                        Clear Filters
+                                    </button>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Additional Content Section */}
-                            <div className="col-span-12 md:col-span-9">
-                                {/* Image Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {/* <CarCard url="https://cdn.pixabay.com/photo/2017/11/12/09/58/renault-2942017_960_720.jpg" />    
-                                    <CarCard url="https://cdn.pixabay.com/photo/2016/11/18/15/11/car-1835246_1280.jpg" />  
-                                    <CarCard url="https://cdn.pixabay.com/photo/2023/03/05/06/55/car-7830737_640.jpg" />  
-                                    <CarCard url="https://cdn.pixabay.com/photo/2016/11/23/17/24/woman-1853936_960_720.jpg" />  
-                                    <CarCard url="https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg" />                                   */}
-
-                                    {
-                                        vehicles?.map((vehicle) => (
-                                            <CarCard vehicle={vehicle} />
-                                        ))
-                                    }
-                                </div>
+                        <div className="col-span-12 md:col-span-9">
+                            <h6 className="font-semibold text-base text-gray-800 mb-4">Available Vehicles</h6>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {loading ? (
+                                    <p>Loading vehicles...</p>
+                                ) : (
+                                    filteredVehicles.map(vehicle => (
+                                        <CarCard id={vehicle.id} vehicle={vehicle} />
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
