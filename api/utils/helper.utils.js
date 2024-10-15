@@ -39,11 +39,13 @@ export class HelperFunc {
 
   static async combineBookingWithVehicle(bookings, vehicles) {
     let newBookings = [];
-  
+
     for (let i = 0; i < bookings.length; i++) {
       // Find the matching vehicle for the current booking
-      const matchedVehicle = vehicles.find(vehicle => vehicle.vehicle_id === bookings[i].vehicle_id);
-  
+      const matchedVehicle = vehicles.find(
+        (vehicle) => vehicle.vehicle_id === bookings[i].vehicle_id
+      );
+
       if (matchedVehicle) {
         // Combine the booking and vehicle details
         const combinedObj = {
@@ -58,21 +60,31 @@ export class HelperFunc {
             filename: matchedVehicle.filename,
           },
         };
-  
+
         newBookings.push(combinedObj);
       } else {
         // If no matching vehicle is found, keep original booking details
         newBookings.push(bookings[i]);
       }
     }
-  
+
     return newBookings;
   }
 
   static async setToMidnightUTC(date) {
     const newDate = new Date(date);
-    newDate.setUTCHours(0, 0, 0, 0); 
+    newDate.setUTCHours(0, 0, 0, 0);
     return newDate;
-  };
-  
+  }
+
+  static async getDateToday() {
+    const date = new Date();
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const dd = String(date.getDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}`;
+
+  }
 }

@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     drop_off_location VARCHAR(100) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL, 
     total_days INT NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'in-progress' CHECK (status IN ('confirmed', 'completed', 'canceled', 'in-progress', 'rented')), 
+    status VARCHAR(20) NOT NULL DEFAULT 'in-progress' CHECK (status IN ('confirmed', 'completed', 'cancelled', 'in-progress', 'rented')), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

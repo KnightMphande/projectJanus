@@ -132,7 +132,7 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
   static async updateBooking(id, updatedBooking) {
     // Validate status input
     if (
-      !["confirmed", "completed", "in-progress", "canceled", "rented"].includes(updatedBooking.status)
+      !["confirmed", "completed", "in-progress", "cancelled", "rented"].includes(updatedBooking.status)
     ) {
       throw new Error(
         `Invalid status provided: ${updatedBooking.status}. Expected "confirmed" or "completed" or "in-progress".`
@@ -140,25 +140,16 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
     }
 
     try {
-      const { checkOut, checkIn, pickUpLocation, dropOffLocation, status } =
+      const { status } =
         updatedBooking;
 
-        console.log(updatedBooking)
       const query = `
           UPDATE bookings 
-          SET check_out = COALESCE($1, check_out),
-              check_in = COALESCE($2, check_in),
-              pick_up_location = COALESCE($3, pick_up_location),
-              drop_off_location = COALESCE($4, drop_off_location),
-              status = COALESCE($5, status)
-          WHERE booking_id = $6
+          SET status = COALESCE($1, status)
+          WHERE booking_id = $2
           RETURNING *;
         `;
       const values = [
-        checkOut,
-        checkIn,
-        pickUpLocation,
-        dropOffLocation,
         status,
         id,
       ];
@@ -166,8 +157,8 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
 
       return result.rows[0] || null;
     } catch (error) {
-      console.error("Error updating booking:", error.message);
-      throw error.message;
+      console.error("Error updating booking:", error);
+      throw error;
     }
   }
 

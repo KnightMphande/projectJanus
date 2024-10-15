@@ -1,4 +1,5 @@
 import { BookingService } from "../services/booking.services.js";
+import { HelperFunc } from "../utils/helper.utils.js";
 
 export const createBookingController = async (req, res) => {
   const bookingData = req.body;
@@ -39,14 +40,14 @@ export const getAllBookingsController = async (req, res) => {
     if (role === "customer") {
       // Fetch bookings related to the customer
       const bookings = await BookingService.getAllBookings();
-      
+
       return res.status(200).json({ success: true, bookings });
     }
 
     const bookings = await BookingService.getAllBookings();
 
-    console.log("Bookings: ", bookings);
-    
+    // console.log("Bookings: ", bookings);
+
     return res.status(200).json({ success: true, bookings });
   } catch (error) {
     console.error("Failed to fetch bookings: ", error);
@@ -102,21 +103,21 @@ export const deleteBookingController = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, error: "Booking not found" });
-
     else if (deletedBooking) {
-        deletedBooking.status = "cancelled";
+      deletedBooking.status = "cancelled";
 
-        const movedToHistoryBooking = await BookingService.moveBookingToHistory(bookingId, deletedBooking)
+      const movedToHistoryBooking = await BookingService.moveBookingToHistory(
+        bookingId,
+        deletedBooking
+      );
 
-        if (movedToHistoryBooking) {
-          return res.status(200).json({
-            success: true,
-            message: "Booking cancelled successfully",
-          });
-        }
-      
+      if (movedToHistoryBooking) {
+        return res.status(200).json({
+          success: true,
+          message: "Booking cancelled successfully",
+        });
+      }
     }
-
   } catch (error) {
     console.error("Failed to delete booking: ", error);
 
@@ -133,59 +134,106 @@ export const updateBookingController = async (req, res) => {
 
   const bookingId = parseInt(req.params.bookingId);
   const status = req.query.status;
-  const bookingData = req.body;  
+  const bookingData = req.body;
 
-  console.log("Booking Data on the Controller: ", bookingData);
-  
+  // console.log("Booking Data on the Controller: ", bookingData);
 
   try {
-    if(role === "customer") {
-        bookingData.status = "in-progress";
+    if (role === "customer") {
+      bookingData.status = "in-progress";
 
-        const updatedBooking = await BookingService.updateBooking(
-            bookingId,
-            bookingData
-          );
-      
-          if (!updatedBooking)
-            return res
-              .status(404)
-              .json({ success: false, error: "Booking not found" });
-      
-          return res.status(200).json({ success: true, message: "Booking updated successfully", updatedBooking });
-    } 
+      const updatedBooking = await BookingService.updateBooking(
+        bookingId,
+        bookingData
+      );
 
-    else if (role === "admin") {
+      if (!updatedBooking)
+        return res
+          .status(404)
+          .json({ success: false, error: "Booking not found" });
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Booking updated successfully",
+          updatedBooking,
+        });
+    } else if (role === "admin") {
+      bookingData.status = status;
+
+      // Get the booking details from database to check if vehicle was rented or not
+      const bookingRecord = await BookingService.getBookingById(bookingId);
+
+      if (
+        bookingData.status === "completed" &&
+        bookingRecord.status !== "rented"
+      ) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            error: "Cannot check in a vehicle that was not rented",
+          });
+      }
+
+      // Check the current date and compare with checkout date to allow renting only if the checkout date has arrived
+      if (bookingData.status === "rented") {
+        const dateToday = await HelperFunc.getDateToday(); 
         
-        bookingData.status = status;
+        const checkoutDate = new Date(bookingRecord.check_out).toISOString().split('T')[0]; 
+        
+        if (dateToday < checkoutDate) {
+          return res.status(400).json({ success: false, error: "Cannot rent vehicle before checkout date." });
+        }
 
-        const updatedBooking = await BookingService.updateBooking(
-            bookingId,
-            bookingData
-          );
-      
-          if (!updatedBooking)
+      }      
+
+      const updatedBooking = await BookingService.updateBooking(
+        bookingId,
+        bookingData
+      );
+
+      if (!updatedBooking)
+        return res
+          .status(404)
+          .json({ success: false, error: "Booking not found" });
+
+      if (
+        updatedBooking.status === "completed" ||
+        updatedBooking.status === "cancelled"
+      ) {
+        const deletedBooking = await BookingService.deleteBooking(
+          updatedBooking.booking_id
+        );
+
+        if (deletedBooking) {
+          const movedToHistoryBooking =
+            await BookingService.moveBookingToHistory(
+              bookingId,
+              deletedBooking
+            );
+
+          if (movedToHistoryBooking) {
             return res
-              .status(404)
-              .json({ success: false, error: "Booking not found" });
-          
-          if (updatedBooking.status === "completed" || updatedBooking.status === "canceled") {
-            const deletedBooking = await BookingService.deleteBooking(updatedBooking.booking_id);
-
-            if (deletedBooking) {
-              
-              const movedToHistoryBooking = await BookingService.moveBookingToHistory(bookingId, deletedBooking)
-
-              if (movedToHistoryBooking) {
-                return res.status(200).json({ success: true, message: "Booking updated successfully", updatedBooking });
-              }
-              
-            }
+              .status(200)
+              .json({
+                success: true,
+                message: "Booking updated successfully",
+                updatedBooking,
+              });
           }
-      
-          return res.status(200).json({ success: true, message: "Booking updated successfully", updatedBooking });
-    }
+        }
+      }
 
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Booking updated successfully",
+          updatedBooking,
+        });
+    }
   } catch (error) {
     console.error("Failed to updated booking: ", error);
 
@@ -197,15 +245,14 @@ export const updateBookingController = async (req, res) => {
 
 export const getLocationsController = async (req, res) => {
   try {
-
     const locations = await BookingService.getLocations();
 
     return res.status(200).json({ success: true, locations });
-    
   } catch (error) {
     console.log("Error fetching locations: ", error);
 
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
-    
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
-}
+};

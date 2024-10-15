@@ -322,9 +322,11 @@ const CurrentBookings = ({ currentBookings, cancelBooking }) => {
                                         <button className="mr-2 flex items-center rounded-full border border-green-600 bg-green-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500">
                                             Invoice
                                         </button>
-                                        <button onClick={() => cancelBooking(booking?.booking_id)} className="rounded-full border border-red-600 bg-red-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-red-600 focus:outline-none focus:ring active:text-red-500">
+                                        {
+                                            (booking?.status !== "rented" || booking?.status !== "cancelled") && <button onClick={() => cancelBooking(booking?.booking_id)} className="rounded-full border border-red-600 bg-red-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-red-600 focus:outline-none focus:ring active:text-red-500">
                                             Cancel Booking
                                         </button>
+                                        }
                                     </div>
                                 </div>
                                 <div className="flex justify-start items-center flex-col ml-4">

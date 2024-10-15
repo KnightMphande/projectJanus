@@ -80,7 +80,7 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
               >
                 <option value="" disabled>Select Status</option>
                 <option value="confirmed">Confirm</option>
-                <option value="canceled">Cancel</option>
+                <option value="cancelled">Cancel</option>
                 <option value="completed">Check In</option>
                 <option value="rented">Check Out</option>
               </select>
