@@ -4,7 +4,7 @@ import { loginController, logoutController, registerCustomerController } from ".
 const auth_router = express.Router();
 
 auth_router.post('/signup', registerCustomerController);
-auth_router.post('/signin/:role', loginController);
+auth_router.post('/signin', loginController);
 auth_router.get('/signout', logoutController);
 
 export default auth_router;

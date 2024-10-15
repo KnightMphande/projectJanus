@@ -85,7 +85,7 @@ export const registerCustomerController = async (req, res) => {
 
 export const loginController = async (req, res) => {
   const userDetails = req.body;
-  const role = req.params.role;
+
   try {
     // Check missing information
     const missingFieldsArr = DataValidation.checkMissingInfo(userDetails);
@@ -111,11 +111,6 @@ export const loginController = async (req, res) => {
     );
 
     if (!emailExists?.exists) {
-      if (role === "admin") {
-        return res
-          .status(409)
-          .json({ success: false, error: "Staff not found." });
-      }
       return res
         .status(409)
         .json({ success: false, error: "User not found, please register." });
@@ -125,7 +120,7 @@ export const loginController = async (req, res) => {
     let isPasswordValid;
 
     if (user) {
-      if (role === "admin" && user.must_change_password === true) {
+      if (user.role === "admin" && user.must_change_password === true) {
         isPasswordValid = true;
 
         // Remove password
@@ -147,18 +142,9 @@ export const loginController = async (req, res) => {
           .cookie('access_token', token, { httpOnly: true })
           .status(200)
           .json({ success: true, message: "Login successfully", user: rest });
-      } else if (role === "customer" && user.role === "admin") {
-        return res
-          .status(400)
-          .json({ success: false, error: "Invalid login credintials" });
-      } else if (role === "admin" && user.role === "customer") {
-        return res
-          .status(400)
-          .json({ success: false, error: "Invalid login credintials" });
-      } else if (
-        role === "customer" ||
-        (role === "admin" && user.must_change_password === false)
-      ) {
+      } 
+      
+    else {
         isPasswordValid = DataValidation.validatePassword(
           userDetails?.password
         );

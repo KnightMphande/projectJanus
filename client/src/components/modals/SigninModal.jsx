@@ -10,7 +10,6 @@ export default function SigninModal({ open, close, switchToSignup }) {
         email: "",
         password: ""
     });
-    const [role, setRole] = useState("");
 
     const dispatch = useDispatch();
 
@@ -22,27 +21,18 @@ export default function SigninModal({ open, close, switchToSignup }) {
         }))
     }
 
-    const updateUserType = (role) => {
-       setRole(role);
-    }
-
     // Handle submit
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            if(role === "") {
-                toast.error("Select user type");
-                return
-            }
-
             // Convert email to lowercase
             formData.email.toLocaleLowerCase();
 
             // Start signin transaction
             dispatch(signinStart());
 
-            const response = await fetch(`/api/auth/signin/${role}`, {
+            const response = await fetch(`/api/auth/signin`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -92,32 +82,6 @@ export default function SigninModal({ open, close, switchToSignup }) {
 
                     {/* Modal Body */}
                     <div className={styles.modalBody}>
-
-                        <div className="flex justify-start items-center mb-4">
-                            {/* Base */}
-
-                            <button
-                                onClick={() => updateUserType("customer")}
-                                className={`${role === "customer" ? "bg-green-600 text-white" : "text-green-600"} rounded-lg border 
-                                border-green-600 px-10 sm:px-12 py-2.5 text-sm font-medium hover:bg-green-600 
-                                hover:text-white focus:outline-none mr-2 sm:mr-4`}
-
-                            >
-                                Customer
-                            </button>
-
-                            {/* Border */}
-
-                            <button
-                                onClick={() => updateUserType("admin")}
-                                className={`${role === "admin" ? "bg-green-600 text-white" : "text-green-600"} rounded-lg border 
-                                border-green-600 px-10 sm:px-12 py-2.5 text-sm font-medium hover:bg-green-600 
-                                hover:text-white focus:outline-none`}
-
-                            >
-                                Admin
-                            </button>
-                        </div>
 
                         {/* Sign In Form */}
                         <form className={styles.form} onSubmit={handleSubmit}>
