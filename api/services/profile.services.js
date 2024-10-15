@@ -37,7 +37,7 @@ export class ProfileService {
   static async getCustomerCurrentBookings(customerId) {
     try {
       const result = await client.query(
-        `SELECT * FROM bookings WHERE customer_id = $1 AND status IN ('confirmed', 'in-progress')`,
+        `SELECT * FROM bookings WHERE customer_id = $1 AND status IN ('confirmed', 'in-progress', 'rented')`,
         [customerId]
       );
       return result.rows;
