@@ -417,7 +417,15 @@ export class VehicleService {
           CASE 
               WHEN vf.has_bluetooth THEN jsonb_build_object('Bluetooth', true)
               ELSE jsonb_build_object('Bluetooth', false)
-          END AS bluetooth
+          END AS bluetooth,
+          b.booking_id,
+          b.check_out,
+          b.check_in,
+          b.pick_up_location,
+          b.drop_off_location,
+          b.amount,
+          b.total_days,
+          b.status AS booking_status
       FROM 
           vehicles v
       LEFT JOIN 
@@ -426,11 +434,14 @@ export class VehicleService {
           vehicle_details vd ON v.vehicle_id = vd.vehicle_id
       LEFT JOIN 
           vehicle_features vf ON v.vehicle_id = vf.vehicle_id
+      LEFT JOIN 
+          bookings b ON v.vehicle_id = b.vehicle_id
       WHERE 
           v.vehicle_id = $1
       ORDER BY 
           v.vehicle_id;
-    `;
+  `;
+  
 
       const result = await client.query(query, [id]);
 

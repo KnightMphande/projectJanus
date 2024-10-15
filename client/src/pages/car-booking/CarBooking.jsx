@@ -27,6 +27,8 @@ export default function CarBooking() {
     const [dropoff, setDropoffLocation] = useState('');
     const [filteredPickupLocations, setFilteredPickupLocations] = useState([]);
     const [filteredDropoffLocations, setFilteredDropoffLocations] = useState([]);
+    const [redDates, setRedDates] = useState([]);
+
 
     const navigate = useNavigate();
 
@@ -74,7 +76,6 @@ export default function CarBooking() {
         fetchLocations();
     }, [vehicleId]);
 
-    // Update total days, amount, and greenDates whenever startDate or endDate changes - Left to implement red for days car is booked
     useEffect(() => {
         if (startDate && endDate && isValid(startDate) && isValid(endDate)) {
 
@@ -85,18 +86,39 @@ export default function CarBooking() {
             // Calculate amount based on days and vehicle price
             setAmount(days * vehicle.price);
 
-            // Highlight the range of selected dates
-            const dates = eachDayOfInterval({ start: startDate, end: endDate });
-            setGreenDates(dates);
+            // Highlight the range of selected dates in green
+            const greenDates = eachDayOfInterval({ start: startDate, end: endDate });
+            setGreenDates(greenDates);
         } else {
             setTotalDays(0);
             setAmount(0);
             setGreenDates([]);
         }
-    }, [startDate, endDate, vehicle.price]);
 
-    // console.log(locations);
+        // Mark booked dates as red
+        if (vehicle && vehicle.check_out && vehicle.check_in) {
+            const checkOutDate = new Date(vehicle.check_out);
+            const checkInDate = new Date(vehicle.check_in);
 
+            // Ensure checkOutDate is before checkInDate
+            if (isValid(checkOutDate) && isValid(checkInDate) && checkOutDate <= checkInDate) {
+                const bookedDates = eachDayOfInterval({ start: checkOutDate, end: checkInDate });
+
+                // Set the range as red dates
+                setRedDates(bookedDates); 
+            } else {
+                // Clear red dates if invalid
+                setRedDates([]); 
+            }
+        } else {
+            // Clear red dates if no vehicle data
+            setRedDates([]); 
+        }
+
+    }, [startDate, endDate, vehicle]);
+
+
+    console.log("Vehicle: ", vehicle);
 
     const handlePickupChange = (e) => {
         const value = e.target.value;
@@ -128,18 +150,18 @@ export default function CarBooking() {
         const newDate = new Date(date);
         newDate.setUTCHours(0, 0, 0, 0); // Set to midnight UTC
         return newDate;
-    };   
+    };
 
     // Handle Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!currentUser) {
             toast.error("Please sign in before booking");
             return;
         }
 
-    
+
         // Convert start and end dates to UTC midnight
         const bookingData = {
             vehicleId: vehicleId,
@@ -151,20 +173,20 @@ export default function CarBooking() {
             totalDays: totalDays,
         };
 
-        console.log("Data to send to backend: ", bookingData);
+        // console.log("Data to send to backend: ", bookingData);
 
-                // Check if pickup and droff are not empty
-                if(pickup === "") {
-                    toast.error("Please select pickup location");
-                    return
-                }
-        
-                if(dropoff === "") {
-                    toast.error("Please select dropoff location");
-                    return
-                }
-        
-    
+        // Check if pickup and droff are not empty
+        if (pickup === "") {
+            toast.error("Please select pickup location");
+            return
+        }
+
+        if (dropoff === "") {
+            toast.error("Please select dropoff location");
+            return
+        }
+
+
         try {
             const response = await fetch('/api/booking', {
                 method: 'POST',
@@ -173,21 +195,21 @@ export default function CarBooking() {
                 },
                 body: JSON.stringify(bookingData),
             });
-    
+
             const result = await response.json();
-    
+
             if (!result.success) {
                 toast.error(result.error);
                 return;
             }
-    
+
             navigate(`/profile/${currentUser?.customer_id}`);
             toast.success(result.message);
         } catch (error) {
             console.log(error);
         }
     };
-    
+
 
     if (loading) {
         return <div>Loading...</div>;
@@ -197,18 +219,17 @@ export default function CarBooking() {
         return <div>Error: {error}</div>;
     }
 
-
     const handleDateSelection = (date) => {
         if (selectingStart) {
             // Add 1 day to the selected start date
             const adjustedStartDate = new Date(date);
             adjustedStartDate.setDate(adjustedStartDate.getDate() + 1);
-            
+
             setStartDate(setToMidnightUTC(adjustedStartDate));
-    
+
             // Reset end date when selecting a new start date
             setEndDate(null);
-    
+
             // Switch to selecting end date
             setSelectingStart(false);
         } else {
@@ -216,31 +237,30 @@ export default function CarBooking() {
                 // Add 1 day to the selected end date
                 const adjustedEndDate = new Date(date);
                 adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
-                
+
                 setEndDate(setToMidnightUTC(adjustedEndDate));
             }
-    
+
             // Switch back to selecting start date
             setSelectingStart(true);
         }
     };
-    
 
     return (
         <>
             <Header />
             <section className="max-w-[1500px] mt-8 sm:mt-12 relative mx-auto px-4 md:px-8">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-                    <div className="h-64 md:h-96 sm:h-[500px] rounded-lg">
-                        <div className="w-full relative h-auto rounded-lg">
+                    <div className="h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-lg">
+                        <div className="w-full h-full rounded-lg overflow-hidden">
                             {vehicle.filename ? (
                                 <img
                                     src={`http://localhost:5000/image/${vehicle.vehicle_id}/${vehicle.filename}`}
                                     alt={`${vehicle.make} ${vehicle.model}`}
-                                    className="w-full max-w-full h-auto rounded-lg"
+                                    className="w-full h-full object-cover rounded-lg"
                                 />
                             ) : (
-                                <div className="w-full h-auto bg-gray-200 rounded-lg flex items-center justify-center">
+                                <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
                                     <p>No image available</p>
                                 </div>
                             )}
@@ -248,13 +268,13 @@ export default function CarBooking() {
                     </div>
 
                     {/* Vehicle Details */}
-                    <div className="rounded-lg p-4 bg-gray-100 min-h-96">
+                    <div className="rounded-lg p-4 bg-gray-100">
                         <h1 className="text-2xl font-bold">
                             {vehicle.make} {vehicle.model} ({vehicle.year})
                         </h1>
                         <p className="mt-2 text-lg font-medium">Price: R{vehicle.price}/day</p>
                         <p className="mt-2 text-lg font-medium">Category: {vehicle.category}</p>
-                        <div className="mt-4 flex items-center bg-green-600 max-w-28 rounded-lg text-white font-medium">
+                        <div className="mt-4 flex items-center justify-center bg-green-600 max-w-[200px] rounded-lg text-white font-medium">
                             <p className="mx-auto">{vehicle.status}</p>
                         </div>
 
@@ -264,11 +284,14 @@ export default function CarBooking() {
                                 {selectingStart ? 'Select Start Date' : 'Select End Date'}
                             </p>
                             <Calendar
-                                minDate={new Date(new Date().setDate(new Date().getDate() - 1))}
+                                minDate={redDates[0] || new Date(new Date().setDate(new Date().getDate() - 1))}
                                 onChange={handleDateSelection}
                                 disabledWeekends={false}
                                 greenDates={greenDates}
+                                redDates={redDates}
+                                disabledDates={redDates}
                             />
+
                             <div className="my-4">
                                 {/* Pickup and Drop-off Locations */}
                                 <div className="flex flex-col lg:flex-row items-center gap-4 bg-slate-100 border border-gray-300 rounded-md p-4 w-full">
@@ -326,11 +349,15 @@ export default function CarBooking() {
 
                             <div className="mt-4 rounded-lg bg-slate-300 max-h-44 p-4 font-medium space-y-1 text-gray-800">
                                 <div className="flex flex-col justify-center items-start">
-                                <p>Check-out Date: {startDate && isValid(startDate) ? format(startDate, 'dd/MM/yyyy') : 'Not selected'} </p>
-                                <p>Check-in Date: {endDate && isValid(endDate) ? format(endDate, 'dd/MM/yyyy') : 'Not selected'} </p>
+                                    <p>Check-out Date: {startDate && isValid(startDate) ? format(startDate, 'dd/MM/yyyy') : 'Not selected'}</p>
+                                    <p>Check-in Date: {endDate && isValid(endDate) ? format(endDate, 'dd/MM/yyyy') : 'Not selected'}</p>
                                     <p>Number of Days: {totalDays}</p>
                                     <p>Amount: R{amount}</p>
-                                    <button type="submit" onClick={handleSubmit} className="mt-2 flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-400 focus:ring-opacity-80">
+                                    <button
+                                        type="submit"
+                                        onClick={handleSubmit}
+                                        className="mt-2 flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-400 focus:ring-opacity-80"
+                                    >
                                         <MdAdd className="w-5 h-5 mx-1" />
                                         <span className="mx-1">Book</span>
                                     </button>
@@ -340,6 +367,7 @@ export default function CarBooking() {
                     </div>
                 </div>
             </section>
+
         </>
     );
 }
