@@ -86,7 +86,7 @@ export default function Header() {
 
                     <div className="flex items-center gap-4">
                         {
-                            (currentUser === null || currentUser === undefined) && <div className="hidden sm:flex sm:gap-4">
+                            (currentUser === null || currentUser === undefined) && <div className="hidden sm:flex sm:gap-2">
                                 <NavLink
                                     className={styles.accountLink}
                                     onClick={() => handleModalOpen("signup")}
@@ -109,7 +109,7 @@ export default function Header() {
                             currentUser && (
                                 <NavLink
                                     onClick={() => handleSignout()}
-                                    className="flex items-center rounded-md px-3 py-2 bg-red-500 hover:bg-red-600 text-white transition">
+                                    className="hidden sm:flex items-center rounded-md px-2 py-2 bg-red-500 hover:bg-red-600 text-white transition">
                                     <span className="text-sm font-medium">Signout</span>
                                 </NavLink>
                             )
