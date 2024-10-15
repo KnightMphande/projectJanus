@@ -19,6 +19,27 @@ export class ProfileService {
     }
   }
 
+  // Get all users
+  static async getAllCustomers() {
+    try {
+      const result = await client.query(`SELECT * FROM customers;`);
+
+      const allCustomers = result.rows;
+      let customers = [];
+
+      if(allCustomers.length > 0) {
+        allCustomers.forEach((customer) => {
+          const { password: pass, address: userAdress, ...rest } = customer;
+          customers.push(rest);
+        });
+      }
+      return customers || [];
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      throw new Error("Failed to get customers");
+    }
+  }
+
   // Get driver's license information by customer ID
   static async getUserDriversLicense(customerId) {
     try {

@@ -3,29 +3,57 @@ import { FaCar, FaWrench, FaClipboardList, FaMoneyBill } from "react-icons/fa";
 import ContentHeader from "../../components/content-header/ContentHeader";
 import Sidebar from "../../components/sidebar/Sidebar";
 import styles from "./Dashboard.module.scss";
+import { removeTimeFromTimestamp } from "../../utils/Helper";
 
 export default function Dashboard() {
     const [openSidebar, setOpenSidebar] = useState(true);
+    const [customers, setCustomers] = useState([]);
 
     useEffect(() => {
         const handleResize = () => {
-          const isMobile = window.innerWidth <= 768; 
-          setOpenSidebar(!isMobile);
+            const isMobile = window.innerWidth <= 768;
+            setOpenSidebar(!isMobile);
         };
-    
+
         // Initial check on component mount
         handleResize();
-    
+
         // Add event listener to handle screen resizing
         window.addEventListener('resize', handleResize);
-    
+
         // Cleanup event listener on component unmount
         return () => window.removeEventListener('resize', handleResize);
-      }, []);
+    }, []);
 
     const handleMenuClick = () => {
         setOpenSidebar(!openSidebar);
     }
+
+    // Get data from backend
+    useEffect(() => {
+        async function fetchCustomers() {
+            const response = await fetch('/api/reports/customers', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                toast.error(data.error);
+                return
+            }
+
+            setCustomers(data.customers);
+        }
+
+        fetchCustomers();
+    }, []);
+
+    console.log(customers);
+
 
     return (
         <div className={styles.dashboard}>
@@ -68,31 +96,24 @@ export default function Dashboard() {
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Name</th>
+                                    <th>Names</th>
                                     <th>Email</th>
                                     <th>Phone</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>John Doe</td>
-                                    <td>john@example.com</td>
-                                    <td>+123456789</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Jane Doe</td>
-                                    <td>jane@example.com</td>
-                                    <td>+987654321</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Gary Barlow</td>
-                                    <td>gary@example.com</td>
-                                    <td>+123456123</td>
-                                </tr>
-                                
+                                {
+                                    customers?.map((customer, index) => (
+                                        <tr key={customer.customerid}>
+                                            <td>{index + 1}</td>
+                                            <td>{customer.names}</td>
+                                            <td>{customer.email}</td>
+                                            <td>{customer.phone}</td>
+                                            <td>Joined {removeTimeFromTimestamp(customer.created_at)}</td>
+                                        </tr>
+                                    ))
+                                }
                             </tbody>
                         </table>
                     </div>
