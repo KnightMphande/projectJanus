@@ -8,6 +8,9 @@ import { removeTimeFromTimestamp } from "../../utils/Helper";
 export default function Dashboard() {
     const [openSidebar, setOpenSidebar] = useState(true);
     const [customers, setCustomers] = useState([]);
+    const [maintenanceVehiclesTotal, setmaintenanceVehiclesTotal] = useState(0);
+    const [fleetTotal, setFleetTotal] = useState(0);
+    const [bookingsTotal, setBookingsTotal] = useState(0);
 
     useEffect(() => {
         const handleResize = () => {
@@ -49,11 +52,35 @@ export default function Dashboard() {
             setCustomers(data.customers);
         }
 
+        async function fetchCalculations() {
+            try {
+                const response = await fetch('/api/reports/calculations', {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const result = await response.json();
+                const data = result.data;
+
+                setmaintenanceVehiclesTotal(data.maintenance);
+                setFleetTotal(data.fleet);
+                setBookingsTotal(data.bookings);
+
+            } catch (error) {
+                toast.error("Something went worng");
+                console.log(error);
+
+            }
+        }
+
         fetchCustomers();
+        fetchCalculations();
     }, []);
 
-    console.log(customers);
-
+    // console.log(customers);
+    // console.log(maintenanceVehiclesTotal);
 
     return (
         <div className={styles.dashboard}>
@@ -74,19 +101,19 @@ export default function Dashboard() {
                         <div className={styles.card}>
                             <FaCar className={styles.icon} />
                             <h3>Fleet Cars</h3>
-                            <p>45</p>
+                            <p>{fleetTotal}</p>
                         </div>
 
                         <div className={styles.card}>
                             <FaWrench className={styles.icon} />
-                            <h3>Maintenance Cars</h3>
-                            <p>5</p>
+                            <h3>Maintenance / Scheduled Cars</h3>
+                            <p>{maintenanceVehiclesTotal}</p>
                         </div>
 
                         <div className={styles.card}>
                             <FaClipboardList className={styles.icon} />
                             <h3>Total Bookings</h3>
-                            <p>120</p>
+                            <p>{bookingsTotal}</p>
                         </div>
                     </div>
 
@@ -103,8 +130,8 @@ export default function Dashboard() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {
-                                    customers?.map((customer, index) => (
+                                {customers?.length > 0 ? (
+                                    customers.map((customer, index) => (
                                         <tr key={customer.customerid}>
                                             <td>{index + 1}</td>
                                             <td>{customer.names}</td>
@@ -113,7 +140,12 @@ export default function Dashboard() {
                                             <td>Joined {removeTimeFromTimestamp(customer.created_at)}</td>
                                         </tr>
                                     ))
-                                }
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="text-center text-lg font-semibold">No customers found</td>
+                                    </tr>
+                                )}
+
                             </tbody>
                         </table>
                     </div>
