@@ -47,4 +47,16 @@ export class InvoiceService {
       
     }
   }
+
+  static async getTotalEarnings() {
+    try {
+        const result = await client.query('SELECT SUM(total_amount) AS total_earnings FROM invoices');
+        const totalEarnings = result.rows[0].total_earnings;
+
+        return totalEarnings || 0; 
+    } catch (error) {
+        throw new Error(`Error calculating total earnings: ${error.message}`);
+    }
+}
+
 }

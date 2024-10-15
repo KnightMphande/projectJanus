@@ -1,4 +1,5 @@
 import { BookingService } from "../services/booking.services.js";
+import { InvoiceService } from "../services/invoice.services.js";
 import { MaintenanceService } from "../services/maintenance.services.js";
 import { ProfileService } from "../services/profile.services.js";
 import { ReportsService } from "../services/reports.services.js";
@@ -35,11 +36,12 @@ export const getCalculationsController = async (req, res) => {
     const vehiclesOnMaintenanceOrScheduled = await MaintenanceService.getAllMaintenance();
     const fleet = await VehicleService.getAllVehicles();
     const bookings = await BookingService.getAllBookings();
+    const totalEarnings = await InvoiceService.getTotalEarnings();
     
 
     return res.status(200).json({ success: true, data: {
       bookings: bookings.length,
-      earnings: [],
+      earnings: totalEarnings,
       fleet: fleet.length,
       maintenance: vehiclesOnMaintenanceOrScheduled.length
     } })

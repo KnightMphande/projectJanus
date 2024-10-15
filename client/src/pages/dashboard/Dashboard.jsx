@@ -11,6 +11,7 @@ export default function Dashboard() {
     const [maintenanceVehiclesTotal, setmaintenanceVehiclesTotal] = useState(0);
     const [fleetTotal, setFleetTotal] = useState(0);
     const [bookingsTotal, setBookingsTotal] = useState(0);
+    const [earnings, setEarnings] = useState(0);
 
     useEffect(() => {
         const handleResize = () => {
@@ -67,6 +68,7 @@ export default function Dashboard() {
                 setmaintenanceVehiclesTotal(data.maintenance);
                 setFleetTotal(data.fleet);
                 setBookingsTotal(data.bookings);
+                setEarnings(data.earnings);
 
             } catch (error) {
                 toast.error("Something went worng");
@@ -95,7 +97,7 @@ export default function Dashboard() {
                         <div className={styles.card}>
                             <FaMoneyBill className={styles.icon} />
                             <h3>Total Earnings</h3>
-                            <p>R250,000</p>
+                            <p>R{earnings}</p>
                         </div>
 
                         <div className={styles.card}>
