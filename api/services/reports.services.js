@@ -6,7 +6,7 @@ export class ReportsService {
     const query = `
             SELECT
                 COUNT(CASE WHEN LOWER(status) = 'available' THEN 1 END) AS available_count,
-                COUNT(CASE WHEN LOWER(status) = 'booked' THEN 1 END) AS booked_count,
+                COUNT(CASE WHEN LOWER(status) = 'rented' THEN 1 END) AS booked_count,
                 COUNT(CASE WHEN LOWER(status) = 'maintenance' THEN 1 END) AS maintenance_count,
                 COUNT(CASE WHEN LOWER(status) = 'out of service' THEN 1 END) AS out_of_service_count
             FROM vehicles

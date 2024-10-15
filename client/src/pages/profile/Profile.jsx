@@ -314,11 +314,23 @@ const BookingHistory = ({ bookingHistory }) => {
                     Year: {booking?.vehicleDetails?.year}
                   </div>
 
-                  <div className="flex my-2 bg-red-500 p-[2px] rounded-lg text-white w-32">
+                  {/* Cancelled */}
+                  {
+                    booking?.status === "cancelled" && <div className="flex my-2 bg-red-500 p-[2px] rounded-lg text-white w-32">
                     {booking?.status === "cancelled" && (
                       <p className="mx-auto">{booking?.status}</p>
                     )}
                   </div>
+                  }
+
+                  {/* Completed */}
+                  {
+                    booking?.status === "completed" &&  <div className="flex my-2 bg-green-500 p-[2px] rounded-lg text-white w-32">
+                    {booking?.status === "completed" && (
+                      <p className="mx-auto">{booking?.status}</p>
+                    )}
+                  </div>
+                  }
                 </div>
                 <img
                   className="w-28 h-20 rounded ml-4"
@@ -336,7 +348,6 @@ const BookingHistory = ({ bookingHistory }) => {
 
 // Component for Current Bookings
 const CurrentBookings = ({ currentBookings, cancelBooking }) => {
-  console.log("Current Bookings To check Status: ", currentBookings);
 
   return (
     <div className="my-8">
@@ -466,7 +477,7 @@ const DriversLicense = ({
       </div>
 
       <button
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
         onClick={handleEditClick}
       >
         {isEditing ? "Cancel" : "Update"}
@@ -512,7 +523,7 @@ const DriversLicense = ({
 
           <button
             type="submit"
-            className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            className="mt-4 px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600"
           >
             Save Changes
           </button>

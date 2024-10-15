@@ -249,22 +249,31 @@ export class VehicleService {
   static async updateVehicle(vehicleId, vehicleData) {
     try {
       // Destructure vehicle data
-      const { price } = vehicleData;
+      const { price, status } = vehicleData;
 
       // Start a new transaction
       await client.query("BEGIN");
 
-      const query = `
-        UPDATE vehicles
-        SET price = $1
+      const query =
+        price === null
+          ? ` UPDATE vehicles
+        SET status = $1
         WHERE vehicle_id = $2
+        RETURNING *;`
+          : `
+        UPDATE vehicles
+        SET price = $1, status = $2
+        WHERE vehicle_id = $3
         RETURNING *;
       `;
 
       // Commit the transaction if successful
       await client.query("COMMIT");
 
-      const result = await client.query(query, [ price, vehicleId ]);
+      const values =
+        price === null ? [status, vehicleId] : [price, status, vehicleId];
+
+      const result = await client.query(query, values);
 
       return result.rows[0] || null;
     } catch (error) {
@@ -363,7 +372,6 @@ export class VehicleService {
   ORDER BY 
       v.vehicle_id;
   `;
-  
 
       const result = await client.query(query);
 
@@ -422,7 +430,7 @@ export class VehicleService {
           v.vehicle_id = $1
       ORDER BY 
           v.vehicle_id;
-    `;  
+    `;
 
       const result = await client.query(query, [id]);
 

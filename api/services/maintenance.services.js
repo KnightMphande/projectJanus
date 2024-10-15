@@ -102,7 +102,7 @@ export class MaintenanceService {
       
       static async updateMaintenance(id, data) {
         try {
-            const { vehicle_id, description, scheduled_date, completed } = data;
+            const { vehicle_id, completed } = data;
           await client.query('BEGIN'); 
       
           const query = `

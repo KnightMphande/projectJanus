@@ -9,7 +9,7 @@ export default function EditVehiclePriceModal({
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    handleEditVehiclePriceSubmit({ price });
+    handleEditVehiclePriceSubmit({ price, status: currentVehicle.status });
   };
 
   return (

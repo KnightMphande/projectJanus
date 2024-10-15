@@ -1,4 +1,5 @@
 import { BookingService } from "../services/booking.services.js";
+import { VehicleService } from "../services/vehicle.services.js";
 import { HelperFunc } from "../utils/helper.utils.js";
 
 export const createBookingController = async (req, res) => {
@@ -152,13 +153,11 @@ export const updateBookingController = async (req, res) => {
           .status(404)
           .json({ success: false, error: "Booking not found" });
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Booking updated successfully",
-          updatedBooking,
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Booking updated successfully",
+        updatedBooking,
+      });
     } else if (role === "admin") {
       bookingData.status = status;
 
@@ -169,30 +168,43 @@ export const updateBookingController = async (req, res) => {
         bookingData.status === "completed" &&
         bookingRecord.status !== "rented"
       ) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: "Cannot check in a vehicle that was not rented",
-          });
+        return res.status(400).json({
+          success: false,
+          error: "Cannot check in a vehicle that was not rented",
+        });
       }
 
       // Check the current date and compare with checkout date to allow renting only if the checkout date has arrived
       if (bookingData.status === "rented") {
-        const dateToday = await HelperFunc.getDateToday(); 
-        
-        const checkoutDate = new Date(bookingRecord.check_out).toISOString().split('T')[0]; 
-        
+        const dateToday = await HelperFunc.getDateToday();
+
+        const checkoutDate = new Date(bookingRecord.check_out)
+          .toISOString()
+          .split("T")[0];
+
         if (dateToday < checkoutDate) {
-          return res.status(400).json({ success: false, error: "Cannot rent vehicle before checkout date." });
+          return res.status(400).json({
+            success: false,
+            error: "Cannot rent vehicle before checkout date.",
+          });
         }
+      }
 
-      }      
-
+      // Update booking
       const updatedBooking = await BookingService.updateBooking(
         bookingId,
         bookingData
       );
+
+      const updatedStatus = updatedBooking.status;
+
+      if (updatedStatus === "rented") {
+        // Update vehicle that has been rented
+        await VehicleService.updateVehicle(updatedBooking.vehicle_id, {
+          status: updatedStatus,
+          price: null,
+        });
+      }
 
       if (!updatedBooking)
         return res
@@ -208,6 +220,12 @@ export const updateBookingController = async (req, res) => {
         );
 
         if (deletedBooking) {
+          // Update vehicle that has been rented
+          await VehicleService.updateVehicle(updatedBooking.vehicle_id, {
+            status: "available",
+            price: null,
+          });
+
           const movedToHistoryBooking =
             await BookingService.moveBookingToHistory(
               bookingId,
@@ -215,24 +233,20 @@ export const updateBookingController = async (req, res) => {
             );
 
           if (movedToHistoryBooking) {
-            return res
-              .status(200)
-              .json({
-                success: true,
-                message: "Booking updated successfully",
-                updatedBooking,
-              });
+            return res.status(200).json({
+              success: true,
+              message: "Booking updated successfully",
+              updatedBooking,
+            });
           }
         }
       }
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Booking updated successfully",
-          updatedBooking,
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Booking updated successfully",
+        updatedBooking,
+      });
     }
   } catch (error) {
     console.error("Failed to updated booking: ", error);
