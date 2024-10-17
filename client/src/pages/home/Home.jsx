@@ -9,7 +9,6 @@ export default function Home() {
     const [vehicles, setVehicles] = useState([]);
     const [filteredVehicles, setFilteredVehicles] = useState([]);
     const [vehicleType, setVehicleType] = useState("default");
-    const [priceRange, setPriceRange] = useState({ min: "", max: "" }); 
     const [vehicleBrand, setVehicleBrand] = useState("All Brands");
     const [seats, setSeats] = useState("Any");
     const [searchQuery, setSearchQuery] = useState("");
@@ -62,11 +61,6 @@ export default function Home() {
             filtered = filtered.filter(vehicle => vehicle.category === vehicleType);
         }
 
-        // Filter by price range
-        if (priceRange.min && priceRange.max) {
-            filtered = filtered.filter(vehicle => vehicle.price >= priceRange.min && vehicle.price <= priceRange.max);
-        }
-
         // Filter by vehicle brand
         if (vehicleBrand !== "All Brands") {
             filtered = filtered.filter(vehicle => vehicle.make === vehicleBrand);
@@ -83,7 +77,6 @@ export default function Home() {
     const clearFilters = () => {
         setSearchQuery("");
         setVehicleType("default");
-        setPriceRange({ min: "", max: "" }); // Reset to empty strings
         setVehicleBrand("All Brands");
         setSeats("Any");
         setFilteredVehicles(vehicles);
@@ -92,7 +85,7 @@ export default function Home() {
     // Trigger search whenever relevant fields change
     useEffect(() => {
         handleSearch();
-    }, [vehicleType, priceRange, vehicleBrand, seats]);
+    }, [vehicleType, vehicleBrand, seats]);
 
     return (
         <>
@@ -127,46 +120,6 @@ export default function Home() {
                         <div className="col-span-12 md:col-span-3">
                             <div className="bg-white rounded-xl border border-gray-300 shadow-md p-6 w-full">
                                 <h6 className="font-semibold text-base text-gray-800 mb-4">Filter Options</h6>
-
-                                {/* Price Range */}
-                                <div className="mt-4">
-                                    <label className="text-sm font-medium text-gray-700">Price Range</label>
-                                    <div className="flex items-center mt-2">
-                                        <div className="relative w-full">
-                                            <select
-                                                className="h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1"
-                                                value={priceRange.min}
-                                                onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
-                                            >
-                                                <option value="">Min</option>
-                                                <option value={450}>450</option>
-                                                <option value={550}>550</option>
-                                                <option value={650}>650</option>
-                                                <option value={750}>750</option>
-                                                <option value={850}>850</option>
-                                                <option value={950}>950</option>
-                                            </select>
-                                        </div>
-                                        <span className="mx-2 text-sm font-medium text-gray-600">to</span>
-                                        <div className="relative w-full">
-                                            <select
-                                                className="h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1"
-                                                value={priceRange.max}
-                                                onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
-                                            >
-                                                <option value="">Max</option>
-                                                <option value={550}>550</option>
-                                                <option value={650}>650</option>
-                                                <option value={750}>750</option>
-                                                <option value={850}>850</option>
-                                                <option value={950}>950</option>
-                                                <option value={1050}>1050</option>
-                                                <option value={1100}>1100</option>
-                                                <option value={1150}>1150</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 {/* Vehicle Type */}
                                 <div className="mt-4">
