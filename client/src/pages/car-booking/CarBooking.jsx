@@ -29,7 +29,6 @@ export default function CarBooking() {
     const [filteredDropoffLocations, setFilteredDropoffLocations] = useState([]);
     const [redDates, setRedDates] = useState([]);
 
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -56,11 +55,18 @@ export default function CarBooking() {
 
         const fetchVehicle = async () => {
             try {
-                const response = await fetch(`/api/vehicle/${vehicleId}`);
+                const response = await fetch(`/api/vehicle/${vehicleId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
                 const data = await response.json();
 
+                // console.log(data); 
+
                 if (response.ok) {
-                    setVehicle(data.vehicles);
+                    setVehicle(data.vehicle);
                     setLoading(false);
                 } else {
                     setError(data.error || 'Error fetching vehicle data');
@@ -73,6 +79,7 @@ export default function CarBooking() {
         };
 
         fetchVehicle();
+
         fetchLocations();
     }, [vehicleId]);
 
@@ -96,29 +103,31 @@ export default function CarBooking() {
         }
 
         // Mark booked dates as red
-        if (vehicle && vehicle.check_out && vehicle.check_in) {
-            const checkOutDate = new Date(vehicle.check_out);
-            const checkInDate = new Date(vehicle.check_in);
+        if (vehicle) {
+            const bookedDates = [];
 
-            // Ensure checkOutDate is before checkInDate
-            if (isValid(checkOutDate) && isValid(checkInDate) && checkOutDate <= checkInDate) {
-                const bookedDates = eachDayOfInterval({ start: checkOutDate, end: checkInDate });
+            // Loop through each booking date
+            vehicle?.dates?.forEach((date) => {
+                const checkOutDate = new Date(date.check_out);
+                const checkInDate = new Date(date.check_in);
 
-                // Set the range as red dates
-                setRedDates(bookedDates); 
-            } else {
-                // Clear red dates if invalid
-                setRedDates([]); 
-            }
+               
+                if (isValid(checkOutDate) && isValid(checkInDate) && checkOutDate <= checkInDate) {
+                    // Accumulate booked dates in an array
+                    const bookedDatesInRange = eachDayOfInterval({ start: checkInDate, end: checkOutDate });
+                    bookedDates.push(...bookedDatesInRange); 
+                }
+            });
+
+            // Set the booked dates as red dates
+            setRedDates(bookedDates);
         } else {
             // Clear red dates if no vehicle data
-            setRedDates([]); 
+            setRedDates([]);
         }
-
     }, [startDate, endDate, vehicle]);
 
-
-    console.log("Vehicle: ", vehicle);
+    // console.log("Vehicle: ", vehicle);
 
     const handlePickupChange = (e) => {
         const value = e.target.value;
@@ -209,7 +218,6 @@ export default function CarBooking() {
             console.log(error);
         }
     };
-
 
     if (loading) {
         return <div>Loading...</div>;

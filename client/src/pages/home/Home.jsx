@@ -28,7 +28,12 @@ export default function Home() {
         async function fetchVehicles() {
             setLoading(true);
             try {
-                const response = await fetch('/api/vehicle');
+                const response = await fetch('/api/vehicle', {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
                 const result = await response.json();
                 setVehicles(result.vehicles);
                 setFilteredVehicles(result.vehicles);

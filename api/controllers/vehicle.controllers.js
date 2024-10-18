@@ -3,6 +3,7 @@ import { VehicleService } from "../services/vehicle.services.js";
 import { DataValidation } from "../utils/validations.utils.js";
 import path from "path";
 import fs from "fs";
+import { BookingService } from "../services/booking.services.js";
 
 // Add new vehicle to fleet
 export const addNewVehicleController = async (req, res) => {
@@ -154,7 +155,7 @@ export const addVehicleDetailsController = async (req, res) => {
 // Add vehicle features
 export const addVehicleFeaturesController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
-  const vehicleFeatures = req.body;  
+  const vehicleFeatures = req.body;
 
   // Access the userId and role from the req object
   const userId = req.user;
@@ -249,7 +250,6 @@ export const deleteVehicleController = async (req, res) => {
             .status(500)
             .json({ success: false, error: "Failed to delete vehicle files" });
         }
-       
       });
     }
 
@@ -376,7 +376,20 @@ export const getAllVehiclesController = async (req, res) => {
   try {
     const vehicles = await VehicleService.getAllVehicles();
 
-    return res.status(200).json({ success: true, vehicles });
+    // Use Promise.all to wait for all asynchronous operations to complete
+    const vehiclesWithBookingDates = await Promise.all(
+      vehicles.map(async (vehicle) => {
+        const dates = await BookingService.getBookingDates(vehicle.vehicle_id);
+        // Add the dates to the vehicle object
+        return { ...vehicle, dates };
+      })
+    );
+
+    console.log(vehiclesWithBookingDates);
+    
+    return res
+      .status(200)
+      .json({ success: true, vehicles: vehiclesWithBookingDates });
   } catch (error) {
     console.error("Failed to fetch all vehicles: ", error);
     return res
@@ -388,13 +401,17 @@ export const getAllVehiclesController = async (req, res) => {
 export const getVehicleByIdController = async (req, res) => {
   const vehicleId = parseInt(req.params.vehicleId);
   try {
-    const vehicles = await VehicleService.getAllVehicleInfoById(vehicleId);
+    const vehicle = await VehicleService.getAllVehicleInfoById(vehicleId);
 
-    return res.status(200).json({ success: true, vehicles });
+    const dates = await BookingService.getBookingDates(vehicleId);
+
+    vehicle.dates = dates;
+
+    return res.status(200).json({ success: true, vehicle });
   } catch (error) {
     console.error("Failed to fetch vehicle: ", error);
     return res
       .status(500)
       .json({ success: false, error: "Internal Server Error" });
   }
-}
+};

@@ -30,7 +30,7 @@ export default function Profile() {
       });
 
       const result = await response.json();
-      console.log(result);
+      // console.log(result);
 
       const data = result.profile;
       setProfile(data);
@@ -48,10 +48,10 @@ export default function Profile() {
     fetchProfile();
   }, [customerId]);
 
-  console.log("User Data: ", userData);
-  console.log("Current Bookings: ", currentBookings);
-  console.log("Booking History: ", bookingHistory);
-  console.log("Drivers License: ", driversLicense);
+  // console.log("User Data: ", userData);
+  // console.log("Current Bookings: ", currentBookings);
+  // console.log("Booking History: ", bookingHistory);
+  // console.log("Drivers License: ", driversLicense);
 
   // Handle modal open
   const handleModalOpen = () => {
@@ -95,7 +95,7 @@ export default function Profile() {
 
   // Handle profile update submit
   const handleUpdateProfile = async (data) => {
-    console.log("Data To Send: ", data);
+    // console.log("Data To Send: ", data);
 
     try {
       // Create a FormData object
@@ -131,7 +131,7 @@ export default function Profile() {
 
   // Handle drivers license update submit
   const handleDriversLicenseSubmit = async (formData) => {
-    console.log("Data to be sent: ", formData);
+    // console.log("Data to be sent: ", formData);
     try {
       const response = await fetch(
         `/api/profile/license/${formData.customerId}`,
@@ -355,7 +355,7 @@ const BookingHistory = ({ bookingHistory }) => {
 
   // Handle invoice generation
   const handleGenerateInvoice = async (bookingId) => {
-    console.log(bookingId);
+    // console.log(bookingId);
 
     try {
       const response = await fetch(`/api/invoice/generate/${bookingId}`, {
@@ -366,7 +366,7 @@ const BookingHistory = ({ bookingHistory }) => {
       });
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       if (!data.success) {
         toast.error(data.error);

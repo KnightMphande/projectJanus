@@ -100,13 +100,24 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
     }
   }
 
+  static async getBookingById(id) {
+    try {
+      const query = `SELECT * FROM bookings WHERE booking_id = $1;`;
+      const result = await client.query(query, [id]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error("Error fetching a single booking:", error);
+      throw error;
+    }
+  }
+
   static async getHistoryBookingById(id) {
     try {
       const query = `SELECT * FROM booking_history WHERE booking_id = $1;`;
       const result = await client.query(query, [id]);
       return result.rows[0] || null;
     } catch (error) {
-      console.error("Error fetching a single booking history:", error);
+      console.error("Error fetching a single booking:", error);
       throw error;
     }
   }
@@ -229,5 +240,21 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
       throw error;
     }
   }
+
+  // BookingService.js
+static async getBookingDates(vehicleId) {
+  try {
+    const query = `
+      SELECT check_out, check_in
+      FROM bookings
+      WHERE vehicle_id = $1
+    `;
+    const result = await client.query(query, [vehicleId]);
+    return result.rows; 
+  } catch (error) {
+    console.error("Error fetching booking dates:", error);
+    throw error;
+  }
+}
 
 }
