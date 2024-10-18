@@ -87,4 +87,8 @@ export class HelperFunc {
     return `${yyyy}-${mm}-${dd}`;
 
   }
+
+  static async removeTimeFromTimestamp(timestamp) {
+    return timestamp.split('T')[0];
+  }
 }

@@ -211,6 +211,8 @@ CREATE TABLE IF NOT EXISTS booking_history (
     pick_up_location VARCHAR(100) NOT NULL,
     drop_off_location VARCHAR(100) NOT NULL,
     status VARCHAR(20) NOT NULL CHECK (status IN ('completed', 'cancelled')), 
+    amount DECIMAL(10, 2) NOT NULL, 
+    total_days INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp for when the booking was completed
 );

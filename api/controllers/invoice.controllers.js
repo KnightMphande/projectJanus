@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
 import { InvoiceService } from "../services/invoice.services.js";
+import { HelperFunc } from "../utils/helper.utils.js";
 
 export const generateInvoiceController = async (req, res) => {
     // Access the userId and role from the req object
@@ -15,7 +16,7 @@ export const generateInvoiceController = async (req, res) => {
   
     try {
       // Fetch booking details
-      const booking = await BookingService.getBookingById(bookingId);
+      const booking = await BookingService.getHistoryBookingById(bookingId);
   
       if (!booking) {
         return res.status(404).json({ success: false, error: "Booking not found" });
@@ -46,8 +47,8 @@ export const generateInvoiceController = async (req, res) => {
   
       doc.text(`Booking ID: ${booking.booking_id}`);
       doc.text(`Vehicle ID: ${booking.vehicle_id}`);
-      doc.text(`Check-in: ${booking.check_in}`);
-      doc.text(`Check-out: ${booking.check_out}`);
+      doc.text(`Check-in: ${HelperFunc.removeTimeFromTimestamp(booking.check_in)}`);
+      doc.text(`Check-out: ${HelperFunc.removeTimeFromTimestamp(booking.check_out)}`);
       doc.text(`Amount: R${booking.amount}`);
   
       const finalTotal = additionalCharges ? booking.amount + additionalCharges : booking.amount;
@@ -67,7 +68,7 @@ export const generateInvoiceController = async (req, res) => {
   
       return res.status(201).json({
         success: true,
-        message: "Invoice generated successfully",
+        message: "Invoice successfully downloaded",
         invoicePath,
       });
     } catch (error) {

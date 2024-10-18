@@ -289,93 +289,8 @@ export default function Profile() {
   );
 }
 
-// Component for Booking History
-const BookingHistory = ({ bookingHistory }) => {
-  return (
-    <div className="my-8">
-      <h2 className="text-lg font-semibold">
-        {bookingHistory?.length === 0
-          ? "Booking history is empty"
-          : "Your Booking History"}
-      </h2>
-      <div className="my-8">
-        <ul className="space-y-4 mb-4">
-          {bookingHistory?.map((booking) => (
-            <li key={booking?.booking_id}>
-              <div className="flex justify-between items-start w-full p-5 text-gray-900 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100">
-                <div className="block">
-                  <div className="w-full text-lg font-semibold">
-                    {booking?.vehicleDetails?.make}{" "}
-                    {booking?.vehicleDetails?.model}
-                  </div>
-                  <div className="w-full text-gray-500">
-                    Year: {booking?.vehicleDetails?.year}
-                  </div>
-
-                  {/* Cancelled */}
-                  {
-                    booking?.status === "cancelled" && <div className="flex my-2 bg-red-500 p-[2px] rounded-lg text-white w-32">
-                      {booking?.status === "cancelled" && (
-                        <p className="mx-auto">{booking?.status}</p>
-                      )}
-                    </div>
-                  }
-
-                  {/* Completed */}
-                  {
-                    booking?.status === "completed" && <div className="flex my-2 bg-green-500 p-[2px] rounded-lg text-white w-32">
-                      {booking?.status === "completed" && (
-                        <p className="mx-auto">{booking?.status}</p>
-                      )}
-                    </div>
-                  }
-                </div>
-                <img
-                  className="w-28 h-20 rounded ml-4"
-                  src={`http://localhost:5000/image/${booking?.vehicle_id}/${booking?.vehicleDetails?.filename}`}
-                  alt={`${booking?.vehicleDetails?.make} ${booking?.vehicleDetails?.model}`}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
 // Component for Current Bookings
 const CurrentBookings = ({ currentBookings, cancelBooking }) => {
-
-// Handle invoice generation
-const handleGenerateInvoice = async (bookingId) => {
-  try {
-    const response = await fetch(`/api/invoice/generate/${bookingId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
-    const data = await response.json();
-    console.log(data);
-
-    if (data.success) {
-      // Construct the URL for the served invoice
-      const invoiceUrl = `${"http://localhost:5000"}/invoices/invoice_${bookingId}.pdf`;
-
-      // Open the URL in a new tab
-      window.open(invoiceUrl, "_blank");
-    }
-  } catch (error) {
-    console.error(error);
-    console.log("Failed to generate invoice");
-  }
-};
-
-
-
-
   return (
     <div className="my-8">
       <h2 className="text-lg font-semibold">Your Current Bookings</h2>
@@ -401,14 +316,8 @@ const handleGenerateInvoice = async (bookingId) => {
                     {" "}
                     Check In: {removeTimeFromTimestamp(booking?.check_in)}
                   </div>
-                  <div className="w-full text-gray-500">
-                    Invoice: {booking?.invoice}
-                  </div>
 
                   <div className="mt-2 flex">
-                    <button onClick={() => handleGenerateInvoice(booking?.booking_id)} className="mr-2 flex items-center rounded-full border border-green-600 bg-green-600 px-2 py-[3px] text-xs font-medium text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500">
-                      Invoice
-                    </button>
                     {(booking?.status === "confirmed" ||
                       booking?.status === "in-progress" ||
                       booking?.status === "cancelled") &&
@@ -440,6 +349,120 @@ const handleGenerateInvoice = async (bookingId) => {
     </div>
   );
 };
+
+// Component for Booking History
+const BookingHistory = ({ bookingHistory }) => {
+
+  // Handle invoice generation
+  const handleGenerateInvoice = async (bookingId) => {
+    console.log(bookingId);
+
+    try {
+      const response = await fetch(`/api/invoice/generate/${bookingId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (!data.success) {
+        toast.error(data.error);
+        return
+      }
+
+      if (data.success) {
+        // Construct the URL for the served invoice
+        const invoiceUrl = `${"http://localhost:5000"}/invoices/invoice_${bookingId}.pdf`;
+
+        toast.success(data.message);
+
+        // Open the URL in a new tab
+        window.open(invoiceUrl, "_blank");
+      }
+    } catch (error) {
+      console.error(error);
+      console.log("Failed to generate invoice");
+    }
+  };
+
+
+  return (
+    <div className="my-8">
+      <h2 className="text-lg font-semibold">
+        {bookingHistory?.length === 0
+          ? "Booking history is empty"
+          : "Your Booking History"}
+      </h2>
+      <div className="my-8">
+        <ul className="space-y-4 mb-4">
+          {bookingHistory?.map((booking) => (
+            <li key={booking?.booking_id}>
+              <div className="flex justify-between items-start w-full p-5 text-gray-900 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100">
+                <div className="block">
+                  <div className="w-full text-lg font-semibold">
+                    {booking?.vehicleDetails?.make}{" "}
+                    {booking?.vehicleDetails?.model}
+                  </div>
+                  <div className="w-full text-gray-500">
+                    Year: {booking?.vehicleDetails?.year}
+                  </div>
+
+                  <div className="w-full text-gray-500">
+                    {" "}
+                    Check Out: {removeTimeFromTimestamp(booking?.check_out)}
+                  </div>
+                  <div className="w-full text-gray-500">
+                    {" "}
+                    Check In: {removeTimeFromTimestamp(booking?.check_in)}
+                  </div>
+
+                  {
+                    booking?.status === "completed" && <button onClick={() => handleGenerateInvoice(booking?.booking_id)} className="flex my-2 bg-green-500 px-8 py-[1px] rounded-lg text-white hover:bg-green-700 focus:outline-none focus:ring">
+                      Download Invoice
+                    </button>
+                  }
+                </div>
+
+                <div className="flex flex-col justify-end">
+                  <img
+                    className="w-28 h-20 rounded"
+                    src={`http://localhost:5000/image/${booking?.vehicle_id}/${booking?.vehicleDetails?.filename}`}
+                    alt={`${booking?.vehicleDetails?.make} ${booking?.vehicleDetails?.model}`}
+                  />
+                  <div>
+                    {/* Cancelled */}
+                    {
+                      booking?.status === "cancelled" && <div className="text-red-500 font-medium text-base w-40">
+                        {booking?.status === "cancelled" && (
+                          <p className="mx-auto">{booking?.status}</p>
+                        )}
+                      </div>
+                    }
+
+                    {/* Completed */}
+                    {
+                      booking?.status === "completed" && <div className="mt-2 text-gray-500 font-medium text-sm w-32">
+                        {booking?.status === "completed" && (
+                          <p className="mx-auto">{booking?.status}</p>
+                        )}
+
+
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
 
 // Component for Driver's License
 const DriversLicense = ({

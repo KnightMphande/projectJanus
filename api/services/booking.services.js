@@ -100,13 +100,13 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
     }
   }
 
-  static async getBookingById(id) {
+  static async getHistoryBookingById(id) {
     try {
-      const query = `SELECT * FROM bookings WHERE booking_id = $1;`;
+      const query = `SELECT * FROM booking_history WHERE booking_id = $1;`;
       const result = await client.query(query, [id]);
       return result.rows[0] || null;
     } catch (error) {
-      console.error("Error fetching a single booking:", error);
+      console.error("Error fetching a single booking history:", error);
       throw error;
     }
   }
@@ -179,12 +179,14 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
         pick_up_location,
         drop_off_location,
         status,
+        amount,
+        total_days
       } = bookingData;
 
       const query = `
       INSERT INTO booking_history 
-      (customer_id, booking_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, status) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+      (customer_id, booking_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, status, amount, total_days) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
       RETURNING *;
     `;
 
@@ -201,6 +203,8 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
         pick_up_location,
         drop_off_location,
         status,
+        amount,
+        total_days
       ];
 
       const result = await client.query(query, values);
@@ -225,4 +229,5 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
       throw error;
     }
   }
+
 }
