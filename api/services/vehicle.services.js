@@ -250,7 +250,7 @@ export class VehicleService {
     try {
       // Destructure vehicle data
       const { price, status } = vehicleData;
-
+      
       // Start a new transaction
       await client.query("BEGIN");
 

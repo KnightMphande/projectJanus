@@ -1,9 +1,14 @@
 /** @type {import('tailwindcss').Config} */
+import typography from '@tailwindcss/typography';
+import scrollbar from 'tailwind-scrollbar';
+import forms from '@tailwindcss/forms';
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./node_modules/@rewind-ui/core/dist/theme/styles/*.js"],
   theme: {
     extend: {},
   },
+  /*
   plugins: [
     require('@tailwindcss/typography'),
     require('tailwind-scrollbar')({ nocompatible: true }),
@@ -11,5 +16,13 @@ export default {
       strategy: 'class' // only generate classes
     })
   ],
+  */
+  plugins: [
+    typography,
+    scrollbar({ nocompatible: true }),
+    forms({
+      strategy: 'class' // only generate classes
+    })
+  ]
   
 };

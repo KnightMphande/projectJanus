@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS vehicles (
     year INT NOT NULL CHECK (year >= 1886 AND year <= EXTRACT(YEAR FROM CURRENT_DATE)), 
     category VARCHAR(50) NOT NULL CHECK (LOWER(category) IN ('economy', 'luxury', 'suv', 'sedan')), 
     price DOUBLE PRECISION NOT NULL DEFAULT 450.00,
-    status VARCHAR(50) NOT NULL CHECK (LOWER(status) IN ('available', 'booked', 'maintenance', 'out of service')), 
+    status VARCHAR(50) NOT NULL CHECK (LOWER(status) IN ('available', 'booked', 'maintenance', 'out of service', 'rented')), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS maintenance (
 -- Invoices
 CREATE TABLE IF NOT EXISTS invoices (
     invoice_id SERIAL PRIMARY KEY,
-    booking_id INT REFERENCES bookings(booking_id) ON DELETE CASCADE, 
+    booking_id INT REFERENCES booking_history(booking_id) ON DELETE CASCADE, 
     customer_id INT REFERENCES customers(customer_id) ON DELETE CASCADE, 
     amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0), 
     additional_charges DECIMAL(10, 2) DEFAULT 0.00 CHECK (additional_charges >= 0), 

@@ -30,15 +30,12 @@ A single car rental service management system
 ### Environment Variables
 Create a `.env` file in the root of your project and configure the following environment variables:
 * PORT
-* POSTGRES_USER
+* POSTGRES_USERS
 * POSTGRES_HOST
 * POSTGRES_DATABASE
 * POSTGRES_PASS
 * PORT_DB
 * SECRET
-* NODEMAILER_USER
-* NODEMAILER_PASS
-
 
 ## Usage
 

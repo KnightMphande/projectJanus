@@ -282,9 +282,6 @@ export default function CarBooking() {
                         </h1>
                         <p className="mt-2 text-lg font-medium">Price: R{vehicle.price}/day</p>
                         <p className="mt-2 text-lg font-medium">Category: {vehicle.category}</p>
-                        <div className="mt-4 flex items-center justify-center bg-green-600 max-w-[200px] rounded-lg text-white font-medium">
-                            <p className="mx-auto">{vehicle.status}</p>
-                        </div>
 
                         {/* Calendar */}
                         <div className="mt-6 rounded-lg">
