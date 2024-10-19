@@ -47,8 +47,8 @@ export const generateInvoiceController = async (req, res) => {
   
       doc.text(`Booking ID: ${booking.booking_id}`);
       doc.text(`Vehicle ID: ${booking.vehicle_id}`);
-      doc.text(`Check-in: ${HelperFunc.removeTimeFromTimestamp(booking.check_in)}`);
-      doc.text(`Check-out: ${HelperFunc.removeTimeFromTimestamp(booking.check_out)}`);
+      doc.text(`Check-in: ${await HelperFunc.removeTimeFromTimestamp(booking.check_in)}`);
+      doc.text(`Check-out: ${await HelperFunc.removeTimeFromTimestamp(booking.check_out)}`);
       doc.text(`Amount: R${booking.amount}`);
   
       const finalTotal = additionalCharges ? booking.amount + additionalCharges : booking.amount;

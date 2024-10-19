@@ -1,7 +1,7 @@
 import React from "react";
-import styles from "./Notification.module.scss"; 
+import styles from "./Notification.module.scss";
 
-const NotificationDropdown = ({ closeNotification, notifications }) => {
+const NotificationDropdown = ({ closeNotification, notifications, markAsRead }) => {
     return (
         <div className={styles.dropdown}>
             <div className={styles.header}>
@@ -13,7 +13,11 @@ const NotificationDropdown = ({ closeNotification, notifications }) => {
                     <p className={styles.noNotifications}>No new notifications</p>
                 ) : (
                     notifications?.map((notification) => (
-                        <div key={notification.id} className={styles.notificationItem}>
+                        <div
+                            key={notification.id}
+                            className={`${styles.notificationItem} ${notification.is_read ? styles.read : ''}`}
+                            onClick={() => markAsRead(notification.notification_id)}
+                        >
                             <p className={styles.message}>{notification.message}</p>
                             <span className={styles.timestamp}>{notification.timestamp}</span>
                         </div>

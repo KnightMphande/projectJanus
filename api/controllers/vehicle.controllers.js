@@ -385,7 +385,7 @@ export const getAllVehiclesController = async (req, res) => {
       })
     );
 
-    console.log(vehiclesWithBookingDates);
+    // console.log(vehiclesWithBookingDates);
     
     return res
       .status(200)

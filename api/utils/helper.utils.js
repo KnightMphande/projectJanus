@@ -89,6 +89,14 @@ export class HelperFunc {
   }
 
   static async removeTimeFromTimestamp(timestamp) {
-    return timestamp.split('T')[0];
+    if (typeof timestamp === 'string') {
+      return timestamp.split('T')[0];
+    } else if (timestamp instanceof Date) {
+      return timestamp.toISOString().split('T')[0];
+    }
+    // Return null or handle cases where the timestamp is not a string or Date object
+    return null;
   }
+  
+  
 }

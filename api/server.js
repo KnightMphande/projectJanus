@@ -20,6 +20,7 @@ import maintenance_router from "./routes/maintenance.routes.js";
 import profile_router from "./routes/profile.routes.js";
 import reports_router from "./routes/reports.routes.js";
 import invoice_router from "./routes/invoice.routes.js";
+import notification_router from "./routes/notifications.routes.js";
 
 //Create app
 const app = express();
@@ -165,3 +166,4 @@ app.use('/api/maintenance', maintenance_router);
 app.use('/api/profile', profile_router);
 app.use('/api/reports', reports_router);
 app.use('/api/invoice', invoice_router);
+app.use('/api/notifications', notification_router);

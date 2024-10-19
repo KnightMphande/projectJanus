@@ -218,6 +218,18 @@ CREATE TABLE IF NOT EXISTS booking_history (
 );
 
 
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL REFERENCES customers(customer_id) ON DELETE CASCADE,
+    booking_id INT NOT NULL REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 -- Update Triggers
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

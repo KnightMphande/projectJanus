@@ -17,19 +17,66 @@ export default function Header() {
     const role = currentUser?.role;
     const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;
 
-    const notifications = [
-        { id: 1, message: "New message from John", timestamp: "2024-10-18 10:00 AM" },
-        { id: 2, message: "Your profile was updated", timestamp: "2024-10-17 09:30 AM" },
-    ];
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState("");
     const [showNotificationDropdown, setNotificationDropdown] = useState(false);
-    
-    const dropdownRef = useRef(null);
+    const [notifications, setNotifications] = useState([]);
+
+    const loadNotifications = async () => {
+        try {
+            const response = await fetch(`/api/notifications/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            console.log(data);
+            
+            setNotifications(data?.notifications);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Fetch notifications when the component mounts
+    useEffect(() => {
+        loadNotifications();
+    }, [userId]);
+
+    // Function to mark a notification as read
+    const markAsRead = async (notificationId) => {
+        try {
+            const response = await fetch(`/api/notifications/${notificationId}/read`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                // Update the local state to mark the notification as read
+                setNotifications((prevNotifications) =>
+                    prevNotifications.map((notification) =>
+                        notification.id === notificationId
+                            ? { ...notification, is_read: true }
+                            : notification
+                    )
+                );
+
+                loadNotifications();
+            } else {
+                console.error('Failed to mark notification as read');
+            }
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    };
 
     const handleModalOpen = (type) => {
         setIsModalOpen(true);
@@ -125,7 +172,7 @@ export default function Header() {
                                         <MdNotifications className="h-7 w-7 text-gray-700" />
                                     </div>
                                     {
-                                        (notifications?.length > 0 ) && (<span className="absolute -top-1 -right-[8px] bg-red-600 p-[3px] px-2 rounded-full text-xs text-white font-medium">{notifications?.length}</span>)
+                                        (notifications?.length > 0) && (<span className="absolute -top-1 -right-[8px] bg-red-600 p-[3px] px-2 rounded-full text-xs text-white font-medium">{notifications?.length}</span>)
                                     }
                                 </div>
                             )
@@ -159,7 +206,7 @@ export default function Header() {
                 {/* Notification dropdown */}
                 {showNotificationDropdown && (
                     <div>
-                        <NotificationDropdown closeNotification={closeNotification} notifications={notifications} />
+                        <NotificationDropdown closeNotification={closeNotification} notifications={notifications} markAsRead={markAsRead} />
                     </div>
                 )}
             </nav>

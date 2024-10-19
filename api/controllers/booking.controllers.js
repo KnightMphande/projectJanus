@@ -1,4 +1,5 @@
 import { BookingService } from "../services/booking.services.js";
+import { NotificationService } from "../services/notifications.services.js";
 import { VehicleService } from "../services/vehicle.services.js";
 import { HelperFunc } from "../utils/helper.utils.js";
 
@@ -91,6 +92,7 @@ export const deleteBookingController = async (req, res) => {
 
   const bookingId = parseInt(req.params.bookingId);
 
+
   try {
     if (role === "admin") {
       return res
@@ -138,6 +140,7 @@ export const updateBookingController = async (req, res) => {
   const bookingData = req.body;
 
   // console.log("Booking Data on the Controller: ", bookingData);
+  const notificationService = new NotificationService();
 
   try {
     if (role === "customer") {
@@ -195,6 +198,17 @@ export const updateBookingController = async (req, res) => {
         bookingId,
         bookingData
       );
+
+      const vehicle = await VehicleService.getVehicleById(updatedBooking.vehicle_id);
+
+      updatedBooking.vehicle = vehicle;
+
+      // Push notification
+      if(bookingData.status === "completed") await notificationService.notifyBookingCompleted(updatedBooking);
+      
+      if(bookingData.status === "confirmed") await notificationService.notifyBookingConfirmed(updatedBooking);
+
+      if(bookingData.status === "rented") await notificationService.notifyStatusChange(updatedBooking);
 
       const updatedStatus = updatedBooking.status;
 
