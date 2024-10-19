@@ -78,6 +78,8 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
             b.vehicle_id,
             b.check_out,
             b.check_in,
+            b.amount,
+            b.total_days,
             b.pick_up_location,
             b.drop_off_location,
             b.status,

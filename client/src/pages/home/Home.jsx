@@ -157,22 +157,6 @@ export default function Home() {
                                     </select>
                                 </div>
 
-                                {/* Number of Seats */}
-                                <div className="mt-4">
-                                    <label className="text-sm font-medium text-gray-700">Number of Seats</label>
-                                    <select
-                                        className="mt-2 h-10 border border-gray-300 text-gray-700 text-xs font-medium rounded-md w-full px-3 py-1 bg-white"
-                                        value={seats}
-                                        onChange={(e) => setSeats(e.target.value)}
-                                    >
-                                        <option value="Any">Any</option>
-                                        <option value="2">2</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="7">7</option>
-                                    </select>
-                                </div>
-
                                 {/* Clear Filters Button */}
                                 <div className="flex justify-end mt-4">
                                     <button

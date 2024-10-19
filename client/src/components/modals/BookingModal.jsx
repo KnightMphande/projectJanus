@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { MdClose } from 'react-icons/md'; 
+import { MdClose } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { removeTimeFromTimestamp } from '../../utils/Helper';
 
 const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
   const [selectedStatus, setSelectedStatus] = useState(booking?.status || '');
+  const [additionalCharges, setAdditionalCharges] = useState(null);
+  const [showAdddtionalChargesInput, setShowAdditionalChargesInput] = useState(false);
+  const [pricingData, setPricingData] = useState({
+    typeOfFee: "",
+    price: ""
+  })
+  console.log("Booking Data: ", booking);
+
 
   // Handle change 
   const handleStatusChange = (event) => {
@@ -19,9 +27,23 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
       return;
     }
 
-    onUpdate(booking, selectedStatus); 
-    onClose(); 
+    onUpdate(booking, selectedStatus);
+    onClose();
   };
+
+  // Handle change for additional price
+  const handleCheckbox = () => {
+    setShowAdditionalChargesInput(!showAdddtionalChargesInput);
+  }
+
+  // Handle pricing change
+  const handlePricingChange = (event) => {
+    const { name, value } = event.target;
+    setPricingData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  }
 
   // Return null if the modal is not open
   if (!isOpen) return null;
@@ -65,7 +87,44 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
               <p><strong>CheckOut:</strong> {removeTimeFromTimestamp(booking.check_out)}</p>
               <p><strong>PickUp Location:</strong> {booking.pick_up_location}</p>
               <p><strong>DropOff Location:</strong> {booking.drop_off_location}</p>
+              <p><strong>Amount:</strong> {booking.amount}</p>
+              <p><strong>Days:</strong> {booking.total_days}</p>
             </div>
+
+            {/* Ask admin whether the want to check the car */}
+            <div className="grid gap-4 grid-cols-1 mt-4">
+              <label>
+                <input onChange={handleCheckbox} value={additionalCharges} checked={showAdddtionalChargesInput} type="checkbox" /> Charge additional price
+              </label>
+            </div>
+
+            {/* Additional price */}
+            {
+              showAdddtionalChargesInput && (<div className="grid gap-4 grid-cols-2 mt-4">
+                <select
+                  name="typeOfFee"
+                  className="formInput"
+                  value={pricingData.typeOfFee}
+                  onChange={handlePricingChange}
+                >
+                  <option value="">Select type for fee</option>
+                  <option value="Car Scratches">Car Scratches</option>
+                  <option value="Late Fees">Late Fees</option>
+                  <option value="Paint Damage">Paint Damage</option>
+                  <option value="Damaged Bumpers">Damaged Bumpers</option>
+                  <option value="Cracked Windshield">Cracked Windshield</option>
+                </select>
+
+                <input
+                  type="text"
+                  name="price"
+                  placeholder="Price"
+                  onChange={handlePricingChange}
+                  value={pricingData.price}
+                  className="formInput"
+                />
+              </div>)
+            }
 
             {/* Status Dropdown */}
             <div className="mt-6">

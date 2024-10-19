@@ -16,6 +16,7 @@ export default function Header() {
     const { currentUser } = useSelector((state) => state.user);
     const role = currentUser?.role;
     const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;
+    const logoUrl = currentUser?.logo_url;
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ export default function Header() {
 
             const data = await response.json();
 
-            console.log(data);
+            // console.log(data);
             
             setNotifications(data?.notifications);
         } catch (error) {
@@ -122,6 +123,12 @@ export default function Header() {
         setNotificationDropdown(!showNotificationDropdown);
     }
 
+    // Logo Url
+    const urlLogo =
+    currentUser?.logo_url === null
+      ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdIVSqaMsmZyDbr9mDPk06Nss404fosHjLg&s"
+      : `http://localhost:5000/profile/${userId}/${logoUrl}`;
+
     return (
         <header className={styles.header}>
             <nav className={styles.nav}>
@@ -165,8 +172,9 @@ export default function Header() {
                             )
                         }
 
+                        {/* Notifications */}
                         {
-                            currentUser && (
+                            (currentUser && currentUser.role !== "admin") && (
                                 <div className="relative" onClick={handleNotificationClick}>
                                     <div className="flex justify-center items-center p-[6px] bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-full">
                                         <MdNotifications className="h-7 w-7 text-gray-700" />
@@ -189,7 +197,7 @@ export default function Header() {
                         {
                             currentUser && currentUser.role !== "admin" && (
                                 <div onClick={() => navigate(`/profile/${userId}`)} className="cursor-pointer">
-                                    <img className='w-10 h-10 rounded-full' src='https://pagedone.io/asset/uploads/1704275541.png' alt='Large avatar' />
+                                    <img className='w-10 h-10 rounded-full border-2 border-green-600' src={urlLogo} alt='avatar' />
                                 </div>
                             )
                         }
