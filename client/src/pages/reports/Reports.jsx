@@ -164,6 +164,34 @@ export default function Reports() {
         ],
     };
 
+      // Usage Statistics Pie Chart Data
+  const optionsUsagePie = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Vehicle Usage Statistics',
+      },
+    },
+  };
+
+  const usageLabels = usageStats.map(stat => `${stat.make} ${stat.model}`);
+  const usagePieData = {
+    labels: usageLabels,
+    datasets: [
+      {
+        label: 'Times Rented',
+        data: usageStats.map(stat => parseInt(stat.times_rented)),
+        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 206, 86, 0.2)'],
+        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)'],
+        borderWidth: 1,
+      },
+    ],
+  };
+
     return (
         <div className={styles.dashboard}>
             <Sidebar open={openSidebar} />
@@ -183,7 +211,7 @@ export default function Reports() {
                         </div>
 
                         {/* Customer Activity Reports */}
-                        <div className="h-32 rounded-lg bg-gray-200 p-4">
+                        <div className="rounded-lg border border-gray-800 p-4">
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-900">Customer Activity Reports</h2>
 
@@ -192,11 +220,11 @@ export default function Reports() {
                         </div>
 
                         {/* Usage Statistics */}
-                        <div className="h-32 rounded-lg bg-gray-200 p-4">
+                        <div className="rounded-lg border border-gray-800 p-4">
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-900">Usage Statistics</h2>
 
-                                
+                                <PieGraph optionsPie={optionsUsagePie} data={usagePieData} />
                             </div>
                         </div>
                     </div>
