@@ -68,9 +68,10 @@ export default function AdminBookings() {
   };
 
   // Handle booking update logic
-  const handleBookingUpdate = async (booking, newStatus) => {
+  const handleBookingUpdate = async (booking, newStatus, additionalCharges) => {
+    
     try {
-      const updatedBooking = { ...booking, status: newStatus };
+      const updatedBooking = { ...booking, status: newStatus, additionalCharges };
 
       const response = await fetch(
         `/api/booking/${booking.booking_id}/update?status=${newStatus}`,

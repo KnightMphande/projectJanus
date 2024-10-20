@@ -31,15 +31,17 @@ dotenv.config();
 //Other const vars
 const port = process.env.PORT;
 
+const corsOptions = {
+  origin: ["http://localhost:3000/", "http://localhost:8080/"], 
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+  //    methods: ["GET", "POST", "PATCH", "PUT", "OPTIONS", "HEAD"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false,
+}
+
 //Application Level Middlewares
 app.use(
-  cors({
-    origin: ["http://localhost:3000/", "http://localhost:8080/"], //allow connection from these endpoints
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
-    //    methods: ["GET", "POST", "PATCH", "PUT", "OPTIONS", "HEAD"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: false,
-  })
+  cors()
 );
 
 app.use(express.json());

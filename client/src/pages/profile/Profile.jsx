@@ -7,6 +7,8 @@ import { MdPreview } from "react-icons/md";
 import { toast } from "react-toastify";
 import UpdateProfileModal from "../../components/modals/updateProfile";
 import { removeTimeFromTimestamp } from "../../utils/Helper";
+import { useDispatch } from "react-redux";
+import { updateUserSuccess } from "../../redux/user/userSlice";
 
 export default function Profile() {
   const { customerId } = useParams();
@@ -19,6 +21,8 @@ export default function Profile() {
   const [vehicleDetails, setVehicleDetails] = useState({});
   const [driversLicense, setDriversLicense] = useState({});
   const [invoicePath, setInvoicePath] = useState('');
+
+  const dispatch = useDispatch();
 
   async function fetchProfile() {
     try {
@@ -38,6 +42,10 @@ export default function Profile() {
       setCurrentBookings(data.currentBookings);
       setBookingHistory(data.bookingHistory);
       setDriversLicense(data.driversLicense);
+
+      // Dispatch to store
+      dispatch(updateUserSuccess(data.user));
+      
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
@@ -353,40 +361,47 @@ const CurrentBookings = ({ currentBookings, cancelBooking }) => {
 // Component for Booking History
 const BookingHistory = ({ bookingHistory }) => {
 
-  // Handle invoice generation
-  const handleGenerateInvoice = async (bookingId) => {
-    // console.log(bookingId);
-
+  const handleDownloadInvoice = async (bookingId) => {
     try {
-      const response = await fetch(`/api/invoice/generate/${bookingId}`, {
-        method: "POST",
+      const response = await fetch(`/api/invoice/${bookingId}`, {
+        method: "GET", // Use GET since we are retrieving an invoice
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/pdf",
+        },
       });
-
-      const data = await response.json();
-      // console.log(data);
-
-      if (!data.success) {
-        toast.error(data.error);
-        return
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(errorData.error || "Failed to download invoice");
+        return;
       }
-
-      if (data.success) {
-        // Construct the URL for the served invoice
-        const invoiceUrl = `${"http://localhost:5000"}/invoices/invoice_${bookingId}.pdf`;
-
-        toast.success(data.message);
-
-        // Open the URL in a new tab
-        window.open(invoiceUrl, "_blank");
-      }
+  
+      // Create a Blob from the PDF stream
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create a link element to trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoice_${bookingId}.pdf`); // Set the filename
+  
+      // Append the link to the body (needed for Firefox)
+      document.body.appendChild(link);
+      
+      // Trigger the download
+      link.click();
+  
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Invoice downloaded successfully!");
     } catch (error) {
       console.error(error);
-      console.log("Failed to generate invoice");
+      toast.error("Failed to generate invoice");
     }
   };
+  
 
 
   return (
@@ -420,7 +435,7 @@ const BookingHistory = ({ bookingHistory }) => {
                   </div>
 
                   {
-                    booking?.status === "completed" && <button onClick={() => handleGenerateInvoice(booking?.booking_id)} className="flex my-2 bg-green-500 px-8 py-[1px] rounded-lg text-white hover:bg-green-700 focus:outline-none focus:ring">
+                    booking?.status === "completed" && <button onClick={() =>  handleDownloadInvoice(booking?.booking_id)} className="flex my-2 bg-green-500 px-8 py-[1px] rounded-lg text-white hover:bg-green-700 focus:outline-none focus:ring">
                       Download Invoice
                     </button>
                   }

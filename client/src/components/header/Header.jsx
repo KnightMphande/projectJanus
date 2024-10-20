@@ -18,6 +18,9 @@ export default function Header() {
     const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;
     const logoUrl = currentUser?.logo_url;
 
+    console.log(currentUser);
+    
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 

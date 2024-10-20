@@ -194,6 +194,7 @@ CREATE TABLE IF NOT EXISTS invoices (
     booking_id INT REFERENCES booking_history(booking_id) ON DELETE CASCADE, 
     customer_id INT REFERENCES customers(customer_id) ON DELETE CASCADE, 
     amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0), 
+    type_of_fee VARCHAR(45),
     additional_charges DECIMAL(10, 2) DEFAULT 0.00 CHECK (additional_charges >= 0), 
     total_amount DECIMAL(10, 2) GENERATED ALWAYS AS (amount + additional_charges) STORED, -- Automatically calculated total
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

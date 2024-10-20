@@ -84,7 +84,7 @@ export const registerCustomerController = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
-  const userDetails = req.body;
+  const userDetails = req.body;  
 
   try {
     // Check missing information

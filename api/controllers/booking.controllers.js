@@ -2,6 +2,7 @@ import { BookingService } from "../services/booking.services.js";
 import { NotificationService } from "../services/notifications.services.js";
 import { VehicleService } from "../services/vehicle.services.js";
 import { HelperFunc } from "../utils/helper.utils.js";
+import { generateInvoice } from "./invoice.controllers.js";
 
 export const createBookingController = async (req, res) => {
   const bookingData = req.body;
@@ -138,6 +139,7 @@ export const updateBookingController = async (req, res) => {
   const bookingId = parseInt(req.params.bookingId);
   const status = req.query.status;
   const bookingData = req.body;
+  
 
   // console.log("Booking Data on the Controller: ", bookingData);
   const notificationService = new NotificationService();
@@ -245,6 +247,16 @@ export const updateBookingController = async (req, res) => {
               bookingId,
               deletedBooking
             );
+
+
+            console.log(bookingData);
+            
+
+          // Generate invoice
+          const invoicePath = await generateInvoice(movedToHistoryBooking.booking_id, bookingData.customer_id, bookingData.additionalCharges);
+
+          console.log(invoicePath);
+          
 
           if (movedToHistoryBooking) {
             return res.status(200).json({

@@ -32,11 +32,14 @@ export class InvoiceService {
 
   // Function to save a new invoice
   static async saveInvoice(bookingId, userId, amount, additionalCharges) {
+
+    console.log("Service Data: ", bookingId, userId, amount, additionalCharges);
+    
     const query = `
-      INSERT INTO invoices (booking_id, customer_id, amount, additional_charges)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO invoices (booking_id, customer_id, amount, type_of_fee, additional_charges)
+      VALUES ($1, $2, $3, $4, $5)
     `;
-    const values = [bookingId, userId, amount, additionalCharges];
+    const values = [bookingId, userId, amount, additionalCharges.typeOfFee, additionalCharges.price || 0];
 
     try {
       await client.query(query, values);

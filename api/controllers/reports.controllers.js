@@ -53,3 +53,25 @@ export const getCalculationsController = async (req, res) => {
       .json({ success: false, error: "Internal Server Error" });
   }
 }
+
+// Controller to get customer activity reports
+export const getCustomerActivityReportsController = async (req, res) => {
+  console.log("Reached");
+  
+  try {
+      const reports = await ReportsService.getCustomerActivityReports();
+      return res.status(200).json({ success: true, reports });
+  } catch (error) {
+      return res.status(500).json({ success: false, error : 'Error retrieving customer activity reports'});
+  }
+};
+
+// Controller to get usage statistics
+export const getUsageStatisticsController = async (req, res) => {
+  try {
+      const stats = await ReportsService.getUsageStatistics();
+      return res.status(200).json({ success: true, stats });
+  } catch (error) {
+      return res.status(500).json({ success: false, error: 'Error retrieving usage statistics' });
+  }
+};

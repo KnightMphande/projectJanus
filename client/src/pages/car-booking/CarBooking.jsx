@@ -85,14 +85,13 @@ export default function CarBooking() {
 
     useEffect(() => {
         if (startDate && endDate && isValid(startDate) && isValid(endDate)) {
-
-            // +1 to include the start day
-            const days = differenceInDays(endDate, startDate) + 1;
+            // Calculate the number of days, allowing for a one-day booking
+            const days = differenceInDays(endDate, startDate);
             setTotalDays(days);
-
+    
             // Calculate amount based on days and vehicle price
             setAmount(days * vehicle.price);
-
+    
             // Highlight the range of selected dates in green
             const greenDates = eachDayOfInterval({ start: startDate, end: endDate });
             setGreenDates(greenDates);
@@ -101,31 +100,25 @@ export default function CarBooking() {
             setAmount(0);
             setGreenDates([]);
         }
-
+    
         // Mark booked dates as red
         if (vehicle) {
             const bookedDates = [];
-
-            // Loop through each booking date
             vehicle?.dates?.forEach((date) => {
                 const checkOutDate = new Date(date.check_out);
                 const checkInDate = new Date(date.check_in);
-
-               
+    
                 if (isValid(checkOutDate) && isValid(checkInDate) && checkOutDate <= checkInDate) {
-                    // Accumulate booked dates in an array
                     const bookedDatesInRange = eachDayOfInterval({ start: checkInDate, end: checkOutDate });
-                    bookedDates.push(...bookedDatesInRange); 
+                    bookedDates.push(...bookedDatesInRange);
                 }
             });
-
-            // Set the booked dates as red dates
             setRedDates(bookedDates);
         } else {
-            // Clear red dates if no vehicle data
             setRedDates([]);
         }
     }, [startDate, endDate, vehicle]);
+    
 
     // console.log("Vehicle: ", vehicle);
 
@@ -229,30 +222,28 @@ export default function CarBooking() {
 
     const handleDateSelection = (date) => {
         if (selectingStart) {
-            // Add 1 day to the selected start date
-            const adjustedStartDate = new Date(date);
-            adjustedStartDate.setDate(adjustedStartDate.getDate() + 1);
-
-            setStartDate(setToMidnightUTC(adjustedStartDate));
-
+            // Set the start date to midnight UTC and add one day
+            const newStartDate = setToMidnightUTC(date);
+            setStartDate(new Date(newStartDate.setDate(newStartDate.getDate() + 1)));
+            
             // Reset end date when selecting a new start date
             setEndDate(null);
-
+            
             // Switch to selecting end date
             setSelectingStart(false);
         } else {
+            // Allow booking for the same day
             if (date >= startDate) {
-                // Add 1 day to the selected end date
-                const adjustedEndDate = new Date(date);
-                adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
-
-                setEndDate(setToMidnightUTC(adjustedEndDate));
+                const newEndDate = setToMidnightUTC(date);
+                setEndDate(new Date(newEndDate.setDate(newEndDate.getDate() + 1)));
             }
-
+            
             // Switch back to selecting start date
             setSelectingStart(true);
         }
     };
+    
+    
 
     return (
         <>
@@ -354,10 +345,10 @@ export default function CarBooking() {
 
                             <div className="mt-4 rounded-lg bg-slate-300 max-h-44 p-4 font-medium space-y-1 text-gray-800">
                                 <div className="flex flex-col justify-center items-start">
-                                    <p>Check-out Date: {startDate && isValid(startDate) ? format(startDate, 'dd/MM/yyyy') : 'Not selected'}</p>
-                                    <p>Check-in Date: {endDate && isValid(endDate) ? format(endDate, 'dd/MM/yyyy') : 'Not selected'}</p>
-                                    <p>Number of Days: {totalDays}</p>
-                                    <p>Amount: R{amount}</p>
+                                     <p>Check-out Date: {startDate && isValid(startDate) ? format(startDate, 'dd/MM/yyyy') : 'Not selected'}</p>
+        <p>Check-in Date: {endDate && isValid(endDate) ? format(endDate, 'dd/MM/yyyy') : 'Not selected'}</p>
+        <p>Total Days: {totalDays === 1 ? '1 day (single day booking)' : `${totalDays} days`}</p>
+        <p>Total Amount: R{amount}</p>
                                     <button
                                         type="submit"
                                         onClick={handleSubmit}
