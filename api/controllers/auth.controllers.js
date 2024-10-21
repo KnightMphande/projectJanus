@@ -4,6 +4,7 @@ import { HelperFunc } from "../utils/helper.utils.js";
 import { DataValidation } from "../utils/validations.utils.js";
 import jwt from "jsonwebtoken";
 
+// Signup controller
 export const registerCustomerController = async (req, res) => {
   const customerDetails = req.body;
 
@@ -83,6 +84,7 @@ export const registerCustomerController = async (req, res) => {
   }
 };
 
+// Signin controller
 export const loginController = async (req, res) => {
   const userDetails = req.body;  
 
@@ -193,6 +195,7 @@ export const loginController = async (req, res) => {
   }
 };
 
+// Logout controller
 export const logoutController = async (req, res) => {
   try {
     return res.clearCookie('access_token').status(200).json({ success: true, message: "Successsfully logged out" });
