@@ -15,10 +15,10 @@ import NotificationDropdown from "../notification/NotificationDropdown";
 export default function Header() {
     const { currentUser } = useSelector((state) => state.user);
     const role = currentUser?.role;
-    const userId = role === "admin" ? currentUser?.staff_id : currentUser?.customer_id;
+    const userId = role === "admin" || role === "employee" ? currentUser?.staff_id : currentUser?.customer_id;
     const logoUrl = currentUser?.logo_url;
 
-    console.log(currentUser);
+    // console.log(currentUser);
     
 
     const dispatch = useDispatch();
@@ -50,7 +50,11 @@ export default function Header() {
 
     // Fetch notifications when the component mounts
     useEffect(() => {
-        loadNotifications();
+        if(currentUser?.role !== "customer") {
+            return
+        } else {
+            loadNotifications();
+        }
     }, [userId]);
 
     // Function to mark a notification as read
@@ -177,7 +181,7 @@ export default function Header() {
 
                         {/* Notifications */}
                         {
-                            (currentUser && currentUser.role !== "admin") && (
+                            (currentUser && currentUser.role === "customer") && (
                                 <div className="relative" onClick={handleNotificationClick}>
                                     <div className="flex justify-center items-center p-[6px] bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-full">
                                         <MdNotifications className="h-7 w-7 text-gray-700" />
@@ -190,7 +194,7 @@ export default function Header() {
                         }
 
                         {
-                            currentUser && currentUser.role === "admin" && (
+                            currentUser && (currentUser?.role === "admin" || currentUser?.role === "employee") && (
                                 <NavLink to="/dashboard" className={styles.accountLink}>
                                     <span className="text-sm font-medium">Admin</span>
                                 </NavLink>

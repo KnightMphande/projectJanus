@@ -1,13 +1,23 @@
 import { AdminService } from "../services/admin.services.js";
+import { HelperFunc } from "../utils/helper.utils.js";
 
 // Create employee
 export const createEmployeeController = async (req, res) => {
     try {
-        const { names, phone, email, password, role } = req.body;
-        const newEmployee = await AdminService.createEmployee(names, phone, email, password, role);
+        const { names, phone, email } = req.body;
+
+        console.log(req.body);
+        
+
+        const password = "Employee@123";
+        const hashedPassword = await HelperFunc.hashFunc(password);
+
+        const role = "employee";
+
+        const newEmployee = await AdminService.createEmployee(names, phone, email, hashedPassword, role);
         return res.status(201).json({ success: true, message: "Employee successfully added", newEmployee });
     } catch (error) {
-      console.error("Failed to create n employee: ", error);
+      console.error("Failed to create an employee: ", error);
   
       return res
         .status(500)

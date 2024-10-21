@@ -1,9 +1,11 @@
+import client from "../configs/db.configs.js";
+
 export class AdminService {
      // Create an employee
-  static  async createEmployee({ names, phone, email, password, role }) {
+  static  async createEmployee( names, phone, email, password, role ) {
     try {
         const query = `
-            INSERT INTO staff (names, phone, email, password, role, logo_url)
+            INSERT INTO staff (names, phone, email, password, role)
             VALUES ($1, $2, $3, $4, $5) 
             RETURNING *;
         `;
@@ -19,7 +21,7 @@ export class AdminService {
 // Get all employees
 static async getAllEmployees() {
     try {
-        const query = `SELECT * FROM staff;`;
+        const query = `SELECT * FROM staff WHERE role = 'employee';`;
         const result = await client.query(query);
         return result.rows;
     } catch (error) {

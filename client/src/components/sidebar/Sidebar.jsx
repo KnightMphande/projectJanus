@@ -7,10 +7,17 @@ import { BsCartPlusFill } from "react-icons/bs";
 import { IoSettings } from "react-icons/io5";
 import { SiGoogleanalytics } from "react-icons/si";
 import styles from "./Sidebar.module.scss";
+import { FaUserFriends } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export default function Sidebar({ open }) {
+    const { currentUser } = useSelector((state) => state.user);
+    const role = currentUser?.role;
+    const userId = role === "admin" || role === "employee" ? currentUser?.staff_id : currentUser?.customer_id;
+    const logoUrl = currentUser?.logo_url;
+
     return (
-        <div className={`${ open ? styles.sidebar : "hidden"}`}>
+        <div className={`${open ? styles.sidebar : "hidden"}`}>
             <div className={styles.logo}>
                 <FaCarAlt className="w-5 h-5" />
                 <NavLink>
@@ -24,6 +31,15 @@ export default function Sidebar({ open }) {
                     <MdDashboard className="w-5 h-5" />
                     Dashboard
                 </NavLink>
+
+                {/* Dashboard */}
+                {
+                    role === "admin" && (
+                        <NavLink to="/employees" className={styles.sidebarItem}>
+                            <FaUserFriends className="w-5 h-5" />
+                            Employees
+                        </NavLink>)
+                }
 
                 {/* Fleet */}
                 <NavLink to="/fleet" className={styles.sidebarItem}>
