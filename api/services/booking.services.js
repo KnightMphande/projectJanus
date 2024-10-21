@@ -193,13 +193,14 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
         drop_off_location,
         status,
         amount,
-        total_days
+        total_days,
+        damaged_image_url
       } = bookingData;
 
       const query = `
       INSERT INTO booking_history 
-      (customer_id, booking_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, status, amount, total_days) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      (customer_id, booking_id, vehicle_id, check_out, check_in, pick_up_location, drop_off_location, status, amount, total_days, damaged_image_url) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
       RETURNING *;
     `;
 
@@ -217,7 +218,8 @@ resettedCheckin.setDate(resettedCheckin.getDate() + 1);
         drop_off_location,
         status,
         amount,
-        total_days
+        total_days,
+        damaged_image_url
       ];
 
       const result = await client.query(query, values);

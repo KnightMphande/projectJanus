@@ -196,13 +196,17 @@ export default function Header() {
                         {
                             currentUser && (currentUser?.role === "admin" || currentUser?.role === "employee") && (
                                 <NavLink to="/dashboard" className={styles.accountLink}>
-                                    <span className="text-sm font-medium">Admin</span>
+                                    <span className="text-sm font-medium">
+                                        {
+                                            role === "admin" ? "Admin" : "Employee"
+                                        }
+                                    </span>
                                 </NavLink>
                             )
                         }
 
                         {
-                            currentUser && currentUser.role !== "admin" && (
+                            role === "customer" && (
                                 <div onClick={() => navigate(`/profile/${userId}`)} className="cursor-pointer">
                                     <img className='w-10 h-10 rounded-full border-2 border-green-600' src={urlLogo} alt='avatar' />
                                 </div>

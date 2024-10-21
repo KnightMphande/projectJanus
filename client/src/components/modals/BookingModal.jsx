@@ -8,11 +8,6 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
   const [showAdditionalChargesInput, setShowAdditionalChargesInput] = useState(false);
   const [pricingData, setPricingData] = useState({ typeOfFee: '', price: '' });
 
-  // Update selectedStatus when booking changes
-  useEffect(() => {
-    setSelectedStatus(booking?.status || '');
-  }, [booking]);
-
   // Handle status change
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -29,6 +24,8 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
 
     // Pass pricing data only if additional charges are being applied
     const additionalCharges = showAdditionalChargesInput ? pricingData : null;
+    // console.log("Updated status: ", selectedStatus);
+    
 
     onUpdate(booking, selectedStatus, additionalCharges);
     onClose();
@@ -102,6 +99,7 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
                   className="formInput"
                   value={pricingData.typeOfFee}
                   onChange={handlePricingChange}
+                  multiple
                 >
                   <option value="">Select type for fee</option>
                   <option value="Car Scratches">Car Scratches</option>
@@ -126,6 +124,7 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
               </label>
               <select
                 id="status"
+                name="status"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 value={selectedStatus}
                 onChange={handleStatusChange}

@@ -201,6 +201,7 @@ CREATE TABLE IF NOT EXISTS booking_history (
     status VARCHAR(20) NOT NULL CHECK (status IN ('completed', 'cancelled')), 
     amount DECIMAL(10, 2) NOT NULL, 
     total_days INT NOT NULL,
+    damaged_image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp for when the booking was completed
 );

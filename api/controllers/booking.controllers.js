@@ -12,10 +12,10 @@ export const createBookingController = async (req, res) => {
   const role = req.role;
 
   try {
-    if (role === "admin") {
+    if (role === "admin" || role === "employee") {
       return res
         .status(400)
-        .json({ success: false, error: "Admin cannot book a car" });
+        .json({ success: false, error: "Staff cannot book a car" });
     }
 
     bookingData.customerId = userId;
@@ -139,7 +139,6 @@ export const updateBookingController = async (req, res) => {
   const bookingId = parseInt(req.params.bookingId);
   const status = req.query.status;
   const bookingData = req.body;
-  
 
   // console.log("Booking Data on the Controller: ", bookingData);
   const notificationService = new NotificationService();
@@ -163,16 +162,13 @@ export const updateBookingController = async (req, res) => {
         message: "Booking updated successfully",
         updatedBooking,
       });
-    } else if (role === "admin") {
+    } else if (role === "admin" || role === "employee") {
       bookingData.status = status;
 
       // Get the booking details from database to check if vehicle was rented or not
       const bookingRecord = await BookingService.getBookingById(bookingId);
 
-      if (
-        bookingData.status === "completed" &&
-        bookingRecord.status !== "rented"
-      ) {
+      if (bookingData.status === "completed" && bookingRecord.status !== "rented") {
         return res.status(400).json({
           success: false,
           error: "Cannot check in a vehicle that was not rented",
@@ -206,11 +202,11 @@ export const updateBookingController = async (req, res) => {
       updatedBooking.vehicle = vehicle;
 
       // Push notification
-      if(bookingData.status === "completed") await notificationService.notifyBookingCompleted(updatedBooking);
-      
-      if(bookingData.status === "confirmed") await notificationService.notifyBookingConfirmed(updatedBooking);
+      if (bookingData.status === "completed") await notificationService.notifyBookingCompleted(updatedBooking);
 
-      if(bookingData.status === "rented") await notificationService.notifyStatusChange(updatedBooking);
+      if (bookingData.status === "confirmed") await notificationService.notifyBookingConfirmed(updatedBooking);
+
+      if (bookingData.status === "rented") await notificationService.notifyStatusChange(updatedBooking);
 
       const updatedStatus = updatedBooking.status;
 
@@ -242,21 +238,24 @@ export const updateBookingController = async (req, res) => {
             price: null,
           });
 
+          // Check if booking has an damaged car image
+          if (req.file) {
+            deletedBooking.damaged_image_url = req.file.filename;
+          }
+
           const movedToHistoryBooking =
             await BookingService.moveBookingToHistory(
               bookingId,
               deletedBooking
             );
 
-
-            console.log(bookingData);
-            
+          // console.log(bookingData);
 
           // Generate invoice
           const invoicePath = await generateInvoice(movedToHistoryBooking.booking_id, bookingData.customer_id, bookingData.additionalCharges);
 
           console.log(invoicePath);
-          
+
 
           if (movedToHistoryBooking) {
             return res.status(200).json({

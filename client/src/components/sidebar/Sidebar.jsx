@@ -60,10 +60,12 @@ export default function Sidebar({ open }) {
                 </NavLink>
 
                 {/* Analytics */}
-                <NavLink to="/reports" className={styles.sidebarItem}>
-                    <SiGoogleanalytics className="w-5 h-5" />
-                    Reports
-                </NavLink>
+                {
+                    role === "admin" && (                <NavLink to="/reports" className={styles.sidebarItem}>
+                        <SiGoogleanalytics className="w-5 h-5" />
+                        Reports
+                    </NavLink>)
+                }
             </div>
         </div>
     );

@@ -4,8 +4,14 @@ import ContentHeader from "../../components/content-header/ContentHeader";
 import Sidebar from "../../components/sidebar/Sidebar";
 import styles from "./Dashboard.module.scss";
 import { removeTimeFromTimestamp } from "../../utils/Helper";
+import { useSelector } from "react-redux";
 
 export default function Dashboard() {
+    // Retrieve the persisted user from the local storage
+    const { currentUser } = useSelector((state) => state.user);
+    const role = currentUser?.role;
+    const userId = role === "admin" || role === "employee" ? currentUser?.staff_id : currentUser?.customer_id;
+
     const [openSidebar, setOpenSidebar] = useState(true);
     const [customers, setCustomers] = useState([]);
     const [maintenanceVehiclesTotal, setmaintenanceVehiclesTotal] = useState(0);
@@ -94,11 +100,13 @@ export default function Dashboard() {
 
                     {/* Cards Section */}
                     <div className={styles.cardsContainer}>
-                        <div className={styles.card}>
-                            <FaMoneyBill className={styles.icon} />
-                            <h3>Total Earnings</h3>
-                            <p>R{earnings}</p>
-                        </div>
+                        {
+                            role === "admin" && (<div className={styles.card}>
+                                <FaMoneyBill className={styles.icon} />
+                                <h3>Total Earnings</h3>
+                                <p>R{earnings}</p>
+                            </div>)
+                        }
 
                         <div className={styles.card}>
                             <FaCar className={styles.icon} />

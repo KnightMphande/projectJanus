@@ -72,6 +72,8 @@ export default function AdminBookings() {
     
     try {
       const updatedBooking = { ...booking, status: newStatus, additionalCharges };
+      console.log(updatedBooking);
+      
 
       const response = await fetch(
         `/api/booking/${booking.booking_id}/update?status=${newStatus}`,
