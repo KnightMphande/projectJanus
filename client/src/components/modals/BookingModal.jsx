@@ -157,7 +157,7 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
             {/* File Upload Section */}
             {previewUrl ? (
               <div>
-                <div className="mt-6 w-full relative h-auto p-1 rounded-md max-w-72 h-44">
+                <div className="mt-6 w-full relative p-1 rounded-md max-w-72 h-44">
                   <img src={previewUrl} alt="Image" className="w-full h-full rounded-md object-fill" />
                 </div>
                 <div className="mt-2 flex justify-start items-center cursor-pointer" onClick={() => clearImagePreview()}>

@@ -1,0 +1,13 @@
+{
+  "name": "projectjanus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:api": "npm run build --prefix api", 
+    "build:client": "npm run build --prefix client",
+    "build": "npm run build:api && npm run build:client"
+  },
+  "author": "",
+  "license": "ISC"
+}
