@@ -21,8 +21,6 @@ admin_router.get('/employees/', getAllEmployeesController);
 admin_router.get('/employees/:id', getEmployeeByIdController);
 admin_router.put('/employees/:id', updateEmployeeController); 
 admin_router.delete('/employees/:id', deleteEmployeeController);
-admin_router.post('/employees/damages');
-admin_router.get('/employees/damages');
 
 // Damages
 admin_router.get('/damages/', getAllDamagesController);

@@ -31,7 +31,7 @@ static async getAllEmployees() {
 }
 
 // Get a single employee by ID
-async getEmployeeById(staff_id) {
+static async getEmployeeById(staff_id) {
     try {
         const query = `SELECT * FROM staff WHERE staff_id = $1;`;
         const values = [staff_id];
@@ -47,7 +47,7 @@ async getEmployeeById(staff_id) {
 }
 
 // Update an employee
-async updateEmployee(staff_id, { names, phone, email, role, logo_url }) {
+static async updateEmployee(staff_id, { names, phone, email, role, logo_url }) {
     try {
         const query = `
             UPDATE staff
@@ -68,7 +68,7 @@ async updateEmployee(staff_id, { names, phone, email, role, logo_url }) {
 }
 
 // Delete an employee
-async deleteEmployee(staff_id) {
+static async deleteEmployee(staff_id) {
     try {
         const query = `DELETE FROM staff WHERE staff_id = $1 RETURNING *;`;
         const values = [staff_id];

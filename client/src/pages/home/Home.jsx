@@ -48,7 +48,7 @@ export default function Home() {
         fetchVehicles();
     }, []);
 
-    const handleSearch = () => {    
+    const handleSearch = () => {
 
         let filtered = vehicles;
 
@@ -57,7 +57,7 @@ export default function Home() {
             filtered = filtered.filter(vehicle => {
                 return vehicle.make.toLowerCase().includes(searchQuery.toLowerCase())
             }
-                
+
             );
         }
 
@@ -150,11 +150,19 @@ export default function Home() {
                                         value={vehicleBrand}
                                         onChange={(e) => setVehicleBrand(e.target.value)}
                                     >
-                                        <option>All Brands</option>
+                                        <option value="">All Brands</option>
                                         <option value="BMW">BMW</option>
                                         <option value="Honda">Honda</option>
                                         <option value="Ford">Ford</option>
+                                        <option value="Toyota">Toyota</option>
+                                        <option value="Mercedes">Mercedes</option>
+                                        <option value="Audi">Audi</option>
+                                        <option value="Volkswagen">Volkswagen</option>
+                                        <option value="Nissan">Nissan</option>
+                                        <option value="Chevrolet">Chevrolet</option>
+                                        <option value="Hyundai">Hyundai</option>
                                     </select>
+
                                 </div>
 
                                 {/* Clear Filters Button */}

@@ -5,6 +5,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import styles from "../../pages/dashboard/Dashboard.module.scss"
 import AddEmployeeModal from "../../components/modals/AddEmployeeModal";
 import { toast } from "react-toastify";
+import { RiDeleteBinLine } from "react-icons/ri";
 
 export default function Employees() {
     const [openSidebar, setOpenSidebar] = useState(true);
@@ -91,6 +92,42 @@ export default function Employees() {
         }
     }
 
+    const handleDelete = async (id) => {
+        try {
+          const response = await fetch(`/api/admin/employees/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+      
+          if (response.status === 204) {
+            // Update the state by removing the deleted employee
+            setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee.staff_id !== id));
+      
+            toast.success("Employee deleted successfully");
+            return;
+          }
+      
+          // For non-204 responses, handle as usual
+          const result = await response.json();
+      
+          if (!result.success) {
+            toast.error(result.error);
+            return;
+          }
+      
+          // Update the state after successful delete
+          setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee.staff_id !== id));
+      
+          toast.success(result.message);
+        } catch (error) {
+          console.error("Error deleting employee:", error);
+          toast.error("An error occurred while deleting the employee.");
+        }
+      };
+      
+
     return (
         <div className={styles.dashboard}>
             <Sidebar open={openSidebar} />
@@ -132,17 +169,21 @@ export default function Employees() {
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Date</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {employees?.length > 0 ? (
                                         employees.map((employee, index) => (
-                                            <tr key={employee.employee_id}>
+                                            <tr key={employee.staff_id}>
                                                 <td>{index + 1}</td>
                                                 <td>{employee.names}</td>
                                                 <td>{employee.email}</td>
                                                 <td>{employee.phone}</td>
                                                 <td>Created {removeTimeFromTimestamp(employee.created_at)}</td>
+                                                <td>
+                                                <RiDeleteBinLine onClick={() => handleDelete(employee.staff_id)} className="h-6 w-6 text-red-600 hover:text-red-700 cursor-pointer" />
+                                                </td>
                                             </tr>
                                         ))
                                     ) : (

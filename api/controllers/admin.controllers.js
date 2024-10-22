@@ -6,7 +6,7 @@ export const createEmployeeController = async (req, res) => {
     try {
         const { names, phone, email } = req.body;
 
-        console.log(req.body);
+        // console.log(req.body);
         
 
         const password = "Employee@123";
@@ -77,8 +77,9 @@ export const createEmployeeController = async (req, res) => {
   export const deleteEmployeeController = async (req, res) => {
     try {
         const { id } = req.params;
+        
         await AdminService.deleteEmployee(id);
-        res.status(204).json({ success: true, message: 'Employee deleted' });
+        return res.status(204).json({ success: true, message: 'Employee deleted' });
     } catch (error) {
       console.error("Failed to delete an employee: ", error);
   
