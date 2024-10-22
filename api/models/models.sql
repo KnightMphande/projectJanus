@@ -207,6 +207,14 @@ CREATE TABLE IF NOT EXISTS booking_history (
 );
 
 
+CREATE TABLE IF NOT EXISTS damages (
+    damage_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Invoices
 CREATE TABLE IF NOT EXISTS invoices (
     invoice_id SERIAL PRIMARY KEY,

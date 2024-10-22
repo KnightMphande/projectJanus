@@ -170,4 +170,4 @@ app.use('/api/profile', profile_router);
 app.use('/api/reports', reports_router);
 app.use('/api/invoice', invoice_router);
 app.use('/api/notifications', notification_router);
-app.use('/api/employees', admin_router);
+app.use('/api/admin', admin_router);

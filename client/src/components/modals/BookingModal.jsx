@@ -1,12 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdDelete } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { removeTimeFromTimestamp } from '../../utils/Helper';
+import Select from 'react-select';
+import { FiUpload } from 'react-icons/fi';
 
 const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [showAdditionalChargesInput, setShowAdditionalChargesInput] = useState(false);
-  const [pricingData, setPricingData] = useState({ typeOfFee: '', price: '' });
+  const [selectedOptions, setSelectedOptions] = useState(null);
+  const [damages, setDamages] = useState([]);
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  async function fetchDamages() {
+    const response = await fetch('/api/admin/damages', {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      toast.error(data.error);
+      return
+    }
+
+    setDamages(data.damages);
+  }
+
+  useEffect(() => {
+    fetchDamages();
+  }, []);
+
+  console.log(damages);
+  console.log("Seleted Options: ", selectedOptions);
+
+  // Handle file upload
+  const handleFileChange = (e) => {
+    const file = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      }
+
+      reader.readAsDataURL(file);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        file,
+      }));
+    }
+  };
+
+  // Clear selected file
+  const clearImagePreview = () => {
+    setPreviewUrl(null);
+  }
+
 
   // Handle status change
   const handleStatusChange = (event) => {
@@ -22,10 +78,11 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
       return;
     }
 
-    // Pass pricing data only if additional charges are being applied
-    const additionalCharges = showAdditionalChargesInput ? pricingData : null;
-    // console.log("Updated status: ", selectedStatus);
+    const additionalCharges = showAdditionalChargesInput ? selectedOptions : null;
+
+    console.log("Additionmal Chrges: ", additionalCharges);
     
+
 
     onUpdate(booking, selectedStatus, additionalCharges);
     onClose();
@@ -34,20 +91,14 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
   // Toggle additional charges input
   const handleCheckbox = () => {
     setShowAdditionalChargesInput(!showAdditionalChargesInput);
-    // Reset pricing data if checkbox is unchecked
-    if (showAdditionalChargesInput) {
-      setPricingData({ typeOfFee: '', price: '' });
-    }
   };
 
-  // Handle changes to pricing data
-  const handlePricingChange = (event) => {
-    const { name, value } = event.target;
-    setPricingData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const options = damages?.map((damage) => {
+    return {
+      value: `${damage.name} - ${damage.price}`,
+      label: `${damage.name} - R${damage.price}`,
+    };
+  });
 
   if (!isOpen) return null;
 
@@ -60,7 +111,7 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
             <MdClose size={24} />
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="overflow-y-auto custom-scrollbar max-h-[65vh]">
           <div className="p-6">
             <div className="flex items-center gap-6 mb-4">
               <img
@@ -93,31 +144,48 @@ const BookingModal = ({ isOpen, onClose, booking, onUpdate }) => {
               </label>
             </div>
             {showAdditionalChargesInput && (
-              <div className="grid gap-4 grid-cols-2 mt-4">
-                <select
-                  name="typeOfFee"
-                  className="formInput"
-                  value={pricingData.typeOfFee}
-                  onChange={handlePricingChange}
-                  multiple
-                >
-                  <option value="">Select type for fee</option>
-                  <option value="Car Scratches">Car Scratches</option>
-                  <option value="Late Fees">Late Fees</option>
-                  <option value="Paint Damage">Paint Damage</option>
-                  <option value="Damaged Bumpers">Damaged Bumpers</option>
-                  <option value="Cracked Windshield">Cracked Windshield</option>
-                </select>
-                <input
-                  type="text"
-                  name="price"
-                  placeholder="Price"
-                  onChange={handlePricingChange}
-                  value={pricingData.price}
-                  className="formInput"
+              <div className="mt-6">
+                <Select
+                  defaultValue={selectedOptions}
+                  onChange={setSelectedOptions}
+                  options={options}
+                  isMulti
                 />
               </div>
             )}
+
+            {/* File Upload Section */}
+            {previewUrl ? (
+              <div>
+                <div className="mt-6 w-full relative h-auto p-1 rounded-md max-w-72 h-44">
+                  <img src={previewUrl} alt="Image" className="w-full h-full rounded-md object-fill" />
+                </div>
+                <div className="mt-2 flex justify-start items-center cursor-pointer" onClick={() => clearImagePreview()}>
+                  <MdDelete className="text-red-600 w-7 h-7" />
+                  <p className="text-base font-semibold">Remove Image</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full mt-6 py-4 bg-gray-50 rounded-2xl border border-gray-300 gap-3 grid border-dashed">
+                <div className="grid gap-1 text-center">
+                  {/* SVG Icon */}
+                  <FiUpload className="mx-auto text-4xl text-blue-500" />
+
+                  {/* File Input */}
+                  <input
+                    type="file"
+                    className="mx-auto mt-6"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+
+                  <p className="text-xs text-gray-500">
+                    Upload a picture of the damaged vehicle.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="mt-6">
               <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-700">
                 Select Status

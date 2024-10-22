@@ -10,7 +10,7 @@ import { HelperFunc } from "../utils/helper.utils.js";
 export const generateInvoice = async (bookingId, userId, additionalCharges) => {
 
   console.log("Invoice Details: ", bookingId, userId, additionalCharges);
-  
+
   // Fetch booking details
   const booking = await BookingService.getHistoryBookingById(bookingId);
 
@@ -47,10 +47,24 @@ export const generateInvoice = async (bookingId, userId, additionalCharges) => {
   doc.text(`Check-out: ${await HelperFunc.removeTimeFromTimestamp(booking.check_out)}`);
   doc.text(`Amount: R${booking.amount}`);
 
-  const finalTotal = additionalCharges ? Number(booking.amount) + Number(additionalCharges.price ): booking.amount;
-  console.log("Final Price: ", finalTotal);
+  // Loop through additionalCharges to display on invoice
+  if(additionalCharges !== null) {
+    additionalCharges?.forEach((charge) => {
+      const [name, price] = charge.value.split(' - '); // Split the value by ' - R' to get name and price
   
-  doc.text(`${additionalCharges ? additionalCharges.typeOfFee : 'Additional costs'} : R${additionalCharges?.price || 0}`);
+      // Display the name and price on the invoice
+      doc.text(`${name} : R${price}`);
+    });
+  }
+
+  // Calculate the final total including all additional charges
+  const finalTotal = additionalCharges !== null
+    ? Number(booking.amount) + additionalCharges.reduce((sum, charge) => {
+      const [, price] = charge.value.split(' - R'); // Get the price part from the value
+      return sum + Number(price); // Add the price to the sum
+    }, 0)
+    : booking.amount;
+
   doc.moveDown();
   doc.text(`Total amount: R${finalTotal}`);
   doc.moveDown();
@@ -61,10 +75,10 @@ export const generateInvoice = async (bookingId, userId, additionalCharges) => {
   if (existingInvoice) {
     await InvoiceService.updateInvoice(bookingId, userId, finalTotal, additionalCharges?.price || 0);
   } else {
-    await InvoiceService.saveInvoice(booking.booking_id, userId, Number( booking.amount), additionalCharges);
+    await InvoiceService.saveInvoice(booking.booking_id, userId, Number(booking.amount), additionalCharges);
   }
 
-  return invoicePath; 
+  return invoicePath;
 };
 
 // Controller to retrieve the invoice

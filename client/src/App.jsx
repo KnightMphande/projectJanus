@@ -10,6 +10,7 @@ import Profile from "./pages/profile/Profile";
 import Maintenance from "./pages/maintenance/Maintenance";
 import Reports from "./pages/reports/Reports";
 import Employees from "./pages/employees/Employees";
+import Damages from "./pages/damages/Damages";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/maintenance" element={<Maintenance />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/employees" element={<Employees />} />
+        <Route path="/damages" element={<Damages />} />
       </Routes>
 
       {/* Toast container */}

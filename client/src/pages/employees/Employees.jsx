@@ -33,7 +33,7 @@ export default function Employees() {
 
     // Get data from backend
     async function fetchEmployees() {
-        const response = await fetch('/api/employees', {
+        const response = await fetch('/api/admin/employees', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -68,7 +68,7 @@ export default function Employees() {
                 return
             }
 
-            const response = await fetch("/api/employees", {
+            const response = await fetch("/api/admin/employees", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

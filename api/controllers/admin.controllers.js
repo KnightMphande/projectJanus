@@ -87,4 +87,70 @@ export const createEmployeeController = async (req, res) => {
         .json({ success: false, error: "Internal Server Error" });
     }
   };
+
+
+// Get all damages
+export const getAllDamagesController = async (req, res) => {
+  try {
+      const damages = await AdminService.getAllDamages();
+      return res.status(200).json({ success: true, damages });
+  } catch (error) {
+    console.log("Error fetching damages: ", error);
+    
+      return res.status(500).json({ success: false, error: "Internal Server Error"});
+  }
+};
+
+// Get damage by ID
+export const getDamageByIdController = async (req, res) => {
+  try {
+      const damage = await AdminService.getDamageById(req.params.id);
+      if (!damage) {
+          return res.status(404).json({ success: false, error: 'Damage not found' });
+      }
+      return res.status(200).json({ success: true, damage });
+  } catch (error) {
+    console.log("Error fetching damage: ", error);
+      return res.status(500).json({ message: error.message });
+  }
+};
+
+// Create a new damage
+export const createDamageController = async (req, res) => {
+  try {
+      const newDamage = await AdminService.createDamage(req.body);
+      return res.status(201).json({ success: true, message: "Successfully created damaged", newDamage });
+  } catch (error) {
+    console.log("Error creating damage: ", error);
+      return res.status(400).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+// Update damage by ID
+export const updateDamageController = async (req, res) => {
+  try {
+      const updatedDamage = await AdminService.updateDamage(req.params.id, req.body);
+      if (!updatedDamage) {
+          return res.status(404).json({ success: false, error: 'Damage not found' });
+      }
+      res.status(200).json(updatedDamage);
+  } catch (error) {
+    console.log("Error updating damage: ", error);
+      return res.status(400).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+// Delete damage by ID
+export const deleteDamageController = async (req, res) => {
+  try {
+      const deletedDamage = await AdminService.deleteDamage(req.params.id);
+      if (!deletedDamage) {
+          return res.status(404).json({ success: false, error: 'Damage not found' });
+      }
+      return res.status(204).json({ success: true, message: "Successfully deleted damage" });
+  } catch (error) {
+    console.log("Error deleting damage: ", error);
+      return res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};
   

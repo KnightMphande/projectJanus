@@ -197,6 +197,9 @@ export const updateBookingController = async (req, res) => {
         bookingData
       );
 
+      console.log(updatedBooking);
+      
+
       const vehicle = await VehicleService.getVehicleById(updatedBooking.vehicle_id);
 
       updatedBooking.vehicle = vehicle;

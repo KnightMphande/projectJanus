@@ -82,4 +82,62 @@ async deleteEmployee(staff_id) {
         throw new Error('Failed to delete employee');
     }
 }
+
+// Get list of damages
+static async getAllDamages() {
+    try {
+        const result = await client.query('SELECT * FROM damages ORDER BY created_at DESC');
+        return result.rows;
+    } catch (error) {
+        throw new Error('Failed to retrieve damages');
+    }
+};
+
+// Get a damage by ID
+static async getDamageById(id) {
+    try {
+        const result = await client.query('SELECT * FROM damages WHERE damage_id = $1', [id]);
+        return result.rows[0];
+    } catch (error) {
+        throw new Error('Failed to retrieve damage');
+    }
+};
+
+// Create a new damage
+static async createDamage(damageData) {
+    const { damage, price } = damageData;
+    try {
+        const result = await client.query(
+            'INSERT INTO damages (name, price) VALUES ($1, $2) RETURNING *',
+            [damage, price]
+        );
+        return result.rows[0];
+    } catch (error) {
+        throw new Error('Failed to create damage');
+    }
+};
+
+// Update an existing damage by ID
+static async updateDamage(id, damageData) {
+    const { name, price } = damageData;
+    try {
+        const result = await client.query(
+            'UPDATE damages SET name = $1, price = $2 WHERE damage_id = $3 RETURNING *',
+            [name, price, id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        throw new Error('Failed to update damage');
+    }
+};
+
+// Delete a damage by ID
+static async deleteDamage(id) {
+    try {
+        const result = await client.query('DELETE FROM damages WHERE damage_id = $1 RETURNING *', [id]);
+        return result.rows[0];
+    } catch (error) {
+        throw new Error('Failed to delete damage');
+    }
+};
 }

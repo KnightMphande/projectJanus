@@ -9,6 +9,7 @@ import { SiGoogleanalytics } from "react-icons/si";
 import styles from "./Sidebar.module.scss";
 import { FaUserFriends } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { MdCarCrash } from "react-icons/md";
 
 export default function Sidebar({ open }) {
     const { currentUser } = useSelector((state) => state.user);
@@ -53,6 +54,13 @@ export default function Sidebar({ open }) {
                     Booking
                 </NavLink>
 
+                {
+                    role === "admin" && (<NavLink to="/damages" className={styles.sidebarItem}>
+                        <MdCarCrash className="w-5 h-5" />
+                        Damages
+                    </NavLink>)
+                }
+
                 {/* Maintenance */}
                 <NavLink to="/maintenance" className={styles.sidebarItem}>
                     <IoSettings className="w-5 h-5" />
@@ -61,7 +69,7 @@ export default function Sidebar({ open }) {
 
                 {/* Analytics */}
                 {
-                    role === "admin" && (                <NavLink to="/reports" className={styles.sidebarItem}>
+                    role === "admin" && (<NavLink to="/reports" className={styles.sidebarItem}>
                         <SiGoogleanalytics className="w-5 h-5" />
                         Reports
                     </NavLink>)
