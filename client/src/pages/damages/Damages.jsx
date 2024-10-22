@@ -37,22 +37,28 @@ export default function Damages() {
 
     // Get data from backend
     async function fetchDamages() {
-        const response = await fetch('/api/admin/damages', {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
+        try {
+            const response = await fetch('/api/admin/damages', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            const data = await response.json();
+    
+            if (!data.success) {
+                toast.error(data.error);
+                return;
             }
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-            toast.error(data.error);
-            return
+    
+            setDamages(data.damages);
+        } catch (error) {
+            toast.error("Failed to fetch damages");
+            console.error("Error fetching damages:", error);
         }
-
-        setDamages(data.damages);
     }
+    
 
     useEffect(() => {
         fetchDamages();
@@ -61,7 +67,9 @@ export default function Damages() {
     // console.log(damages);
 
 
-    const handleSubmit = async (formData) => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();  
+
         try {
             if (!damage || !price) {
                 toast.error("Missing required fields")
@@ -77,6 +85,8 @@ export default function Damages() {
             });
 
             const result = await response.json();
+            console.log(result);
+            
 
             if (!result.success) {
                 toast.error(result.error);
@@ -90,6 +100,45 @@ export default function Damages() {
             console.log(error);
         }
     }
+
+    const handleDelete = async (id) => {
+        try {
+            const response = await fetch(`/api/admin/damages/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+
+            if (response.status === 204) {
+                // Update the state by removing the deleted damage
+                setDamages((prevDamages) => prevDamages.filter((damage) => damage.damage_id !== id));
+    
+                toast.success("Damage deleted successfully");
+                return;
+            }
+    
+            // For non-204 responses, handle as usual
+            const result = await response.json();
+    
+            if (!result.success) {
+                toast.error(result.error);
+                return;
+            }
+    
+            // Update the state after successful delete
+            setDamages((prevDamages) => prevDamages.filter((damage) => damage.damage_id !== id));
+    
+            toast.success(result.message);
+        } catch (error) {
+            console.error("Error deleting damage:", error);
+            toast.error("An error occurred while deleting the damage.");
+        }
+    };
+    
+    
+    
 
     return (
         <div className={styles.dashboard}>
@@ -165,7 +214,7 @@ export default function Damages() {
                                                         <td className="text-sm">{damage.price}</td>
                                                         <td className="text-sm">Created {removeTimeFromTimestamp(damage.created_at)}</td>
                                                         <td className="">
-                                                            <RiDeleteBinLine className="h-6 w-6 text-red-600 hover:text-red-700 cursor-pointer" />
+                                                            <RiDeleteBinLine onClick={() => handleDelete(damage.damage_id)} className="h-6 w-6 text-red-600 hover:text-red-700 cursor-pointer" />
                                                         </td>
                                                     </tr>
                                                 ))

@@ -43,8 +43,14 @@ export const generateInvoice = async (bookingId, userId, additionalCharges) => {
 
   doc.text(`Booking ID: ${booking.booking_id}`);
   doc.text(`Vehicle ID: ${booking.vehicle_id}`);
+
   doc.text(`Check-in: ${await HelperFunc.removeTimeFromTimestamp(booking.check_in)}`);
   doc.text(`Check-out: ${await HelperFunc.removeTimeFromTimestamp(booking.check_out)}`);
+
+  doc.moveDown();
+  doc.text("Charges");
+  doc.moveDown();
+
   doc.text(`Amount: R${booking.amount}`);
 
   // Loop through additionalCharges to display on invoice
@@ -60,7 +66,7 @@ export const generateInvoice = async (bookingId, userId, additionalCharges) => {
   // Calculate the final total including all additional charges
   const finalTotal = additionalCharges !== null
     ? Number(booking.amount) + additionalCharges.reduce((sum, charge) => {
-      const [, price] = charge.value.split(' - R'); // Get the price part from the value
+      const [, price] = charge.value.split(' - '); // Get the price part from the value
       return sum + Number(price); // Add the price to the sum
     }, 0)
     : booking.amount;
