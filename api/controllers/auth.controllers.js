@@ -136,7 +136,7 @@ export const loginController = async (req, res) => {
           },
           process.env.SECRET,
           {
-            expiresIn: "2h",
+            expiresIn: "12h",
           }
         );
 

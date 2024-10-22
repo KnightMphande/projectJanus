@@ -95,6 +95,9 @@ export default function Damages() {
 
             toast.success(result.message);
 
+            setDamage('')
+            setPrice('')
+
             fetchDamages();
         } catch (error) {
             console.log(error);
